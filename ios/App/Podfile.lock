@@ -1,0 +1,129 @@
+PODS:
+  - AppAuth (1.7.6):
+    - AppAuth/Core (= 1.7.6)
+    - AppAuth/ExternalUserAgent (= 1.7.6)
+  - AppAuth/Core (1.7.6)
+  - AppAuth/ExternalUserAgent (1.7.6):
+    - AppAuth/Core
+  - Capacitor (6.2.0):
+    - CapacitorCordova
+  - CapacitorActionSheet (6.0.3):
+    - Capacitor
+  - CapacitorApp (6.0.2):
+    - Capacitor
+  - CapacitorBrowserview (1.0.0-beta.3):
+    - Capacitor
+  - CapacitorCordova (6.2.0)
+  - CapacitorDialog (6.0.2):
+    - Capacitor
+  - CapacitorGeolocation (6.1.0):
+    - Capacitor
+  - CapacitorInappbrowser (1.0.3):
+    - Capacitor
+    - OSInAppBrowserLib (~> 1.0)
+  - CapacitorSplashScreen (6.0.3):
+    - Capacitor
+  - CapacitorStatusBar (6.0.2):
+    - Capacitor
+  - CapacitorToast (6.0.3):
+    - Capacitor
+  - CapawesomeTeamCapacitorDatetimePicker (6.0.0):
+    - Capacitor
+  - CodetrixStudioCapacitorGoogleAuth (0.0.1):
+    - Capacitor
+    - GoogleSignIn (~> 6.2.4)
+  - CordovaPlugins (6.2.0):
+    - CapacitorCordova
+  - CordovaPluginsResources (0.0.105)
+  - GoogleSignIn (6.2.4):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.1)
+  - GTMAppAuth (1.3.1):
+    - AppAuth/Core (~> 1.6)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.5)
+  - GTMSessionFetcher/Core (2.3.0)
+  - OSInAppBrowserLib (1.0.0)
+
+DEPENDENCIES:
+  - "Capacitor (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorActionSheet (from `../../node_modules/@capacitor/action-sheet`)"
+  - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - CapacitorBrowserview (from `../../node_modules/capacitor-browserview`)
+  - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
+  - "CapacitorDialog (from `../../node_modules/@capacitor/dialog`)"
+  - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
+  - "CapacitorInappbrowser (from `../../node_modules/@capacitor/inappbrowser`)"
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
+  - "CapacitorToast (from `../../node_modules/@capacitor/toast`)"
+  - "CapawesomeTeamCapacitorDatetimePicker (from `../../node_modules/@capawesome-team/capacitor-datetime-picker`)"
+  - "CodetrixStudioCapacitorGoogleAuth (from `../../node_modules/@codetrix-studio/capacitor-google-auth`)"
+  - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
+  - CordovaPluginsResources (from `../capacitor-cordova-ios-plugins`)
+
+SPEC REPOS:
+  trunk:
+    - AppAuth
+    - GoogleSignIn
+    - GTMAppAuth
+    - GTMSessionFetcher
+    - OSInAppBrowserLib
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorActionSheet:
+    :path: "../../node_modules/@capacitor/action-sheet"
+  CapacitorApp:
+    :path: "../../node_modules/@capacitor/app"
+  CapacitorBrowserview:
+    :path: "../../node_modules/capacitor-browserview"
+  CapacitorCordova:
+    :path: "../../node_modules/@capacitor/ios"
+  CapacitorDialog:
+    :path: "../../node_modules/@capacitor/dialog"
+  CapacitorGeolocation:
+    :path: "../../node_modules/@capacitor/geolocation"
+  CapacitorInappbrowser:
+    :path: "../../node_modules/@capacitor/inappbrowser"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
+  CapacitorToast:
+    :path: "../../node_modules/@capacitor/toast"
+  CapawesomeTeamCapacitorDatetimePicker:
+    :path: "../../node_modules/@capawesome-team/capacitor-datetime-picker"
+  CodetrixStudioCapacitorGoogleAuth:
+    :path: "../../node_modules/@codetrix-studio/capacitor-google-auth"
+  CordovaPlugins:
+    :path: "../capacitor-cordova-ios-plugins"
+  CordovaPluginsResources:
+    :path: "../capacitor-cordova-ios-plugins"
+
+SPEC CHECKSUMS:
+  AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
+  Capacitor: 05d35014f4425b0740fc8776481f6a369ad071bf
+  CapacitorActionSheet: d1655abbbd3a57b86a7868269e8114848b5dac3e
+  CapacitorApp: e1e6b7d05e444d593ca16fd6d76f2b7c48b5aea7
+  CapacitorBrowserview: 55815c5a68a71f2eb0d09421f6d125134ed9cc78
+  CapacitorCordova: b33e7f4aa4ed105dd43283acdd940964374a87d9
+  CapacitorDialog: 25878ac91f5ffaca62ce78884b6e1473e75596e1
+  CapacitorGeolocation: 3f6c960e6d9d11c83fcdd181c4912604857afb51
+  CapacitorInappbrowser: 55d42e8344fed6f4f14c2178d8d348cb658f73a9
+  CapacitorSplashScreen: fd8bf1bf9081d9aa8817b7cd37d740d1bdaf2fb2
+  CapacitorStatusBar: b16799a26320ffa52f6c8b01737d5a95bbb8f3eb
+  CapacitorToast: 325d1815e2c2b556257909df7ef1e25eb96cd0c5
+  CapawesomeTeamCapacitorDatetimePicker: 833341abe71c6ca84ab8f47bedccafb8f48200bd
+  CodetrixStudioCapacitorGoogleAuth: 9dcfabfb7dd804ad6231a1513bc6e81e620cbec6
+  CordovaPlugins: 7177aacc3ecf1a5c6e56c8a9cfb102c905858455
+  CordovaPluginsResources: 0c211f770ed91763a179ebcd9b9346e120b70662
+  GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
+  GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
+  GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
+  OSInAppBrowserLib: c3d0b21a0c8b6d81e69117ad08bb6b8a4849c4e1
+
+PODFILE CHECKSUM: 8223f60a9bad37385bb7183a0eb07eabad965229
+
+COCOAPODS: 1.16.2

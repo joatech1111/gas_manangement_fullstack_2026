@@ -1,0 +1,252 @@
+@import url('https://hangeul.pstatic.net/hangeul_static/css/NanumGothic.css');
+@import url('https://hangeul.pstatic.net/hangeul_static/css/NanumMyeongjo.css');
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f8f8f8; /* 배경색 설정 (필요하면 변경) */
+}
+
+.ui-page {
+    min-height: 100vh; /* jQuery Mobile 페이지 높이 설정 */
+    padding-top: env(safe-area-inset-top, 20px);
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+    padding-left: env(safe-area-inset-left, 10px);
+    padding-right: env(safe-area-inset-right, 10px);
+    background-color: white; /* 배경 설정 */
+}
+
+/* 홈 인디케이터가 있는 iPhone에서만 적용 (iOS 대응) */
+@supports (padding-top: env(safe-area-inset-top)) {
+    .ui-page {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+
+.custom-swal-title {
+    font-size: 17px !important; /* 🔹 제목 글씨 크기 줄이기 */
+    font-weight: lighter !important;
+}
+
+.custom-swal-title-small {
+    font-size: 12px !important; /* 🔹 삭제 완료 메시지의 제목 크기 더 작게 */
+}
+
+.custom-swal-popup {
+    border-radius: 10px; /* 둥근 모서리 */
+    padding: 15px;
+}
+
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+}
+
+/* ✅ 등장 애니메이션 */
+.swal-slide-in {
+    animation: slideIn 0.1s ease-out;
+}
+
+/* ✅ 사라질 때 애니메이션 */
+.swal-slide-out {
+    animation: slideOut 0.1s ease-in;
+}
+
+/* 스플래시 화면 스타일 */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 10000;
+}
+
+.splash-content {
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* 로더 스타일 */
+.custom-loader-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    min-width: 150px;
+    max-width: 60%;
+    padding: 5px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+}
+/* 로더 스타일 */
+.loader-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* 스피너 애니메이션 */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid #007bff; /* 파란색 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 전체 화면을 덮는 로더 배경 */
+.custom-loader-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px; /* 부드러운 모서리 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 살짝 그림자 효과 */
+    padding: 13px 20px;
+    width: auto;
+    min-width: 120px;
+    max-width: 30%;
+    background: linear-gradient(135deg, #4a7495, #90b0d6); /* 더 진한 네이비 블루 혼합 */ /* 네이비 블루 + 연한 회색 혼합 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    display: none;
+}
+
+/* 로더 박스 */
+.custom-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 회전 애니메이션 */
+.spinner {
+    width: 25px;
+    height: 25px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid #8400ff; /* 파란색 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* 애니메이션 효과 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 텍스트 스타일 */
+/* 로더 텍스트 스타일 */
+#loader-text {
+    max-width: 90%;
+    min-width: 150px;
+    word-wrap: break-word;
+    text-align: center;
+    overflow-wrap: break-word;
+    white-space: normal;
+    color: white;
+    font-size: 14px;
+    padding: 5px;
+}
+
+/* 점(.) 포함 시 줄바꿈 처리 */
+#loader-text::after {
+    content: attr(data-text);
+    display: block;
+    white-space: pre-line;
+}
+
+.ui-dialog-contain {
+    width: 92.5%;
+    max-width: 230px;
+    margin: 10% auto 15px auto;
+    padding: 0;
+    position: relative;
+    top: -15px;
+}
+
+input[type="date"] {
+    min-width: 130px;
+}
+
+html, body {
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+}
+
+/* 배경 숨기기 */
+.ui-loader.ui-overlay {
+    background: none !important;
+    opacity: 0 !important;
+    display: none !important;
+}
+
+/* 로딩 아이콘만 보이도록 조정 */
+.ui-loader {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* iOS Safe Area를 고려한 고정 헤더 */
+/* Safe Area까지 불투명한 배경 유지 */
+
+/* Safe Area까지 포함한 배경 (회색 불투명 처리) */
+/* Safe Area를 포함한 전체 상단 배경을 회색(#ccc)으로 처리 */
+/* iOS Safe Area까지 고려하여 추가적으로 조정 (필요한 경우) */
+/*@supports (top: env(safe-area-inset-top)) {*/
+/*    header + div {*/
+/*        margin-top: calc(env(safe-area-inset-top, 0) + 50px);*/
+/*    }*/
+/*}*/

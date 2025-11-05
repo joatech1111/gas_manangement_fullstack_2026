@@ -1,0 +1,30 @@
+###
+
+# curl -X POST "http://192.168.0.91:9191/gasmaxeye_2022/tankplusv3/auth_check_ajx.jsp"
+#     -H "Accept: application/xml, text/xml, */*; q=0.01"
+#     -H "Accept-Encoding: gzip, deflate"
+#     -H "Accept-Language: en-US,en;q=0.9"
+#     -H "Content-Type: application/x-www-form-urlencoded"
+#     -H "Cookie: JSESSIONID=5786797AA91642D209A030C0E87662A2"
+#     --data-urlencode "loginId=ggg"
+#     --data-urlencode "loginPw=Z2dn"
+#     --data-urlencode "uuid=4e6bef9269650164"
+#     --data-urlencode "mobileNumber=MDEwLTEyMy0xMjM0"
+#     --data-urlencode "areaSeq=0"
+#     --data-urlencode "appVersion=3.0.0"
+POST http://192.168.0.91:9191/gasmaxeye_2022/tankplusv3/auth_check_ajx.jsp
+Accept: application/xml, text/xml, */*; q=0.01
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+Cookie: JSESSIONID=5786797AA91642D209A030C0E87662A2
+Content-Type: application/x-www-form-urlencoded
+
+loginId = ggg &
+loginPw = Z2dn &
+uuid = 4e6bef9269650164 &
+mobileNumber = MDEwLTEyMy0xMjM0 &
+areaSeq = 0 &
+appVersion = 3.0.0
+
+###
+
