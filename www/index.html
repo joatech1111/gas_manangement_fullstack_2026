@@ -117,6 +117,38 @@
 
     </style>
     <style>
+        /* 메인 아이콘 스타일 - 정사각형, border-radius 적용 */
+        #pageMain table img[src*="main_"] {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 15px;
+            -webkit-border-radius: 15px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        /* 헤더 SafeArea 처리 - 상단 백버튼이 SafeArea 위로 올라가지 않도록 */
+        [data-role="header"] {
+            padding-top: env(safe-area-inset-top, 0px) !important;
+            margin-top: 0 !important;
+        }
+        
+        /* jQuery Mobile 헤더 내부 요소들도 SafeArea 고려 */
+        [data-role="header"] .ui-btn-left,
+        [data-role="header"] .ui-btn-right,
+        [data-role="header"] h1,
+        [data-role="header"] h3 {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+        
+        /* 헤더 높이 조정 - SafeArea 포함 */
+        [data-role="header"].ui-bar {
+            min-height: calc(44px + env(safe-area-inset-top, 0px)) !important;
+            padding-top: env(safe-area-inset-top, 0px) !important;
+        }
+        
         #statusMessage {
             /*position: fixed;*/
             /*bottom: 100px; !* 화면의 맨 아래 배치 *!*/
@@ -132,12 +164,15 @@
     </style>
 
     <script type="text/javascript">
-        //todo: 페이지 로드 후 2초 후 스플래시 숨김
+        //todo: 페이지 로드 후 스플래시 숨김
         $(document).ready(function () {
-            // 페이지 로드 후 2초 후 스플래시 숨김
+            // 페이지 로드 후 부드러운 페이드아웃
             setTimeout(function () {
-                $("#splash-screen").fadeOut();
-            }, 777);
+                $("#splash-screen").addClass("fade-out");
+                setTimeout(function () {
+                    $("#splash-screen").hide();
+                }, 600); // CSS transition 시간과 동일
+            }, 1500); // 1.5초 후 페이드아웃 시작
         });
 
         $(document).ready(function () {
@@ -159,7 +194,8 @@
                 method: "GET",
                 timeout: 5000, // 5초 안에 응답이 없으면 실패로 간주
                 success: function () {
-                    $("#statusMessage").text("✅ 서버와 정상적으로 연결되었습니다.").css("color", "green");
+                    // 서버 연결 성공 메시지 제거
+                    $("#statusMessage").hide();
                 },
                 error: function () {
                     $("#statusMessage").text("❌ 현재 통신장애로 인하여 앱접속이 어렵습니다.\n" +
@@ -191,6 +227,30 @@
                 $("body").toggleClass("dark-mode");
             }
 
+            // SafeArea 적용 - 모든 플랫폼에서 헤더에 SafeArea 적용
+            function applySafeAreaToHeaders() {
+                // CSS 변수에서 safe-area-inset-top 값 가져오기
+                const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top')) || 
+                                   parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 0;
+                
+                // 모든 헤더에 SafeArea 적용
+                const headers = document.querySelectorAll('[data-role="header"]');
+                headers.forEach(function(header) {
+                    if (safeAreaTop > 0) {
+                        header.style.paddingTop = safeAreaTop + 'px';
+                        header.style.minHeight = 'calc(44px + ' + safeAreaTop + 'px)';
+                    }
+                });
+            }
+            
+            // 초기 적용
+            applySafeAreaToHeaders();
+            
+            // 페이지 전환 시에도 적용 (jQuery Mobile)
+            $(document).on('pagecreate', function() {
+                applySafeAreaToHeaders();
+            });
+            
             //todo: #####################################
             //todo: ios인 경우 safearea 부분 margin-top 50px
             //todo: #####################################
@@ -283,6 +343,46 @@
                 } catch (error) {
                     //alert(error)
                 }
+
+                // 딥링크 리스너 추가 - 앱이 실행 중일 때 딥링크 수신
+                Capacitor.Plugins.App.addListener('appUrlOpen', (data) => {
+                    console.log('딥링크 수신:', data.url);
+                    if (typeof handleDeepLink === 'function') {
+                        handleDeepLink(data.url);
+                    }
+                });
+
+                // 앱이 처음 실행될 때 딥링크 확인
+                Capacitor.Plugins.App.getLaunchUrl().then((result) => {
+                    if (result && result.url) {
+                        console.log('앱 실행 시 딥링크:', result.url);
+                        // 약간의 지연을 두어 앱이 완전히 로드된 후 처리
+                        setTimeout(() => {
+                            if (typeof handleDeepLink === 'function') {
+                                handleDeepLink(result.url);
+                            }
+                        }, 1000);
+                    }
+                }).catch(() => {
+                    // 딥링크가 없으면 무시
+                });
+
+                // 앱이 백그라운드에서 포그라운드로 돌아올 때 딥링크 처리
+                Capacitor.Plugins.App.addListener('appStateChange', (state) => {
+                    if (state.isActive) {
+                        // 앱이 활성화될 때 딥링크 확인
+                        Capacitor.Plugins.App.getLaunchUrl().then((result) => {
+                            if (result && result.url) {
+                                console.log('앱 활성화 시 딥링크:', result.url);
+                                if (typeof handleDeepLink === 'function') {
+                                    handleDeepLink(result.url);
+                                }
+                            }
+                        }).catch(() => {
+                            // 딥링크가 없으면 무시
+                        });
+                    }
+                });
             }
 
 
@@ -482,44 +582,21 @@
 
 <body bgcolor="#C0DFFD">
 <!-- 스플래시 화면 -->
-<div id="splash-screen" style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #1f2937;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-">
+<div id="splash-screen">
     <div class="splash-content" style="text-align: center; width: 100%; padding: 0 20px;">
         <img src="/images/front_logo.gif"
              alt="Logo"
-             style="width: 100%; height: auto; max-width: 400px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"/>
+             class="splash-logo"/>
 
         <!-- 로딩 인디케이터 -->
-        <div style="margin-top: 30px;">
-            <div style="
-                border: 4px solid #f3f3f3;
-                border-top: 4px solid #00c6ff;
-                border-radius: 50%;
-                width: 36px;
-                height: 36px;
-                animation: spin 1s linear infinite;
-                margin: 0 auto;
-            "></div>
+        <div class="splash-loader-container">
+            <div class="splash-loader"></div>
+            <div class="splash-progress-bar">
+                <div class="splash-progress-fill"></div>
+            </div>
         </div>
 
-        <div style="
-            margin-top: 20px;
-            font-style: italic;
-            font-size: 16px;
-            color: #ffffffcc;
-            font-weight: 500;
-        ">
+        <div class="splash-subtitle">
             조아테크 가스 경영 관리 2025
         </div>
     </div>
@@ -603,8 +680,8 @@ todo: ================ 인트로 페이지 시작 ==================
 
 <section id="pageIntro" data-role="page">
     <header data-role="header" data-theme="b" class="ui-bar"
-            style="background-color: #1f2937; color: white; padding: 14px 10px; text-align: center; border: none;">
-        <h1 style="margin: 0; font-size: 18px; font-weight: bold; letter-spacing: 1px;">
+            style="background-color: #1f2937; color: white; padding: 4px 10px !important; text-align: center; border: none; min-height: auto !important; height: auto !important;">
+        <h1 style="margin: 0 !important; padding: 0 !important; font-size: 14px !important; font-weight: bold; letter-spacing: 1px; line-height: 1.3 !important; height: auto !important;">
             ⛽ 가스경영관리 2025
         </h1>
     </header>
@@ -626,13 +703,13 @@ todo: ================ 인트로 페이지 시작 ==================
             <form>
                 <!-- 아이디 입력 -->
                 <div class="ui-field-contain"
-                     style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px; padding: 8px 10px; background: linear-gradient(135deg, #ffffffcc, #f8f9facc); border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255, 255, 255, 0.4);">
+                     style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px; padding: 4px 10px; background: linear-gradient(135deg, #ffffffcc, #f8f9facc); border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255, 255, 255, 0.4);">
                     <label for="txtLoginId"
                            style="min-width: 80px; font-weight: 600; color: #2d3748; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 6px;">
                         <span style="font-size: 18px;">👤</span>&nbsp;&nbsp;&nbsp;아이디
                     </label>
                     <input type="text" id="txtLoginId" placeholder="아이디를 입력하세요"
-                           style="flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: #ffffffee; color: #2d3748; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.03);"
+                           style="flex: 1; padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: #ffffffee; color: #2d3748; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.03); line-height: 1.4; height: auto;"
                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.15)'; disableFixed('footerIntro')"
                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 1px 4px rgba(0,0,0,0.03)'; enableFixed('footerIntro')"
                     />
@@ -640,13 +717,13 @@ todo: ================ 인트로 페이지 시작 ==================
 
                 <!-- 비밀번호 입력 -->
                 <div class="ui-field-contain"
-                     style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px; padding: 8px 10px; background: linear-gradient(135deg, #ffffffcc, #f8f9facc); border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255, 255, 255, 0.4); margin-top: -8px;">
+                     style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px; padding: 4px 10px; background: linear-gradient(135deg, #ffffffcc, #f8f9facc); border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255, 255, 255, 0.4); margin-top: -8px;">
                     <label for="txtLoginPw"
                            style="min-width: 80px; font-weight: 600; color: #2d3748; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 6px;">
                         <span style="font-size: 18px;">🔒</span>비밀번호
                     </label>
                     <input type="password" id="txtLoginPw" placeholder="비밀번호를 입력하세요" autocomplete="off"
-                           style="flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: #ffffffee; color: #2d3748; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.03);"
+                           style="flex: 1; padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: #ffffffee; color: #2d3748; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.03); line-height: 1.4; height: auto;"
                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.15)'; disableFixed('footerIntro')"
                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 1px 4px rgba(0,0,0,0.03)'; enableFixed('footerIntro')"
                     />
@@ -699,7 +776,7 @@ todo: ================ 인트로 페이지 시작 ==================
             </div>
         </div>
         <div id="statusMessage"
-             style="text-align: center; font-size: 13px; color: #555; margin: 8px auto 0; padding: 6px 12px; background-color: #f5f5f5; border-radius: 8px; width: fit-content;">
+             style="text-align: center; font-size: 13px; color: #555; margin: 8px auto 0; padding: 6px 12px; background-color: #f5f5f5; border-radius: 8px; width: fit-content; display: none;">
             ✅ 서버 상태 확인 중...
         </div>
     </footer>
@@ -779,11 +856,11 @@ todo: ================ 홈 페이지 시작 ==================
         <div style="height: 10px;"></div>
         <tr style="margin-top: 0px;">
             <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageCidList()"><img
-                    src="images/v2/main_cid_btn.png" widht="107" height="94"/></a></td>
+                    src="images/v2/main_cid_btn.png"/></a></td>
             <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageSaleList()"><img
-                    src="images/v2/main_custcenter_btn.png" widht="107" height="94"/></a></td>
+                    src="images/v2/main_custcenter_btn.png"/></a></td>
             <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageUnpaidList()"><img
-                    src="images/v2/main_uncollected_btn.png" widht="107" height="94"/></a></td>
+                    src="images/v2/main_uncollected_btn.png"/></a></td>
         </tr>
         <tr>
             <td>&nbsp;</td>
@@ -792,11 +869,11 @@ todo: ================ 홈 페이지 시작 ==================
         </tr>
         <tr>
             <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageCollectList()"><img
-                    src="images/v2/main_collection_btn.png" widht="107" height="94"/></a></td>
+                    src="images/v2/main_collection_btn.png"/></a></td>
             <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageReadMeterList()"><img
-                    src="images/v2/main_register_btn.png" widht="107" height="94"/></a></td>
-            <!--            <td style="color:#3333FF ; text-align: center ; "><a onclick="openJoaOffice()" target="_self"><img-->
-            <!--                    src="images/v2/main_joa_portal2_btn.png" widht="107" height="94"></a></td>-->
+                    src="images/v2/main_register_btn.png"/></a></td>
+            <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="openJoaTechWebsite()"><img
+                    src="images/v2/main_joatech_btn.png"/></a></td>
         </tr>
 
         <tr>

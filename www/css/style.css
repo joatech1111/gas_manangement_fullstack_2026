@@ -77,6 +77,21 @@ html, body {
     animation: slideOut 0.1s ease-in;
 }
 
+/* 로그인 화면 헤더 높이 줄이기 */
+#pageIntro [data-role="header"] {
+    padding: 4px 10px !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+#pageIntro [data-role="header"] h1 {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+}
+
 /* 스플래시 화면 스타일 */
 #splash-screen {
     position: fixed;
@@ -84,20 +99,134 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: black;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     z-index: 10000;
+    opacity: 1;
+    transition: opacity 0.6s ease-out;
+}
+
+#splash-screen.fade-out {
+    opacity: 0;
 }
 
 .splash-content {
     text-align: center;
-    color: white;
+    color: #2d3748;
     font-size: 24px;
     font-weight: bold;
     margin-top: 15px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.splash-logo {
+    width: 100%;
+    height: auto;
+    max-width: 400px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    animation: logoFadeIn 1s ease-out, logoPulse 2s ease-in-out infinite 1s;
+}
+
+@keyframes logoFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes logoPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.splash-loader-container {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.splash-loader {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #4facfe;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+}
+
+.splash-progress-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.splash-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe, #00d4ff);
+    border-radius: 2px;
+    animation: progressLoad 1.5s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+}
+
+@keyframes progressLoad {
+    0% {
+        width: 0%;
+        transform: translateX(0);
+    }
+    50% {
+        width: 70%;
+    }
+    100% {
+        width: 100%;
+        transform: translateX(0);
+    }
+}
+
+.splash-subtitle {
+    margin-top: 24px;
+    font-size: 16px;
+    color: #4a5568;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    animation: fadeIn 1.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* 로더 스타일 */

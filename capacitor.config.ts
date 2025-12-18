@@ -15,14 +15,16 @@ const config: CapacitorConfig = {
         webContentsDebuggingEnabled: true,
         allowMixedContent: true
     },
-
+    ios: {
+        scheme: "gasmanagement"
+    }
 };
 
-config.server = {
-    //url: "http://192.168.0.10:3000", //home localhost
-    url: "http://192.168.3.38:3000", //office localhost
-    cleartext: true
-};
+// config.server = {
+//     url: "http://192.168.0.9:3000", //home localhost
+//     //url: "http://192.168.3.38:3000", //office localhost
+//     cleartext: true
+// };
 
 export default config;
 

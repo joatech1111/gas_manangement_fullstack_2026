@@ -286,6 +286,27 @@ async function openJoaTech() {
     }
 }
 
+// 조아테크 웹사이트 열기
+async function openJoaTechWebsite() {
+    try {
+        const platform = Capacitor.getPlatform();
+        if (platform === "android") {
+            try {
+                Capacitor.Plugins.AppLauncher.launchActivity({
+                    url: "https://www.joatech.co.kr/",
+                    title: "조아테크"
+                });
+            } catch (e) {
+                alert(e.toString())
+            }
+        } else {
+            window.open("https://www.joatech.co.kr/", "_blank");
+        }
+    } catch (e) {
+        alert(e.toString())
+    }
+}
+
 function showPageMain() {
 
     if ($("#hdnCidCustomerSearchYesNo").attr("value") == "Y") { //만일 CID 편집화면에서 검색한 경우에는 CID 편집화면으로 이동함.
@@ -316,7 +337,20 @@ function showPageMain() {
         success: function (html) {
             hideActivityIndicator()
             $("#mainMenuIcons").html(html).trigger("create");
-
+            
+            // 로그인 성공 후 대기 중인 딥링크가 있으면 처리
+            if (window.pendingDeepLink) {
+                console.log('로그인 완료 후 딥링크 처리:', window.pendingDeepLink);
+                var deepLinkUrl = window.pendingDeepLink;
+                window.pendingDeepLink = null; // 처리 후 초기화
+                
+                // 약간의 지연을 두어 메인 화면이 완전히 로드된 후 딥링크 처리
+                setTimeout(function() {
+                    if (typeof handleDeepLink === 'function') {
+                        handleDeepLink(deepLinkUrl);
+                    }
+                }, 500);
+            }
         }
     });
     // 앱 초기화
@@ -434,4 +468,146 @@ function showActivityIndicator(message) {
 function hideActivityIndicator() {
     $.mobile.loading("hide");
     // $("#custom-loader").fadeOut();
+}
+
+// localStorage에 저장된 로그인 정보로 자동 로그인 시도
+function autoLoginWithStoredInfo() {
+    try {
+        // localStorage에서 로그인 정보 확인
+        var remember = window.localStorage.getItem('remember_gasmax');
+        var remember_id = window.localStorage.getItem('remember_gasmax_id');
+        var remember_pw = window.localStorage.getItem('remember_gasmax_pw');
+        
+        // 저장된 로그인 정보가 있는지 확인
+        if (remember == "1" && remember_id && remember_pw) {
+            console.log('저장된 로그인 정보로 자동 로그인 시도:', remember_id);
+            
+            // 로그인 입력 필드에 값 설정
+            $("#txtLoginId").val(remember_id);
+            $("#txtLoginPw").val(remember_pw);
+            
+            // authCheck 함수가 존재하면 호출, 없으면 직접 로그인 처리
+            if (typeof authCheck === 'function') {
+                // 약간의 지연을 두어 입력 필드가 업데이트된 후 로그인 시도
+                setTimeout(function() {
+                    // 로그인 성공을 감지하기 위해 showPageMain 함수를 감시
+                    var originalShowPageMain = window.showPageMain;
+                    if (originalShowPageMain) {
+                        window.showPageMain = function() {
+                            // 원래 함수 호출
+                            originalShowPageMain.apply(this, arguments);
+                        };
+                    }
+                    authCheck();
+                }, 100);
+                return true;
+            } else {
+                console.warn('authCheck 함수를 찾을 수 없습니다.');
+                return false;
+            }
+        } else {
+            console.log('저장된 로그인 정보가 없습니다.');
+            return false;
+        }
+    } catch (error) {
+        console.error('자동 로그인 처리 오류:', error);
+        return false;
+    }
+}
+
+// 딥링크 처리 함수
+function handleDeepLink(url) {
+    try {
+        console.log('딥링크 처리 시작:', url);
+        
+        // 현재 페이지가 로그인 화면인지 확인
+        var currentPage = $("#hdnCurrentPage").attr("value");
+        var isLoginPage = (currentPage === "pageIntro" || currentPage === "" || !currentPage);
+        
+        // 로그인 화면이고 localStorage에 저장된 정보가 있으면 자동 로그인 시도
+        if (isLoginPage) {
+            var autoLoginSuccess = autoLoginWithStoredInfo();
+            if (autoLoginSuccess) {
+                console.log('자동 로그인 시도 중... 딥링크 처리는 로그인 완료 후 진행됩니다.');
+                // 로그인 성공 후 딥링크를 다시 처리하기 위해 URL을 저장
+                window.pendingDeepLink = url;
+                return;
+            }
+        }
+        
+        // URL 파싱
+        const urlObj = new URL(url);
+        const scheme = urlObj.protocol.replace(':', ''); // gasmanagement://
+        const host = urlObj.host; // 호스트 (있을 경우)
+        const path = urlObj.pathname; // 경로
+        const params = new URLSearchParams(urlObj.search); // 쿼리 파라미터
+        
+        // 딥링크 예시: gasmanagement://customer/123?action=detail
+        // 또는: gasmanagement://?page=customer&id=123
+        
+        // 쿼리 파라미터에서 페이지 정보 가져오기
+        const page = params.get('page');
+        const id = params.get('id');
+        const action = params.get('action');
+        
+        // 경로 기반 처리
+        if (path) {
+            const pathParts = path.split('/').filter(p => p);
+            if (pathParts.length > 0) {
+                const route = pathParts[0];
+                
+                switch(route) {
+                    case 'customer':
+                        if (pathParts.length > 1) {
+                            const customerId = pathParts[1];
+                            // 고객 상세 페이지로 이동
+                            // showPageCustomerDetail() 등의 함수 호출
+                            console.log('고객 상세 페이지로 이동:', customerId);
+                            // 실제 구현은 앱의 라우팅 로직에 맞게 수정 필요
+                        }
+                        break;
+                    case 'main':
+                        showPageMain();
+                        break;
+                    default:
+                        console.log('알 수 없는 경로:', route);
+                }
+            }
+        }
+        
+        // 쿼리 파라미터 기반 처리
+        if (page) {
+            switch(page) {
+                case 'main':
+                    showPageMain();
+                    break;
+                case 'customer':
+                    if (id) {
+                        console.log('고객 페이지로 이동:', id);
+                        // 고객 상세 페이지로 이동하는 로직 추가
+                    }
+                    break;
+                default:
+                    console.log('알 수 없는 페이지:', page);
+            }
+        }
+        
+        // 액션 기반 처리
+        if (action) {
+            switch(action) {
+                case 'open':
+                    // 특정 기능 열기
+                    break;
+                default:
+                    console.log('알 수 없는 액션:', action);
+            }
+        }
+        
+        // 딥링크가 처리되었음을 사용자에게 알림 (선택사항)
+        // showToast('딥링크가 처리되었습니다.');
+        
+    } catch (error) {
+        console.error('딥링크 처리 오류:', error);
+        // URL 파싱 실패 시에도 앱이 정상 작동하도록 처리
+    }
 }

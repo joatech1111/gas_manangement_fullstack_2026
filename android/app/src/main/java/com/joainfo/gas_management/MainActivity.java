@@ -86,9 +86,18 @@ public class MainActivity extends BridgeActivity {
                     String script = String.format(
                         "document.documentElement.style.setProperty('--safe-area-inset-top', '%dpx');" +
                         "document.documentElement.style.setProperty('--safe-area-inset-bottom', '%dpx');" +
+                        "document.documentElement.style.setProperty('--safe-area-inset-left', '0px');" +
+                        "document.documentElement.style.setProperty('--safe-area-inset-right', '0px');" +
                         "document.body.style.paddingTop = '%dpx';" +
-                        "document.body.style.paddingBottom = '%dpx';",
-                        statusBarHeight, navigationBarHeight, statusBarHeight, navigationBarHeight
+                        "document.body.style.paddingBottom = '%dpx';" +
+                        // 헤더에 SafeArea 적용
+                        "var headers = document.querySelectorAll('[data-role=\"header\"]');" +
+                        "headers.forEach(function(header) {" +
+                        "    header.style.paddingTop = '%dpx';" +
+                        "    header.style.minHeight = 'calc(44px + %dpx)';" +
+                        "});",
+                        statusBarHeight, navigationBarHeight, statusBarHeight, navigationBarHeight,
+                        statusBarHeight, statusBarHeight
                     );
                     webView.evaluateJavascript(script, null);
 

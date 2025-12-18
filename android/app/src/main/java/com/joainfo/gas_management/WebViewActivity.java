@@ -6,6 +6,13 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.view.Window;
+import android.graphics.Color;
+import android.os.Build;
+import androidx.core.view.WindowCompat;
 
 public class WebViewActivity extends AppCompatActivity {
     private WebView webView;
@@ -14,6 +21,10 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SafeArea 처리 설정
+        setupSafeAreaView();
+        
         setContentView(R.layout.activity_webview);
 
         toolbar = findViewById(R.id.toolbar);
@@ -25,6 +36,18 @@ public class WebViewActivity extends AppCompatActivity {
         if (title != null) {
             getSupportActionBar().setTitle(title);
         }
+
+        // Toolbar에 SafeArea 적용
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (view, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            view.setPadding(
+                view.getPaddingLeft(),
+                statusBarHeight,
+                view.getPaddingRight(),
+                view.getPaddingBottom()
+            );
+            return insets;
+        });
 
         webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -38,6 +61,28 @@ public class WebViewActivity extends AppCompatActivity {
         String url = getIntent().getStringExtra("url");
         if (url != null) {
             webView.loadUrl(url);
+        }
+    }
+    
+    // SafeArea 처리 설정
+    private void setupSafeAreaView() {
+        Window window = getWindow();
+
+        // Edge-to-edge 디스플레이 활성화
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowCompat.setDecorFitsSystemWindows(window, false);
+        }
+
+        // 상태바 투명 처리
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // 상태바 텍스트를 어둡게 (밝은 배경용)
+                View decorView = window.getDecorView();
+                decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
         }
     }
 
