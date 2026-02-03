@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
             android:usesCleartextTraffic="true"
@@ -59,4 +60,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" android:maxSdkVersion="29" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    
+    <!-- Google Play 정책 준수를 위해 미디어 권한 제거 -->
+    <!-- 사진 선택 도구(Photo Picker)를 사용하므로 READ_MEDIA 권한 불필요 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
 </manifest>

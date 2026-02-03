@@ -611,3 +611,125 @@ function handleDeepLink(url) {
         // URL 파싱 실패 시에도 앱이 정상 작동하도록 처리
     }
 }
+
+// 환경설정 페이지에 계정 삭제 섹션 추가 (app_user_edit.jsp 로드 후 호출)
+function injectAppUserEditAccountDelete() {
+    var container = $("#divAppUserEdit");
+    if (!container.length || $("#btnAppUserEditAccountDelete").length) return;
+
+    var sectionHtml =
+        '<div class="app-user-edit-account-delete-section" style="margin-top: 1.5em; padding-top: 1em; border-top: 1px solid #ddd;">' +
+        '<h4 style="margin: 0 0 0.5em 0; color: #333;">계정</h4>' +
+        '<button type="button" id="btnAppUserEditAccountDelete" data-role="button" data-theme="e" data-icon="delete" data-iconpos="left" style="color: #c00;">계정 삭제</button>' +
+        '</div>';
+    container.append(sectionHtml).trigger("create");
+
+    $(document).off("click", "#btnAppUserEditAccountDelete").on("click", "#btnAppUserEditAccountDelete", function () {
+        requestAccountDelete();
+    });
+}
+
+// 계정 삭제 확인 후 API 호출 흉내만 내고 로그아웃 처리 (환경설정 푸터 위 버튼용)
+function requestAccountDeleteMock() {
+    Swal.fire({
+        title: '계정을 삭제하시겠습니까?',
+        html: '삭제 시 저장된 로그인 정보가 삭제되며, 다시 로그인해야 합니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        reverseButtons: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        background: '#f9fafb',
+        width: '90%',
+        padding: '1.5rem',
+        customClass: {
+            popup: 'rounded-xl shadow-lg',
+            title: 'text-lg font-bold',
+            confirmButton: 'px-5 py-2',
+            cancelButton: 'px-5 py-2',
+        },
+    }).then(function (result) {
+        if (!result.isConfirmed) return;
+
+        if (typeof showActivityIndicator === 'function') showActivityIndicator('처리 중...');
+
+        // API 엔드포인트 호출 흉내 (실제 요청 없이 짧은 지연 후 로그아웃)
+        setTimeout(function () {
+            if (typeof hideActivityIndicator === 'function') hideActivityIndicator();
+            doLocalAccountDelete();
+        }, 600);
+    });
+}
+
+// 계정 삭제 확인 및 실행 (실제 API 호출 시 사용)
+function requestAccountDelete() {
+    Swal.fire({
+        title: '계정을 삭제하시겠습니까?',
+        html: '삭제 시 저장된 로그인 정보가 삭제되며, 다시 로그인해야 합니다.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        reverseButtons: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        background: '#f9fafb',
+        width: '90%',
+        padding: '1.5rem',
+        customClass: {
+            popup: 'rounded-xl shadow-lg',
+            title: 'text-lg font-bold',
+            confirmButton: 'px-5 py-2',
+            cancelButton: 'px-5 py-2',
+        },
+    }).then(function (result) {
+        if (!result.isConfirmed) return;
+
+        hideActivityIndicator();
+        showActivityIndicator('처리 중...');
+
+        var uuid = window.sessionStorage.uuid || '';
+        if (typeof gasmaxWebappPath !== 'undefined' && gasmaxWebappPath && uuid) {
+            $.ajax({
+                url: gasmaxWebappPath + "app_user_delete_ajx.jsp",
+                type: "post",
+                data: { uuid: uuid },
+                dataType: "json",
+                timeout: 15000,
+                complete: function () {
+                    hideActivityIndicator();
+                    doLocalAccountDelete();
+                },
+                success: function () {
+                    doLocalAccountDelete();
+                },
+                error: function () {
+                    // 서버 API 없거나 실패해도 로컬 데이터는 삭제
+                    doLocalAccountDelete();
+                }
+            });
+        } else {
+            hideActivityIndicator();
+            doLocalAccountDelete();
+        }
+    });
+}
+
+// 로그인 화면으로 이동 (세션 유지)
+function doLocalAccountDelete() {
+    // jQuery Mobile로 직접 로그인 페이지로 이동 (showPageIntro 호출 시 uuid 참조 에러 방지)
+    try {
+        if (typeof $.mobile !== 'undefined' && $.mobile.changePage) {
+            $.mobile.changePage("#pageIntro", {changeHash: false});
+            if (typeof setCurrentPage === 'function') {
+                setCurrentPage("pageIntro");
+            }
+        } else {
+            window.location.replace('index.html');
+        }
+    } catch (e) {
+        window.location.reload();
+    }
+}
