@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CustomerVolumeCollect.Select" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE    AS areaCode
+			, GS_CU_CODE   AS customerCode
+			, GS_DATE      AS collectDate
+			, GS_SNO       AS sequenceNumber
+			, GS_SUKUMTYPE AS collectTypeCode
+			, Su_Name      AS collectTypeName
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GS_KUMACK, 0),1),'.00','')    AS collectAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GS_DC, 0),1),'.00','')        AS discountAmount
+			, GS_SW_CODE   AS employeeCode
+			, GS_SW_NAME   AS employeeName
+			, GS_BIGO      AS remark
+		FROM $catalogName$.dbo.fn_BOOK_CJ_SUKUM('$areaCode$','$customerCode$','$startDate$','$endDate$')
+		WHERE 1=1
+		ORDER BY AREA_CODE, GS_CU_CODE, GS_DATE, GS_SNO
+	</select>
+	
+</sqlMap>

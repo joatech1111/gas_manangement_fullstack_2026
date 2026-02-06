@@ -1,22 +1,26 @@
 @import url('https://hangeul.pstatic.net/hangeul_static/css/NanumGothic.css');
 @import url('https://hangeul.pstatic.net/hangeul_static/css/NanumMyeongjo.css');
 
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #f8f8f8; /* 배경색 설정 (필요하면 변경) */
+    background-color: #f8f8f8;
+    /* 배경색 설정 (필요하면 변경) */
 }
 
 .ui-page {
-    min-height: 100vh; /* jQuery Mobile 페이지 높이 설정 */
+    min-height: 100vh;
+    /* jQuery Mobile 페이지 높이 설정 */
     padding-top: env(safe-area-inset-top, 20px);
     padding-bottom: env(safe-area-inset-bottom, 20px);
     padding-left: env(safe-area-inset-left, 10px);
     padding-right: env(safe-area-inset-right, 10px);
-    background-color: white; /* 배경 설정 */
+    background-color: white;
+    /* 배경 설정 */
 }
 
 /* 홈 인디케이터가 있는 iPhone에서만 적용 (iOS 대응) */
@@ -31,16 +35,19 @@ html, body {
 
 
 .custom-swal-title {
-    font-size: 17px !important; /* 🔹 제목 글씨 크기 줄이기 */
+    font-size: 17px !important;
+    /* 🔹 제목 글씨 크기 줄이기 */
     font-weight: lighter !important;
 }
 
 .custom-swal-title-small {
-    font-size: 12px !important; /* 🔹 삭제 완료 메시지의 제목 크기 더 작게 */
+    font-size: 12px !important;
+    /* 🔹 삭제 완료 메시지의 제목 크기 더 작게 */
 }
 
 .custom-swal-popup {
-    border-radius: 10px; /* 둥근 모서리 */
+    border-radius: 10px;
+    /* 둥근 모서리 */
     padding: 15px;
 }
 
@@ -50,6 +57,7 @@ html, body {
         transform: translateY(-30px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -61,6 +69,7 @@ html, body {
         transform: translateY(0);
         opacity: 1;
     }
+
     to {
         transform: translateY(-30px);
         opacity: 0;
@@ -99,175 +108,237 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0f2027);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    transition: opacity 0.8s ease-out;
     z-index: 10000;
     opacity: 1;
-    transition: opacity 0.8s ease-out;
+    transition: opacity 0.5s ease-out;
     overflow: hidden;
 }
 
-/* 배경 애니메이션 파티클 */
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 배경 오버레이 패턴 */
 #splash-screen::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: 
-        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
-    animation: particleMove 20s linear infinite;
-}
-
-@keyframes particleMove {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    100% {
-        transform: translate(50px, 50px) rotate(360deg);
-    }
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+    opacity: 0.3;
+    z-index: -1;
 }
 
 #splash-screen.fade-out {
     opacity: 0;
+    pointer-events: none;
 }
 
 .splash-content {
     text-align: center;
     color: white;
     font-size: 28px;
-    font-weight: bold;
-    margin-top: 30px;
-    animation: fadeInUp 1s ease-out;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    letter-spacing: 1px;
+    font-weight: 800;
+    margin-top: 20px;
+    animation: fadeInUp 0.8s ease-out;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1.5px;
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.splash-title {
+    margin-top: 25px;
+    color: white;
+    font-size: 26px;
+    font-weight: 800;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.splash-logo-container {
+    position: relative;
+    margin-bottom: 30px;
 }
 
 .splash-logo {
-    width: 85%;
-    height: auto;
+    width: 140px;
+    height: 140px;
     max-width: 350px;
-    border-radius: 24px;
-    box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-    animation: logoFadeIn 1.2s ease-out, logoFloat 3s ease-in-out infinite 1.2s;
-    background: white;
-    padding: 20px;
+    object-fit: contain;
+    border-radius: 35px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+    padding: 25px;
+    animation: logoEntrance 1s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
-@keyframes logoFadeIn {
-    from {
+@keyframes logoEntrance {
+    0% {
         opacity: 0;
-        transform: scale(0.8) translateY(30px);
+        transform: scale(0.5) rotate(-10deg);
     }
-    to {
+
+    100% {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: scale(1) rotate(0deg);
     }
 }
 
-@keyframes logoFloat {
-    0%, 100% {
-        transform: translateY(0);
+/* 로고 뒤의 빛나는 효과 */
+.splash-logo-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    z-index: 1;
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.5;
     }
+
     50% {
-        transform: translateY(-10px);
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
     }
 }
 
 .splash-loader-container {
-    margin-top: 50px;
+    margin-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
     position: relative;
     z-index: 1;
 }
 
+/* 모던 원형 로더 */
 .splash-loader {
-    width: 60px;
-    height: 60px;
-    border: 5px solid rgba(255, 255, 255, 0.2);
-    border-top: 5px solid white;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top: 3px solid #ffffff;
     border-radius: 50%;
-    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    box-shadow: 
-        0 0 30px rgba(255, 255, 255, 0.5),
-        inset 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: spin 0.8s linear infinite;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 .splash-progress-bar {
-    width: 220px;
+    width: 200px;
     height: 6px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     overflow: hidden;
     position: relative;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
 }
 
 .splash-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ffffff, #f0f0f0, #ffffff);
-    background-size: 200% 100%;
+    background: #ffffff;
     border-radius: 10px;
-    animation: progressShine 2s ease-in-out infinite;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    width: 0%;
+    animation: progressFill 2.5s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-@keyframes progressShine {
+@keyframes progressFill {
     0% {
-        width: 20%;
-        background-position: 0% 50%;
+        width: 0%;
+        transform: translateX(-20%);
     }
+
     50% {
-        width: 60%;
-        background-position: 100% 50%;
+        width: 70%;
     }
+
     100% {
-        width: 90%;
-        background-position: 0% 50%;
+        width: 100%;
+        transform: translateX(0);
     }
 }
 
 .splash-subtitle {
-    margin-top: 20px;
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 400;
-    letter-spacing: 1px;
-    animation: fadeIn 1.5s ease-out;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    animation: pulseText 2s ease-in-out infinite;
+}
+
+@keyframes pulseText {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -325,9 +396,12 @@ html, body {
 }
 
 @keyframes logoFloat {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-5px);
     }
@@ -335,21 +409,28 @@ html, body {
 
 /* 애니메이션 효과 */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes spinModern {
-    0% { 
+    0% {
         transform: rotate(0deg);
         border-top-color: white;
         border-right-color: white;
     }
+
     50% {
         border-top-color: rgba(255, 255, 255, 0.8);
         border-right-color: rgba(255, 255, 255, 0.5);
     }
-    100% { 
+
+    100% {
         transform: rotate(360deg);
         border-top-color: white;
         border-right-color: white;
@@ -393,7 +474,8 @@ input[type="date"] {
     min-width: 130px;
 }
 
-html, body {
+html,
+body {
     padding-top: var(--safe-top);
     padding-bottom: var(--safe-bottom);
     padding-left: var(--safe-left);
@@ -414,14 +496,181 @@ html, body {
     box-shadow: none !important;
 }
 
-/* iOS Safe Area를 고려한 고정 헤더 */
-/* Safe Area까지 불투명한 배경 유지 */
 
-/* Safe Area까지 포함한 배경 (회색 불투명 처리) */
-/* Safe Area를 포함한 전체 상단 배경을 회색(#ccc)으로 처리 */
-/* iOS Safe Area까지 고려하여 추가적으로 조정 (필요한 경우) */
-/*@supports (top: env(safe-area-inset-top)) {*/
-/*    header + div {*/
-/*        margin-top: calc(env(safe-area-inset-top, 0) + 50px);*/
-/*    }*/
-/*}*/
+/* ✅ Modern Header */
+.modern-header {
+    background: linear-gradient(90deg, #1e3c72, #2a5298) !important;
+    border-bottom: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 15px !important;
+}
+
+.modern-header .ui-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    color: white !important;
+    font-size: 14px;
+}
+
+.modern-header h3 {
+    color: white !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    margin: 0 !important;
+    letter-spacing: 1px;
+}
+
+/* ✅ Modern Search Bar */
+.modern-search-wrapper {
+    padding: 20px 15px 10px;
+    background: #f8f9fa;
+}
+
+.modern-search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    padding: 8px 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eef0f2;
+}
+
+.modern-search-box input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 15px;
+    padding: 5px !important;
+    width: 100%;
+}
+
+.modern-search-btn {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 10px;
+    box-shadow: 0 4px 6px rgba(30, 60, 114, 0.2);
+}
+
+.modern-menu-card:active,
+.modern-menu-card-original:active {
+    transform: scale(0.96);
+}
+
+.modern-menu-card-original {
+    background: transparent;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    text-decoration: none !important;
+}
+
+.modern-menu-card-original img {
+    width: 100%;
+    height: auto;
+    max-width: 110px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    display: block;
+}
+
+.modern-grid-menu {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 columns for original icons */
+    gap: 12px;
+    padding: 20px 15px;
+    background: #f8f9fa;
+}
+
+.modern-header {
+    background: linear-gradient(135deg, #0f2027, #203a43) !important;
+    /* Dark navy for consistency */
+    border-bottom: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    height: 64px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 15px !important;
+}
+
+.modern-menu-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 24px;
+    color: white;
+}
+
+/* Icon Colors */
+.icon-cid {
+    background: linear-gradient(135deg, #a8e063, #56ab2f);
+}
+
+.icon-sales {
+    background: linear-gradient(135deg, #fce38a, #f38181);
+}
+
+.icon-unpaid {
+    background: linear-gradient(135deg, #ff9966, #ff5e62);
+}
+
+.icon-collect {
+    background: linear-gradient(135deg, #56ccf2, #2f80ed);
+}
+
+.icon-meter {
+    background: linear-gradient(135deg, #89f7fe, #66a6ff);
+}
+
+.icon-joa {
+    background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+}
+
+.modern-menu-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4a4a4a;
+    letter-spacing: -0.5px;
+}
+
+/* Add shimmer effect */
+.modern-menu-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+}
+
+.modern-menu-card:hover::after {
+    left: 100%;
+}

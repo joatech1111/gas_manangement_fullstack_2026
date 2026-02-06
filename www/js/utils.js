@@ -34,7 +34,7 @@ function removeParentheses(address) {
 
 function injectionCustomerSummary(tagId) {
     $.ajax({
-        url: gasmaxWebappPath + "customer_summary.jsp?uuid=" +  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_summary.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
         timeout: 60000,
@@ -126,14 +126,14 @@ function injectionCustomerDetail(tagId) {
             var latestSaftyCheckDate = $(xml).find("latestSaftyCheckDate").text();
             latestSaftyCheckDate = latestSaftyCheckDate.substring(0, 4) + "-" + latestSaftyCheckDate.substring(4, 6) + "-" + latestSaftyCheckDate.substring(6);
             //안전점검 대상 체크
-//			var saftyCheckYesNoText = "안전점검대상";
+            //			var saftyCheckYesNoText = "안전점검대상";
             var latestSaftyCheckDateStyle = "#3333FF";
             if (latestSaftyCheckDate != "") {
                 var today = new Date();
                 var diff = parseInt((today - latestSaftyCheckDate, 10) / 86400000); //오늘 날짜와 차이 계산
                 var satryCheckPeriod = 365; //체적이 아니면 1년마다 체크
                 if (customerType == "0") satryCheckPeriod = 183; //체적일 때 6개월 마다 체크
-//				if (diff <  satryCheckPeriod) saftyCheckYesNoText = ""; //안전점검 체크 기간이 아니면 표시 안함.
+                //				if (diff <  satryCheckPeriod) saftyCheckYesNoText = ""; //안전점검 체크 기간이 아니면 표시 안함.
                 if (diff >= satryCheckPeriod) latestSaftyCheckDateStyle = "#FF0000"; //안전점검 체크 기간이면 빨간색으로.
             }
             var contracterResidentNumber = $(xml).find("contracterResidentNumber").text();
@@ -149,7 +149,7 @@ function injectionCustomerDetail(tagId) {
             var supplyPipe2 = $(xml).find("supplyPipe2").text();
             var regulatorPressure = $(xml).find("regulatorPressure").text();
             //단가 표시
-//			var priceType = $(xml).find("priceType").text(); //적용단가 코드
+            //			var priceType = $(xml).find("priceType").text(); //적용단가 코드
             var applyPrice = $(xml).find("applyPrice").text(); //적용단가 명
             var environmentPrice = $(xml).find("environmentPrice").text(); //환경단가
             var individualPrice = $(xml).find("individualPrice").text(); //개별단가
@@ -162,12 +162,12 @@ function injectionCustomerDetail(tagId) {
             }
             var priceText = applyPrice + " " + insertComma(price);
             //할인 적용 표시
-//			var priceMode = $(xml).find("priceMode").text(); //할인부호 +, -, *(%)
-//			var discountAmount = insertComma($(xml).find("discountAmount").text()); //할인적용액
-//			var discountText = priceMode + discountAmount;
-//			if (priceMode == "*") {
-//				discountText = discountAmount + " %";
-//			}
+            //			var priceMode = $(xml).find("priceMode").text(); //할인부호 +, -, *(%)
+            //			var discountAmount = insertComma($(xml).find("discountAmount").text()); //할인적용액
+            //			var discountText = priceMode + discountAmount;
+            //			if (priceMode == "*") {
+            //				discountText = discountAmount + " %";
+            //			}
             var defaultRate = $(xml).find("defaultRate").text() + " %";
             var discountRate = $(xml).find("discountRate").text() + " %";
             var maintenanceFee = insertComma($(xml).find("maintenanceFee").text());
@@ -308,20 +308,30 @@ async function openJoaTechWebsite() {
 }
 
 function showPageMain() {
+    try {
+        var svrDbName = window.sessionStorage.getItem("login_svrDbName") || window.localStorage.getItem("remember_gasmax_svrDbName") || "";
+        if (svrDbName) {
+            $("#headerSvrDbName").html("[" + svrDbName + "]").show();
+        } else {
+            $("#headerSvrDbName").hide();
+        }
+    } catch (e) {
+        console.error("Error updating SvrDbName display:", e);
+    }
 
     if ($("#hdnCidCustomerSearchYesNo").attr("value") == "Y") { //만일 CID 편집화면에서 검색한 경우에는 CID 편집화면으로 이동함.
         $("#hdnCidCustomerSearchYesNo").attr("value", "N");
-        $.mobile.changePage("#pageManageCidEdit", {changeHash: false});
+        $.mobile.changePage("#pageManageCidEdit", { changeHash: false });
         setCurrentPage("pageManageCidEdit");
         return;
     }
-    $.mobile.changePage("#pageMain", {changeHash: false});
+    $.mobile.changePage("#pageMain", { changeHash: false });
     $("#txtHomeCustomerKeyword").attr("value", "");
     setCurrentPage("pageMain");
 
     showActivityIndicator("로딩중...")
     $.ajax({
-        url: gasmaxWebappPath + "home.jsp?uuid="+  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "home.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
         timeout: 60000,
@@ -337,15 +347,15 @@ function showPageMain() {
         success: function (html) {
             hideActivityIndicator()
             $("#mainMenuIcons").html(html).trigger("create");
-            
+
             // 로그인 성공 후 대기 중인 딥링크가 있으면 처리
             if (window.pendingDeepLink) {
                 console.log('로그인 완료 후 딥링크 처리:', window.pendingDeepLink);
                 var deepLinkUrl = window.pendingDeepLink;
                 window.pendingDeepLink = null; // 처리 후 초기화
-                
+
                 // 약간의 지연을 두어 메인 화면이 완전히 로드된 후 딥링크 처리
-                setTimeout(function() {
+                setTimeout(function () {
                     if (typeof handleDeepLink === 'function') {
                         handleDeepLink(deepLinkUrl);
                     }
@@ -365,7 +375,7 @@ function showDialogDatePicker(pageId, dateInputId) {
     //	return;
     //}
     $("#hdnCallPageDiaglogDatePicker").attr("value", pageId);
-    $.mobile.changePage("#dialogDatePicker", {changeHash: false, role: "dialog", reverse: true});
+    $.mobile.changePage("#dialogDatePicker", { changeHash: false, role: "dialog", reverse: true });
     $("#hdnDatePickerInputId").attr("value", dateInputId);
     var date = $("#" + dateInputId).attr("value");
     var year = date.substr(0, 4);
@@ -393,7 +403,7 @@ async function openCapacitorDatePicker(pageId, dateInputId) {
             ? new Date(currentValue).toISOString()  // 기존 날짜가 있으면 변환
             : new Date().toISOString();  // 없으면 오늘 날짜 사용
 
-        const {value} = await DatetimePicker.present({
+        const { value } = await DatetimePicker.present({
             cancelButtonText: 'Cancel',
             doneButtonText: 'Ok',
             mode: 'date',
@@ -477,23 +487,23 @@ function autoLoginWithStoredInfo() {
         var remember = window.localStorage.getItem('remember_gasmax');
         var remember_id = window.localStorage.getItem('remember_gasmax_id');
         var remember_pw = window.localStorage.getItem('remember_gasmax_pw');
-        
+
         // 저장된 로그인 정보가 있는지 확인
         if (remember == "1" && remember_id && remember_pw) {
             console.log('저장된 로그인 정보로 자동 로그인 시도:', remember_id);
-            
+
             // 로그인 입력 필드에 값 설정
             $("#txtLoginId").val(remember_id);
             $("#txtLoginPw").val(remember_pw);
-            
+
             // authCheck 함수가 존재하면 호출, 없으면 직접 로그인 처리
             if (typeof authCheck === 'function') {
                 // 약간의 지연을 두어 입력 필드가 업데이트된 후 로그인 시도
-                setTimeout(function() {
+                setTimeout(function () {
                     // 로그인 성공을 감지하기 위해 showPageMain 함수를 감시
                     var originalShowPageMain = window.showPageMain;
                     if (originalShowPageMain) {
-                        window.showPageMain = function() {
+                        window.showPageMain = function () {
                             // 원래 함수 호출
                             originalShowPageMain.apply(this, arguments);
                         };
@@ -519,11 +529,11 @@ function autoLoginWithStoredInfo() {
 function handleDeepLink(url) {
     try {
         console.log('딥링크 처리 시작:', url);
-        
+
         // 현재 페이지가 로그인 화면인지 확인
         var currentPage = $("#hdnCurrentPage").attr("value");
         var isLoginPage = (currentPage === "pageIntro" || currentPage === "" || !currentPage);
-        
+
         // 로그인 화면이고 localStorage에 저장된 정보가 있으면 자동 로그인 시도
         if (isLoginPage) {
             var autoLoginSuccess = autoLoginWithStoredInfo();
@@ -534,29 +544,29 @@ function handleDeepLink(url) {
                 return;
             }
         }
-        
+
         // URL 파싱
         const urlObj = new URL(url);
         const scheme = urlObj.protocol.replace(':', ''); // gasmanagement://
         const host = urlObj.host; // 호스트 (있을 경우)
         const path = urlObj.pathname; // 경로
         const params = new URLSearchParams(urlObj.search); // 쿼리 파라미터
-        
+
         // 딥링크 예시: gasmanagement://customer/123?action=detail
         // 또는: gasmanagement://?page=customer&id=123
-        
+
         // 쿼리 파라미터에서 페이지 정보 가져오기
         const page = params.get('page');
         const id = params.get('id');
         const action = params.get('action');
-        
+
         // 경로 기반 처리
         if (path) {
             const pathParts = path.split('/').filter(p => p);
             if (pathParts.length > 0) {
                 const route = pathParts[0];
-                
-                switch(route) {
+
+                switch (route) {
                     case 'customer':
                         if (pathParts.length > 1) {
                             const customerId = pathParts[1];
@@ -574,10 +584,10 @@ function handleDeepLink(url) {
                 }
             }
         }
-        
+
         // 쿼리 파라미터 기반 처리
         if (page) {
-            switch(page) {
+            switch (page) {
                 case 'main':
                     showPageMain();
                     break;
@@ -591,10 +601,10 @@ function handleDeepLink(url) {
                     console.log('알 수 없는 페이지:', page);
             }
         }
-        
+
         // 액션 기반 처리
         if (action) {
-            switch(action) {
+            switch (action) {
                 case 'open':
                     // 특정 기능 열기
                     break;
@@ -602,10 +612,10 @@ function handleDeepLink(url) {
                     console.log('알 수 없는 액션:', action);
             }
         }
-        
+
         // 딥링크가 처리되었음을 사용자에게 알림 (선택사항)
         // showToast('딥링크가 처리되었습니다.');
-        
+
     } catch (error) {
         console.error('딥링크 처리 오류:', error);
         // URL 파싱 실패 시에도 앱이 정상 작동하도록 처리
@@ -722,7 +732,7 @@ function doLocalAccountDelete() {
     // jQuery Mobile로 직접 로그인 페이지로 이동 (showPageIntro 호출 시 uuid 참조 에러 방지)
     try {
         if (typeof $.mobile !== 'undefined' && $.mobile.changePage) {
-            $.mobile.changePage("#pageIntro", {changeHash: false});
+            $.mobile.changePage("#pageIntro", { changeHash: false });
             if (typeof setCurrentPage === 'function') {
                 setCurrentPage("pageIntro");
             }

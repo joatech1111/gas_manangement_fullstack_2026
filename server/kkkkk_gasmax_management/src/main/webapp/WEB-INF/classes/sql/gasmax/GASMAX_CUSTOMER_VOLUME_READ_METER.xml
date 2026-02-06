@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CustomerVolumeReadMeter.Select" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE    AS areaCode
+			, GJ_CU_CODE   AS customerCode
+			, GJ_GUMYMSNO  AS sequenceNumber
+			, ISNULL(GJ_DATE, '')      AS readMeterDate
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_JUNGUM, 0),1),'.00','')    AS preMonthReadMeter
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_GUM, 0),1),'.00','')       AS nowMonthReadMeter
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_GAGE, 0),1),'.00','')      AS useQuantity
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_DANGA, 0),1),'.00','')     AS price
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_KUMACK, 0),1),'.00','')    AS useAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_ANKUM, 0),1),'.00','')     AS manageAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_DC, 0),1),'.00','')        AS discountAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_PERKUM, 0),1),'.00','')    AS delayAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_TOTAL, 0),1),'.00','')     AS nowMonthAmount
+			, ISNULL(GJ_BIGO, '')      AS remark
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_JANKG, 0),1),'.00','')     AS remainQuantity
+			, ISNULL(GJ_SUKUMDATE, '') AS collectDate
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_MISUJAN, 0),1),'.00','')   AS unpaidAmount
+		FROM $catalogName$.dbo.fn_BOOK_CJ_GUM('$areaCode$','$customerCode$','$startDate$','$endDate$')
+		WHERE 1=1
+		ORDER BY AREA_CODE, GJ_CU_CODE, GJ_DATE, GJ_GUMYMSNO
+	</select>
+	
+
+     <select id="GASMAX.CustomerLatestReadMeter.Select" resultClass="java.util.HashMap">
+		SELECT
+			  Area_Code       AS areaCode
+			, CU_Code         AS customerCode
+			, ISNULL(CU_NAME, '')         AS buildingName
+			, ISNULL(CU_USERNAME, '')     AS userName
+			, ISNULL(CU_SW_CODE, '')      AS employeeCode
+			, ISNULL(CU_SW_NAME, '')      AS employeeName
+			, ISNULL(JN_TYPE_PER, '')     AS delayFeeMethodType
+			, JN_TYPE_WON     AS roundType
+			, ISNULL(CU_TYPE_Danga, '')   AS priceType
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Basic_Danga, 0),1),'.00','')  AS environmentPrice
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_User_Danga, 0),1),'.00','')   AS unitPrice
+			<!--, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_DC_Danga, 0),1),'.0','')     AS discountPrice-->
+			, CAST(CAST(ISNULL(CU_DC_Danga, 0) AS NUMERIC(9)) AS VARCHAR)     AS discountPrice
+			, ISNULL(CU_BA_Gage_YN, 'N')   AS defaultAmountYesNo
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_BA_Gage_M3, 0),1),'.00','')   AS defaultUse
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_BA_Gage_KUM, 0),1),'.00','')  AS defaultAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_AnKum, 0),1),'.00','')        AS managementAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Per, 0),1),'','')          AS delayFeePercent
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_CDC, 0),1),'','')          AS discountPercent
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_CMISU, 0),1),'.00','')        AS delayAmount1
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_PerKum_2, 0),1),'.00','')     AS delayAmount2
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_PerKum_3, 0),1),'.00','')     AS delayAmount3
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_PerKum_4, 0),1),'.00','')     AS delayAmount4
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_PerKum_5, 0),1),'.00','')     AS delayAmount5
+			, ISNULL(GJ_GUMYMSNO, '')     AS preSequenceNumber
+			, ISNULL(GJ_DATE, '')         AS preReadMeterDate
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_GUM, 0),1),'.00','')          AS preReadMeter
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_KUMACK, 0),1),'.00','')       AS preAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_JanKg, 0),1),'.00','')        AS preRemain
+			, ISNULL(GJ_SUKUMDATE, '')    AS collectDate
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_MISUJAN, 0),1),'.00','')      AS preUnpaidAmount
+			, ISNULL(GJ_Close_Date, '')   AS applyDelayDate
+		FROM $catalogName$.dbo.fn_CJGUM_CU_SET('$areaCode$','$customerCode$','$readMeterDate$')
+		WHERE 1=1
+	</select>
+	
+     <parameterMap id="GASMAX.CustomerReadMeter.Insert.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="sequenceNumber"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="readMeterDate"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerName"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="userName"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="employeeCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="employeeName"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="preMonthReadMeter"            javaType="java.lang.Integer" jdbcType="INTEGER" mode="IN" />
+	    <parameter property="thisMonthReadMeter"             javaType="java.lang.Integer" jdbcType="INTEGER" mode="IN" />
+	    <parameter property="useQuantity"             javaType="java.lang.Integer" jdbcType="INTEGER" mode="IN" />
+	    <parameter property="price"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="useAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="managementAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="discountAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="delayAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="thisMonthAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="preRemain"             javaType="java.lang.Integer" jdbcType="INTEGER" mode="IN" />
+	    <parameter property="nowRemain"             javaType="java.lang.Integer" jdbcType="INTEGER" mode="IN" />
+	    <parameter property="remark"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="startDate"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="endDate"     javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="preUnpaidAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="applyDelayDate" 	javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="delayAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="defaultAmountYesNo" 	javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="defaultDelayAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="registerDate" 	javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="userId" 	javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="outputMessage"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+	<resultMap id="GASMAX.CustomerReadMeter.Insert.ReturnValue" class="java.util.HashMap">
+		<result property="outputMessage" column="@po_ERROR_CODE" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CustomerReadMeter.Insert" resultMap="GASMAX.CustomerReadMeter.Insert.ReturnValue" parameterMap="GASMAX.CustomerReadMeter.Insert.ParameterValue">
+	  <![CDATA[
+	  {
+		   CALL $catalogName$.dbo.sp_CJGUM (
+				?,
+				?,
+				'I',
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				? 
+			)
+		}
+	   ]]>
+	 </procedure>
+	 
+     
+	<parameterMap id="GASMAX.CustomerReadMeter.Delete.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="sequenceNumber"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="transactionDate"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="userId"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="outputMessage"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+	<resultMap id="GASMAX.CustomerReadMeter.Delete.ReturnValue" class="java.util.HashMap">
+		<result property="outputMessage" column="@po_ERROR_CODE" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CustomerReadMeter.Delete" resultMap="GASMAX.CustomerReadMeter.Delete.ReturnValue" parameterMap="GASMAX.CustomerReadMeter.Delete.ParameterValue">
+	  <![CDATA[
+		   execute $catalogName$.dbo.sp_CJGUM 
+				@pi_AREA_CODE      =?,
+				@pi_CU_CODE        =?,
+				@pi_GJ_DIV         ='D',
+				@pi_GJ_GUMYMSNO         =?,
+				@pi_GJ_ins_Date = ?,
+				@pi_User_ID = ?,
+				@po_ERROR_CODE     =?
+	   ]]>
+	 </procedure>
+</sqlMap>

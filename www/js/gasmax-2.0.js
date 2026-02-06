@@ -6,7 +6,7 @@ function showPageIntro(appExit) {
         // uuid는 hdnUuid가 가장 신뢰도 높음 (웹/앱 모두 init에서 세팅)
         var macNumber = $("#hdnUuid").val() || $("#hdnUuid").attr("value") || window.sessionStorage.uuid || "";
         getMultiAppUser(macNumber);
-        $.mobile.changePage("#pageIntro", {changeHash: false});
+        $.mobile.changePage("#pageIntro", { changeHash: false });
         setCurrentPage("pageIntro");
         $("#loginMessage").html("").trigger("create");
     } catch (e) {
@@ -63,20 +63,21 @@ function getMultiAppUser() {
             var totalRowCount = parseInt($(xml).find("totalRowCount").text());
             console.log("📊 [getMultiAppUser] totalRowCount:", totalRowCount);
 
-            // ⭐ 첫 번째 회사의 areaCode를 저장 (로그인 시 사용)
+            // ⭐ 첫 번째 회사의 areaCode 및 svrDbName을 저장 (로그인 시 사용)
             var firstAppUser = $(xml).find("AppUser").first();
             if (firstAppUser.length > 0) {
                 var firstAreaCode = firstAppUser.find("areaCode").text();
-                var firstAreaName = firstAppUser.find("areaName").text();
+                var firstSvrDbName = firstAppUser.find("svrDbName").text() || firstAppUser.find("SVR_DBName").text() || "";
                 window.sessionStorage.setItem("login_areaCode", firstAreaCode);
-                console.log("💾 [getMultiAppUser] Saved areaCode to sessionStorage:", firstAreaCode, "(" + firstAreaName + ")");
+                window.sessionStorage.setItem("login_svrDbName", firstSvrDbName);
+                console.log("💾 [getMultiAppUser] Saved areaCode and svrDbName to sessionStorage:", firstAreaCode, firstSvrDbName);
             }
 
             /*if ($(xml).find("session").text() == "X"){
-				alert("오랫동안 사용하지 않아서\n접속이 종료되었습니다.\n다시 로그인해 주세요.");
-				showPageIntro(false);
-				return;
-			}*/
+                alert("오랫동안 사용하지 않아서\n접속이 종료되었습니다.\n다시 로그인해 주세요.");
+                showPageIntro(false);
+                return;
+            }*/
 
             var resultText = $(xml).find("Result").text();
             console.log("📊 [getMultiAppUser] Result:", resultText);
@@ -103,12 +104,13 @@ function getMultiAppUser() {
                 $(xml).find("AppUser").each(function () {
                     var areaCode = ($(this).find("areaCode").text() || "").trim(); //업체코드
                     var areaName = ($(this).find("areaName").text() || "").trim(); //회사명
+                    var svrDbName = ($(this).find("svrDbName").text() || $(this).find("SVR_DBName").text() || $(this).find("dbCatalogName").text() || "").trim(); //서버DB명
 
                     if (!firstAreaCode) firstAreaCode = areaCode;
 
                     // 업체명 + areaCode 완전 노출
                     var btnText = areaName + "  [areaCode: " + areaCode + "]";
-                    html += '<a href="#" class="btnLoginAreaCode" data-areacode="' + areaCode + '" data-role="button">' + btnText + "</a>";
+                    html += '<a href="#" class="btnLoginAreaCode" data-areacode="' + areaCode + '" data-svrdbname="' + svrDbName + '" data-role="button">' + btnText + "</a>";
                     optionCount++;
                 });
 
@@ -117,15 +119,17 @@ function getMultiAppUser() {
                 $("#divMultiUserSelect").html(html).trigger("create");
                 console.log("✅ [getMultiAppUser] Button list created with " + optionCount + " options");
 
-                function applyLoginAreaCodeSelection(selectedAreaCode) {
+                function applyLoginAreaCodeSelection(selectedAreaCode, selectedSvrDbName) {
                     if (!selectedAreaCode) return;
                     window.sessionStorage.setItem("login_areaCode", selectedAreaCode);
+                    window.sessionStorage.setItem("login_svrDbName", selectedSvrDbName || "");
                     window.localStorage.setItem("remember_gasmax_areaCode", selectedAreaCode);
+                    window.localStorage.setItem("remember_gasmax_svrDbName", selectedSvrDbName || "");
 
                     // 선택 표시 (jQM active 스타일)
                     $("#loginAreaCodeButtons .btnLoginAreaCode").removeClass("ui-btn-active");
                     $("#loginAreaCodeButtons .btnLoginAreaCode[data-areacode='" + selectedAreaCode + "']").addClass("ui-btn-active");
-                    console.log("🔄 [Button Select] Selected areaCode:", selectedAreaCode);
+                    console.log("🔄 [Button Select] Selected areaCode:", selectedAreaCode, "svrDbName:", selectedSvrDbName);
                 }
 
                 // 버튼 클릭 시 선택값 저장
@@ -134,24 +138,31 @@ function getMultiAppUser() {
                     .on("click", "#loginAreaCodeButtons .btnLoginAreaCode", function (e) {
                         e.preventDefault();
                         var selectedAreaCode = $(this).attr("data-areacode") || "";
-                        applyLoginAreaCodeSelection(selectedAreaCode);
+                        var selectedSvrDbName = $(this).attr("data-svrdbname") || "";
+                        applyLoginAreaCodeSelection(selectedAreaCode, selectedSvrDbName);
                     });
 
                 // 최초 선택값(기억값 우선) 저장 및 UI 표시
                 var initialAreaCode = rememberedAreaCode || firstAreaCode;
+                var initialSvrDbName = window.localStorage.getItem("remember_gasmax_svrDbName") || (initialAreaCode === firstAreaCode ? ($(xml).find("AppUser").first().find("svrDbName").text() || $(xml).find("AppUser").first().find("SVR_DBName").text() || "") : "");
                 if (initialAreaCode) {
-                    applyLoginAreaCodeSelection(initialAreaCode);
+                    applyLoginAreaCodeSelection(initialAreaCode, initialSvrDbName);
                 }
             } else {
                 console.log("ℹ️ [getMultiAppUser] Single company or no companies, no dropdown needed");
                 // 단일 회사일 때 areaCode를 localStorage에 저장
                 if (totalRowCount == 1) {
-                    var singleAreaCode = $(xml).find("AppUser").first().find("areaCode").text();
-                    var singleAreaName = $(xml).find("AppUser").first().find("areaName").text();
-                    console.log("📌 [getMultiAppUser] Single company: areaCode=" + singleAreaCode + ", areaName=" + singleAreaName);
+                    var firstUser = $(xml).find("AppUser").first();
+                    var singleAreaCode = firstUser.find("areaCode").text();
+                    var singleAreaName = firstUser.find("areaName").text();
+                    var singleSvrDbName = firstUser.find("svrDbName").text() || firstUser.find("SVR_DBName").text() || "";
+                    console.log("📌 [getMultiAppUser] Single company: areaCode=" + singleAreaCode + ", areaName=" + singleAreaName + ", svrDbName=" + singleSvrDbName);
                     window.localStorage["single_company_areaCode"] = singleAreaCode;
+                    window.localStorage["single_company_svrDbName"] = singleSvrDbName;
                     window.sessionStorage.setItem("login_areaCode", singleAreaCode);
+                    window.sessionStorage.setItem("login_svrDbName", singleSvrDbName);
                     window.localStorage.setItem("remember_gasmax_areaCode", singleAreaCode);
+                    window.localStorage.setItem("remember_gasmax_svrDbName", singleSvrDbName);
                 }
             }
         }
@@ -164,42 +175,39 @@ function authCheck() {
     $("#loginMessage").html(getResultMessage("접속 중입니다.", true)).trigger("create");
     var loginId = $("#txtLoginId").attr("value");
     var loginPw = $("#txtLoginPw").attr("value");
-//var mustErase ;
-//$("#hdnUuid").attr("value", "356455042867040");
+    //var mustErase ;
+    //$("#hdnUuid").attr("value", "356455042867040");
     var uuid = $("#hdnUuid").attr("value");
 
 
     var mobileNumber = $("#hdnMobileNumber").attr("value");
     var remember = $("#ckbRememberLogin").attr("checked");
 
-    // 선택된 areaCode 가져오기: (1) 버튼 선택값 (2) sessionStorage
-    console.log("🔍 [authCheck] === Get areaCode Start ===");
+    // 선택된 areaCode 및 svrDbName 가져오기
+    console.log("🔍 [authCheck] === Get Login Info Start ===");
 
     var areaCode = "";
-    var btnAreaCode = $("#loginAreaCodeButtons .btnLoginAreaCode.ui-btn-active").attr("data-areacode");
-    if (btnAreaCode != undefined && btnAreaCode !== null && btnAreaCode !== "") {
-        areaCode = btnAreaCode;
-        try { window.sessionStorage.setItem("login_areaCode", areaCode); } catch (e) {}
-        console.log("✅ [authCheck] areaCode from button(active):", areaCode);
+    var svrDbName = "";
+    var activeBtn = $("#loginAreaCodeButtons .btnLoginAreaCode.ui-btn-active");
+
+    if (activeBtn.length > 0) {
+        areaCode = activeBtn.attr("data-areacode") || "";
+        svrDbName = activeBtn.attr("data-svrdbname") || "";
+        try {
+            window.sessionStorage.setItem("login_areaCode", areaCode);
+            window.sessionStorage.setItem("login_svrDbName", svrDbName);
+        } catch (e) { }
+        console.log("✅ [authCheck] areaCode from active button:", areaCode, "svrDbName:", svrDbName);
     } else {
-        // 혹시 active가 안 붙었으면 첫번째 버튼/저장값으로 fallback
         areaCode = window.sessionStorage.getItem("login_areaCode") || "";
-        if (!areaCode) {
-            areaCode = $("#loginAreaCodeButtons .btnLoginAreaCode").first().attr("data-areacode") || "";
-            if (areaCode) {
-                try { window.sessionStorage.setItem("login_areaCode", areaCode); } catch (e) {}
-            }
-        }
-        console.log("📥 [authCheck] areaCode fallback:", areaCode);
+        svrDbName = window.sessionStorage.getItem("login_svrDbName") || "";
+        console.log("📥 [authCheck] Login Info from sessionStorage fallback:", areaCode, svrDbName);
     }
 
     if (!areaCode || areaCode == "" || areaCode == "null") {
         areaCode = "0";
-        console.log("⚠️ [authCheck] areaCode is empty, using default: 0");
-    } else {
-        console.log("✅ [authCheck] Using areaCode: '" + areaCode + "'");
     }
-    console.log("🔍 [authCheck] === Get areaCode End ===");
+    console.log("🔍 [authCheck] === Get Login Info End ===");
 
 
     //핸드폰 장비 정보에 +82 부분을 0으로 바꿔 010으로 번호가 시작하도록 변경
@@ -219,6 +227,7 @@ function authCheck() {
             + "&uuid=" + sec(uuid)
             + "&mobileNumber=" + sec(mobileNumber)
             + "&areaCode=" + areaCode
+            + "&svrDbName=" + svrDbName
         ,
         dataType: "xml",
         timeout: 60000,
@@ -360,7 +369,7 @@ function authCheck() {
 
                 $("#divLoginFailMessage").html(html).trigger("create");
 
-// ✅ 2초 후 사라지게 처리
+                // ✅ 2초 후 사라지게 처리
                 setTimeout(function () {
                     $("#divLoginFailMessage").fadeOut(300, function () {
                         $(this).empty().show(); // 다시 보여질 수 있도록 초기화
@@ -374,7 +383,7 @@ function authCheck() {
 
 //회원가입 신청 페이지로 이동
 function showPageJoin() {
-    $.mobile.changePage("#pageJoin", {changeHash: false});
+    $.mobile.changePage("#pageJoin", { changeHash: false });
     setCurrentPage("pageJoin");
     injectionAppUserInsert("divJoin");
 
@@ -440,7 +449,7 @@ function initializeAppConfig() {
 
 //환경설정 페이지로 이동
 function showPageAppUserEdit() {
-    $.mobile.changePage("#pageAppUserEdit", {changeHash: false});
+    $.mobile.changePage("#pageAppUserEdit", { changeHash: false });
     setCurrentPage("pageAppUserEdit");
     $.ajax({
         url: gasmaxWebappPath + "app_user_edit.jsp?uuid=" + (window.sessionStorage.uuid || "") + "&darkMode=" + localStorage.getItem("darkMode"),
@@ -466,7 +475,7 @@ function showPageAppUserEdit() {
             $("#divAppUserEdit").html(html).trigger("create");
         }
     })
-    ;
+        ;
 }
 
 // 환경설정 영업소 선택 변경 시
@@ -656,10 +665,10 @@ function showPageCustomerSearch(refresh) {
         refresh = true;
     }
     if (refresh == false) {
-        $.mobile.changePage("#pageCustomerSearch", {changeHash: false});
+        $.mobile.changePage("#pageCustomerSearch", { changeHash: false });
         return;
     }
-    $.mobile.changePage("#pageCustomerSearch", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSearch", { changeHash: false });
     setCurrentPage("pageCustomerSearch");
     if ($("#hdnCidCustomerSearchYesNo").attr("value") == "Y") { //만일 CID 편집화면에서 검색한 경우에는 이전 페이지를 CID 편집화면으로 강제로 변경함.
         $("#hdnPreviousPage").attr("value", "pageManageCidEdit");
@@ -676,20 +685,20 @@ function showPageCustomerSearch(refresh) {
 //거래처 신규등록 페이지로 이동
 function showPageCustomerSearchInsert() {
     /*
-	var menuPermissionCustomerInsert = $("#hdnMenuPermissionCustomerInsert").attr("value");
-	if (menuPermissionCustomerInsert == "0") {
-	} else if (menuPermissionCustomerInsert == "1"){
-	} else if (menuPermissionCustomerInsert == "2"){
-		alert("권한이 없습니다.");
-		return;
-	}
-	*/
+    var menuPermissionCustomerInsert = $("#hdnMenuPermissionCustomerInsert").attr("value");
+    if (menuPermissionCustomerInsert == "0") {
+    } else if (menuPermissionCustomerInsert == "1"){
+    } else if (menuPermissionCustomerInsert == "2"){
+        alert("권한이 없습니다.");
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionCustomerInsert", ["0"])) {
         alert("권한이 없습니다.");
         return;
     }
 
-    $.mobile.changePage("#pageCustomerSearchInsert", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSearchInsert", { changeHash: false });
     setCurrentPage("pageCustomerSearchInsert");
     injectionCustomerInsert("contentCustomerSearchInsert");
 }
@@ -697,20 +706,20 @@ function showPageCustomerSearchInsert() {
 //거래처 수정 페이지로 이동
 function showPageCustomerDetailUpdate() {
     /*
-	var menuPermissionCustomerInsert = $("#hdnMenuPermissionCustomerInsert").attr("value");
-	if (menuPermissionCustomerInsert == "0") {
-	} else if (menuPermissionCustomerInsert == "1"){
-	} else if (menuPermissionCustomerInsert == "2"){
-		alert("권한이 없습니다.");
-		return;
-	}
-	*/
+    var menuPermissionCustomerInsert = $("#hdnMenuPermissionCustomerInsert").attr("value");
+    if (menuPermissionCustomerInsert == "0") {
+    } else if (menuPermissionCustomerInsert == "1"){
+    } else if (menuPermissionCustomerInsert == "2"){
+        alert("권한이 없습니다.");
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionCustomerInsert", ["0"])) {
         alert("권한이 없습니다.");
         return;
     }
 
-    $.mobile.changePage("#pageCustomerDetailUpdate", {changeHash: false});
+    $.mobile.changePage("#pageCustomerDetailUpdate", { changeHash: false });
     setCurrentPage("pageCustomerDetailUpdate");
     injectionCustomerUpdate("contentCustomerDetailUpdate");
 }
@@ -718,7 +727,7 @@ function showPageCustomerDetailUpdate() {
 //거래처 상세 페이지로 이동
 function showPageCustomerDetail() {
     showActivityIndicator("로딩중입니다....")
-    $.mobile.changePage("#pageCustomerDetail", {changeHash: false});
+    $.mobile.changePage("#pageCustomerDetail", { changeHash: false });
     setCurrentPage("pageCustomerDetail");
     if ($("#hdnRequireRefreshPageCustomerDetail").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerDetail");
@@ -765,15 +774,15 @@ function showPageCustomerBook() {
 //거래처별 판매등록 페이지로 이동
 function showPageCustomerSale() {
     /*
-	var menuPermissionSale = $("#hdnMenuPermissionSale").attr("value");
-	if (menuPermissionSale == "0") {
-	} else if (menuPermissionSale == "1"){
-	} else if (menuPermissionSale == "2"){
-		alert("권한이 없습니다.");
-		showPageCustomerDetail();
-		return;
-	}
-	*/
+    var menuPermissionSale = $("#hdnMenuPermissionSale").attr("value");
+    if (menuPermissionSale == "0") {
+    } else if (menuPermissionSale == "1"){
+    } else if (menuPermissionSale == "2"){
+        alert("권한이 없습니다.");
+        showPageCustomerDetail();
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionSale", ["0"])) {
         alert("권한이 없습니다.");
         resetActiveStateFooterCustomerBiz();
@@ -786,33 +795,33 @@ function showPageCustomerSale() {
     } else { // 그외의 경우 일반판매로
         showPageCustomerSaleWeightInsert();
     }
-//	var currentPageCustomerSaleSub = $("#hdnCurrentPageCustomerSaleSub").attr("value");
-//	if (currentPageCustomerSaleSub=="pageCustomerSaleWeightInsert"){ //판매등록-일반판매 일 때
-//		showPageCustomerSaleWeightInsert();
-//	}else if (currentPageCustomerSaleSub=="pageCustomerSaleVolumeInsert"){ //판매등록-체적공급 일 때
-//		showPageCustomerSaleVolumeInsert();
-//	}
+    //	var currentPageCustomerSaleSub = $("#hdnCurrentPageCustomerSaleSub").attr("value");
+    //	if (currentPageCustomerSaleSub=="pageCustomerSaleWeightInsert"){ //판매등록-일반판매 일 때
+    //		showPageCustomerSaleWeightInsert();
+    //	}else if (currentPageCustomerSaleSub=="pageCustomerSaleVolumeInsert"){ //판매등록-체적공급 일 때
+    //		showPageCustomerSaleVolumeInsert();
+    //	}
 }
 
 //거래처별 수금등록 페이지로 이동
 function showPageCustomerCollect() {
     /*
-	var menuPermissionCollect = $("#hdnMenuPermissionCollect").attr("value");
-	if (menuPermissionCollect == "0") {
-	} else if (menuPermissionCollect == "1"){
-	} else if (menuPermissionCollect == "2"){
-		alert("권한이 없습니다.");
-		showPageCustomerDetail();
-		return;
-	}
-	*/
+    var menuPermissionCollect = $("#hdnMenuPermissionCollect").attr("value");
+    if (menuPermissionCollect == "0") {
+    } else if (menuPermissionCollect == "1"){
+    } else if (menuPermissionCollect == "2"){
+        alert("권한이 없습니다.");
+        showPageCustomerDetail();
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionCollect", ["0"])) {
         alert("권한이 없습니다.");
         resetActiveStateFooterCustomerBiz();
         return;
     }
 
-    $.mobile.changePage("#pageCustomerCollect", {changeHash: false});
+    $.mobile.changePage("#pageCustomerCollect", { changeHash: false });
     setCurrentPage("pageCustomerCollect");
     if ($("#hdnRequireRefreshPageCustomerCollect").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerCollect"); //거래처 요약정보
@@ -825,15 +834,15 @@ function showPageCustomerCollect() {
 //거래처별 안전점검 페이지로 이동
 function showPageCustomerSaftyCheck() {
     /*
-	var menuPermissionSaftyCheck = $("#hdnMenuPermissionSaftyCheck").attr("value");
-	if (menuPermissionSaftyCheck == "0") {
-	} else if (menuPermissionSaftyCheck == "1"){
-	} else if (menuPermissionSaftyCheck == "2"){
-		alert("권한이 없습니다.");
-		showPageCustomerDetail();
-		return;
-	}
-	*/
+    var menuPermissionSaftyCheck = $("#hdnMenuPermissionSaftyCheck").attr("value");
+    if (menuPermissionSaftyCheck == "0") {
+    } else if (menuPermissionSaftyCheck == "1"){
+    } else if (menuPermissionSaftyCheck == "2"){
+        alert("권한이 없습니다.");
+        showPageCustomerDetail();
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionSaftyCheck", ["0"])) {
         alert("권한이 없습니다.");
         resetActiveStateFooterCustomerBiz();
@@ -862,7 +871,7 @@ function showPageCustomerSaftyCheckInsertEdit() {
 
 //거래처 거래장부-일반장부 페이지로 이동
 function showPageCustomerBookWeight(pageType) {
-    $.mobile.changePage("#pageCustomerBookWeight", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookWeight", { changeHash: false });
     setCurrentPage("pageCustomerBookWeight");
     if ($("#hdnRequireRefreshPageCustomerBookWeight").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerBookWeight"); //거래처 요약정보
@@ -1091,13 +1100,13 @@ function clickMorePageCustomerBookWeightCollect() {
 
 //거래처 거래장부-일반(중량)장부-거래상세 내역 페이지로 이동
 function showPageCustomerBookWeightCollectDetail(key) {
-    $.mobile.changePage("#pageCustomerBookWeightCollectDetail", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookWeightCollectDetail", { changeHash: false });
     setCurrentPage("pageCustomerBookWeightCollectDetail");
     injectionCustomerSummary("customerSummaryCustomerBookWeightCollectDetail"); //거래처 요약정보
     $("#divResultMessageCustomerBookWeightCollectDetail").html("").trigger("create");
     injectionCustomerBookWeightCollectDetail("divCustomerBookWeightCollectDetail", key); //거래 상세 내역
-//	injectionSubFooterCustomerBook("subFooterCustomerBookWeightCollectDetail", 1); //서브메뉴
-//	injectionFooterCustomerBiz("footerCustomerBookWeightCollectDetail", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
+    //	injectionSubFooterCustomerBook("subFooterCustomerBookWeightCollectDetail", 1); //서브메뉴
+    //	injectionFooterCustomerBiz("footerCustomerBookWeightCollectDetail", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
 }
 
 //거래처 거래장부-일반장부-거래상세 정보 삽입하기
@@ -1187,28 +1196,28 @@ function injectionCustomerBookWeightCollectDetail(tagId, key) {
 function deleteCustomerBookWeightCollectDetail(key, typeCode, collectDate) {
     if (typeCode == "5") { // 수금 삭제권한 체크
         /*
-		var menuPermissionSale = $("#hdnMenuPermissionCollect").attr("value");
-		if (menuPermissionSale == "0") {
-		} else if (menuPermissionSale == "1"){
-		} else if (menuPermissionSale == "2"){
-			alert("권한이 없습니다.");
-			return;
-		}
-		*/
+        var menuPermissionSale = $("#hdnMenuPermissionCollect").attr("value");
+        if (menuPermissionSale == "0") {
+        } else if (menuPermissionSale == "1"){
+        } else if (menuPermissionSale == "2"){
+            alert("권한이 없습니다.");
+            return;
+        }
+        */
         if (!hasPermission("hdnMenuPermissionCollect", ["0"])) {
             alert("권한이 없습니다.");
             return;
         }
     } else if ((typeCode == "0") || (typeCode == "1") || (typeCode == "2")) { // 판매 삭제권한 체크
         /*
-		var menuPermissionSale = $("#hdnMenuPermissionSale").attr("value");
-		if (menuPermissionSale == "0") {
-		} else if (menuPermissionSale == "1"){
-		} else if (menuPermissionSale == "2"){
-			alert("권한이 없습니다.");
-			return;
-		}
-		*/
+        var menuPermissionSale = $("#hdnMenuPermissionSale").attr("value");
+        if (menuPermissionSale == "0") {
+        } else if (menuPermissionSale == "1"){
+        } else if (menuPermissionSale == "2"){
+            alert("권한이 없습니다.");
+            return;
+        }
+        */
         if (!hasPermission("hdnMenuPermissionSale", ["0"])) {
             alert("권한이 없습니다.");
             return;
@@ -1370,7 +1379,7 @@ function searchCustomerBookWeightSale() {
                     + '				<td style="text-align: right ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; " ><span style="color:#222222 ; font-size:14px ; ">' + insertComma(sumAmount) + '</span></td>'
                     + '			</tr>'
                     + '		</table>'
-                ;
+                    ;
             });
             $("#divSearchResultCustomerBookWeight").html(html).trigger("create");
             var footerHtml = '<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; ">'
@@ -1435,7 +1444,7 @@ function clickMorePageCustomerBookWeightSale() {
                     + '				<td style="text-align: right ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; " ><span style="color:#222222 ; font-size:14px ; ">' + insertComma(sumAmount) + '</span></td>'
                     + '			</tr>'
                     + '		</table>'
-                ;
+                    ;
                 $("#divSearchResultCustomerBookWeight").append(html).trigger("create");
             });
 
@@ -1452,7 +1461,7 @@ function clickMorePageCustomerBookWeightSale() {
 
 //거래처 거래장부-체적장부 페이지로 이동
 function showPageCustomerBookVolume(pageType) {
-    $.mobile.changePage("#pageCustomerBookVolume", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookVolume", { changeHash: false });
     setCurrentPage("pageCustomerBookVolume");
     if ($("#hdnRequireRefreshPageCustomerBookVolume").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerBookVolume"); //거래처 요약정보
@@ -1835,14 +1844,14 @@ function clickMorePageCustomerBookVolumeCollect() {
 //거래처 거래장부-체적장부-수금내역 삭제 처리
 function deleteCustomerBookVolumeCollect(key) {
     /*
-	var menuPermissionSale = $("#hdnMenuPermissionCollect").attr("value");
-	if (menuPermissionSale == "0") {
-	} else if (menuPermissionSale == "1"){
-	} else if (menuPermissionSale == "2"){
-		alert("권한이 없습니다.");
-		return;
-	}
-	*/
+    var menuPermissionSale = $("#hdnMenuPermissionCollect").attr("value");
+    if (menuPermissionSale == "0") {
+    } else if (menuPermissionSale == "1"){
+    } else if (menuPermissionSale == "2"){
+        alert("권한이 없습니다.");
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionCollect", ["0"])) {
         alert("권한이 없습니다.");
         return;
@@ -1964,7 +1973,7 @@ function searchCustomerBookVolumeSale() {
                     + '			</tr>'
                     + '		</table>'
                     + '	</a>'
-                ;
+                    ;
             });
             $("#divSearchResultCustomerBookVolume").html(html).trigger("create");
             $("#divSearchResultCustomerBookVolume a").taphold(function (event) { //하위의 모든 Anchor 태그에 이벤트 등록. taphold 했을 때 상세내역 출력
@@ -2035,7 +2044,7 @@ function clickMorePageCustomerBookVolumeSale() {
                     + '			</tr>'
                     + '		</table>'
                     + '	</a>'
-                ;
+                    ;
                 $("#divSearchResultCustomerBookVolume").append(html).trigger("create");
                 $("#divSearchResultCustomerBookVolume a").unbind("taphold"); //모든 taphold 이벤트를 우선 제거한다.(중복 이벤트 발생을 방지)
                 $("#divSearchResultCustomerBookVolume a").taphold(function (event) { //하위의 모든 Anchor 태그에 이벤트 등록. taphold 했을 때 상세내역 출력
@@ -2058,14 +2067,14 @@ function clickMorePageCustomerBookVolumeSale() {
 //거래처 거래장부-일반(중량)장부-공급내역 삭제 처리하기
 function deleteCustomerBookVolumeSale(key) {
     /*
-	var menuPermissionSale = $("#hdnMenuPermissionSale").attr("value");
-	if (menuPermissionSale == "0") {
-	} else if (menuPermissionSale == "1"){
-	} else if (menuPermissionSale == "2"){
-		alert("권한이 없습니다.");
-		return;
-	}
-	*/
+    var menuPermissionSale = $("#hdnMenuPermissionSale").attr("value");
+    if (menuPermissionSale == "0") {
+    } else if (menuPermissionSale == "1"){
+    } else if (menuPermissionSale == "2"){
+        alert("권한이 없습니다.");
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionSale", ["0"])) {
         alert("권한이 없습니다.");
         return;
@@ -2114,12 +2123,12 @@ function deleteCustomerBookVolumeSale(key) {
 
 //거래처 거래장부-체적장부-검침상세 내역 페이지로 이동
 function showPageCustomerBookVolumeReadMeterDetail(key) {
-    $.mobile.changePage("#pageCustomerBookVolumeReadMeterDetail", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookVolumeReadMeterDetail", { changeHash: false });
     setCurrentPage("pageCustomerBookVolumeReadMeterDetail");
     injectionCustomerSummary("customerSummaryCustomerBookVolumeReadMeterDetail"); //거래처 요약정보
     injectionCustomerBookVolumeReadMeterDetail("divCustomerBookVolumeReadMeterDetail", key); //검침 상세 내역
-//	injectionSubFooterCustomerBook("subFooterCustomerBookVolumeReadMeterDetail", 2); //서브메뉴
-//	injectionFooterCustomerBiz("footerCustomerBookVolumeReadMeterDetail", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
+    //	injectionSubFooterCustomerBook("subFooterCustomerBookVolumeReadMeterDetail", 2); //서브메뉴
+    //	injectionFooterCustomerBiz("footerCustomerBookVolumeReadMeterDetail", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
 }
 
 //거래처 거래장부-체적장부-검침상세 정보 삽입하기
@@ -2214,14 +2223,14 @@ function injectionCustomerBookVolumeReadMeterDetail(tagId, key) {
 //거래처 거래장부-체적장부-검침상세 검침 삭제
 function deleteCustomerBookVolumeReadMeterDetail(key) {
     /*
-	var menuPermissionSale = $("#hdnMenuPermissionReadMeter").attr("value");
-	if (menuPermissionSale == "0") {
-	} else if (menuPermissionSale == "1"){
-	} else if (menuPermissionSale == "2"){
-		alert("권한이 없습니다.");
-		return;
-	}
-	*/
+    var menuPermissionSale = $("#hdnMenuPermissionReadMeter").attr("value");
+    if (menuPermissionSale == "0") {
+    } else if (menuPermissionSale == "1"){
+    } else if (menuPermissionSale == "2"){
+        alert("권한이 없습니다.");
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionReadMeter", ["0"])) {
         alert("권한이 없습니다.");
         return;
@@ -2305,7 +2314,7 @@ function navigateCustomerBookVolumeReadMeterDetail(key, direction) {
 
 //거래처 거래장부-세금계산서 페이지로 이동
 function showPageCustomerBookTaxInvoice() {
-    $.mobile.changePage("#pageCustomerBookTaxInvoice", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookTaxInvoice", { changeHash: false });
     setCurrentPage("pageCustomerBookTaxInvoice");
     if ($("#hdnRequireRefreshPageCustomerBookTaxInvoice").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerBookTaxInvoice"); //거래처 요약정보
@@ -2367,7 +2376,7 @@ function searchCustomerBookTaxInvoice() {
             $(xml).find("CustomerTaxInvoice").each(function () {
                 rowCount++;
                 var issueDate = $(this).find("issueDate").text(); //작성일
-//				var issueDateYYYYMMDD = issueDate.substr(0,4) + "-" + issueDate.substr(4,2) + "-" + issueDate.substr(6,2); //작성일
+                //				var issueDateYYYYMMDD = issueDate.substr(0,4) + "-" + issueDate.substr(4,2) + "-" + issueDate.substr(6,2); //작성일
                 var issueDateYYYYMMDD = issueDate.substr(4, 2) + "-" + issueDate.substr(6, 2); //작성일
                 var amount = $(this).find("amount").text(); //공급액
                 var tax = $(this).find("tax").text(); //세액
@@ -2498,12 +2507,12 @@ function clickMorePageCustomerBookTaxInvoice() {
 
 //거래처 거래장부-세금계산서 상세내역 페이지로 이동
 function showPageCustomerBookTaxInvoiceDetail(key, period) {
-    $.mobile.changePage("#pageCustomerBookTaxInvoiceDetail", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookTaxInvoiceDetail", { changeHash: false });
     setCurrentPage("pageCustomerBookTaxInvoiceDetail");
     injectionCustomerSummary("customerSummaryCustomerBookTaxInvoiceDetail"); //거래처 요약정보
     $("#divResultMessageCustomerTaxInvoiceDetail").html("").trigger("create");
     injectionCustomerBookTaxInvoiceDetail("divCustomerBookTaxInvoiceDetail", key, period); //세금계산서 상세 내역
-//	injectionFooterCustomerBiz("footerCustomerBookTaxInvoiceDetail", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
+    //	injectionFooterCustomerBiz("footerCustomerBookTaxInvoiceDetail", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
 }
 
 //거래처 거래장부-세금계산서 정보 삽입하기
@@ -2569,7 +2578,7 @@ function navigateCustomerBookTaxInvoiceDetail(key, direction) {
 
 //거래처 거래장부-재고현황 페이지로 이동
 function showPageCustomerBookItemBalance() {
-    $.mobile.changePage("#pageCustomerBookItemBalance", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookItemBalance", { changeHash: false });
     setCurrentPage("pageCustomerBookItemBalance");
     if ($("#hdnRequireRefreshPageCustomerBookItemBalance").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerBookItemBalance"); //거래처 요약정보
@@ -2734,15 +2743,15 @@ function clickMorePageCustomerBookItemBalanceHPG() {
 
 //거래처 거래장부-재고내역(고압) 상세내역 페이지로 이동
 function showPageCustomerBookItemBalanceHPGDetailList(key, itemName, preBalance, salePrice, inout, balance) {
-    $.mobile.changePage("#pageCustomerBookItemBalanceDetailList", {changeHash: false});
+    $.mobile.changePage("#pageCustomerBookItemBalanceDetailList", { changeHash: false });
     setCurrentPage("pageCustomerBookItemBalanceDetailList");
     injectionCustomerSummary("customerSummaryCustomerBookItemBalanceDetailList"); //거래처 요약정보
     $("#divSearchResultCustomerBookItemBalanceDetailList").html("").trigger("create");
     $("#btnMorePageCustomerBookItemBalanceDetailList").html("").trigger("create");
     injectionSearchOptionCustomerBookItemBalanceHPGDetailList("searchOptionCustomerBookItemBalanceDetailList", itemName, salePrice, preBalance, inout, balance); //검색조건
     injectionCustomerBookItemBalanceHPGDetailList(key, preBalance); //재고 상세 내역
-//	injectionSubFooterCustomerBook("subFooterCustomerBookItemBalanceDetailList", 4); //서브메뉴
-//	injectionFooterCustomerBiz("footerCustomerBookItemBalanceDetailList", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
+    //	injectionSubFooterCustomerBook("subFooterCustomerBookItemBalanceDetailList", 4); //서브메뉴
+    //	injectionFooterCustomerBiz("footerCustomerBookItemBalanceDetailList", 1); //Footer 는 navbar 선택 표시 문제로 항상 갱신
 }
 
 //거래처 거래장부-재고내역(고압) 검색
@@ -2887,7 +2896,7 @@ function showPageCustomerSaleWeightInsert() {
         showPageCustomerDetail();
         return;
     }
-    $.mobile.changePage("#pageCustomerSaleWeightInsert", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaleWeightInsert", { changeHash: false });
     setCurrentPage("pageCustomerSaleWeightInsert");
     if ($("#hdnRequireRefreshPageCustomerSaleWeightInsert").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerSaleWeightInsert"); //거래처 요약정보
@@ -2901,7 +2910,7 @@ function showPageCustomerSaleWeightInsert() {
 
 //거래처 판매등록-일반판매 비고 검색 페이지로 이동
 function showPageCustomerSaleWeightInsertRemarkSearch() {
-    $.mobile.changePage("#pageCustomerSaleWeightInsertRemarkSearch", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaleWeightInsertRemarkSearch", { changeHash: false });
     injectionCustomerSaleWeightInsertRemarkSearch("searchResultCustomerSaleWeightInsertRemarkSearch"); //조회화면
 }
 
@@ -2910,24 +2919,24 @@ function showPageCustomerSaleWeightInsertItemDetail(insertMode, itemIndex, refre
     if (refresh == undefined) {
         refresh = true;
     }
-    $.mobile.changePage("#pageCustomerSaleWeightInsertItemDetail", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaleWeightInsertItemDetail", { changeHash: false });
     if (refresh == true) {
-//		injectionCustomerSummary("customerSummaryCustomerSaleWeightInsertItemDetail"); //거래처 요약정보
+        //		injectionCustomerSummary("customerSummaryCustomerSaleWeightInsertItemDetail"); //거래처 요약정보
         injectionCustomerSaleWeightInsertItemDetail("divCustomerSaleWeightInsertItemDetail", insertMode, itemIndex); //등록화면
     }
-//	injectionFooterCustomerBiz("footerCustomerSaleWeightInsertItemDetail", 2); //Footer 는 navbar 선택 표시 문제로 항상 갱신
+    //	injectionFooterCustomerBiz("footerCustomerSaleWeightInsertItemDetail", 2); //Footer 는 navbar 선택 표시 문제로 항상 갱신
 }
 
 //거래처 판매등록-일반판매 품목 검색 페이지로 이동
 function showPageCustomerSaleWeightInsertItemSearch() {
-    $.mobile.changePage("#pageCustomerSaleWeightInsertItemSearch", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaleWeightInsertItemSearch", { changeHash: false });
     setCurrentPage("pageCustomerSaleWeightInsertItemSearch");
     injectionCustomerSaleWeightInsertItemSearch("searchResultCustomerSaleWeightInsertItemSearch"); //등록화면
 }
 
 //거래처 판매등록-일반판매 품목 상세 비고 검색 페이지로 이동
 function showPageCustomerSaleWeightInsertItemDetailRemarkSearch() {
-    $.mobile.changePage("#pageCustomerSaleWeightInsertItemDetailRemarkSearch", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaleWeightInsertItemDetailRemarkSearch", { changeHash: false });
     setCurrentPage("pageCustomerSaleWeightInsertItemDetailRemarkSearch");
     injectionCustomerSaleWeightInsertItemDetailRemarkSearch("searchResultCustomerSaleWeightInsertItemDetailRemarkSearch"); //조회화면
 }
@@ -2942,7 +2951,7 @@ function showPageCustomerSaleVolumeInsert() {
         showPageCustomerDetail();
         return;
     }
-    $.mobile.changePage("#pageCustomerSaleVolumeInsert", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaleVolumeInsert", { changeHash: false });
     setCurrentPage("pageCustomerSaleVolumeInsert");
     if ($("#hdnRequireRefreshPageCustomerSaleVolumeInsert").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerSaleVolumeInsert"); //거래처 요약정보
@@ -2957,22 +2966,22 @@ function showPageCustomerSaleVolumeInsert() {
 //거래처 검침등록 페이지로 이동
 function showPageCustomerReadMeterInsert() {
     /*
-	var menuPermissionReadMeter = $("#hdnMenuPermissionReadMeter").attr("value");
-	if (menuPermissionReadMeter == "0") {
-	} else if (menuPermissionReadMeter == "1"){
-	} else if (menuPermissionReadMeter == "2"){
-		alert("권한이 없습니다.");
-		showPageCustomerDetail();
-		return;
-	}
-	*/
+    var menuPermissionReadMeter = $("#hdnMenuPermissionReadMeter").attr("value");
+    if (menuPermissionReadMeter == "0") {
+    } else if (menuPermissionReadMeter == "1"){
+    } else if (menuPermissionReadMeter == "2"){
+        alert("권한이 없습니다.");
+        showPageCustomerDetail();
+        return;
+    }
+    */
     if (!hasPermission("hdnMenuPermissionReadMeter", ["0"])) {
         alert("권한이 없습니다.");
         resetActiveStateFooterCustomerBiz();
         return;
     }
 
-    $.mobile.changePage("#pageCustomerReadMeterInsert", {changeHash: false});
+    $.mobile.changePage("#pageCustomerReadMeterInsert", { changeHash: false });
     setCurrentPage("pageCustomerReadMeterInsert");
     if ($("#hdnRequireRefreshPageCustomerReadMeterInsert").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerReadMeterInsert"); //거래처 요약정보
@@ -2992,7 +3001,7 @@ function showPageCustomerSaftyCheckList() {
         showPageCustomerDetail();
         return;
     }
-    $.mobile.changePage("#pageCustomerSaftyCheckList", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaftyCheckList", { changeHash: false });
     $("#divResultMessageCustomerSaftyCheckEdit").html("").trigger("create"); // 메시지 삭제
     $("#divResultMessageCustomerSaftyCheckInsert").html("").trigger("create"); // 메시지 삭제
     $("#divResultMessageCustomerSaftyCheckTankEdit").html("").trigger("create"); // 메시지 삭제
@@ -3011,7 +3020,7 @@ function showPageCustomerSaftyCheckList() {
 
 //거래처 안전점검-점검수정 페이지로 이동
 function showPageCustomerSaftyCheckEdit(key, sequenceNumber) {
-    $.mobile.changePage("#pageCustomerSaftyCheckEdit", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaftyCheckEdit", { changeHash: false });
     setCurrentPage("pageCustomerSaftyCheckEdit");
     injectionCustomerSummary("customerSummaryCustomerSaftyCheckEdit"); //거래처 요약정보
     injectionCustomerSaftyCheckEdit("divCustomerSaftyCheckEdit", key); //수정 내역
@@ -3029,7 +3038,7 @@ function showPageCustomerSaftyCheckInsert() {
         showPageCustomerDetail();
         return;
     }
-    $.mobile.changePage("#pageCustomerSaftyCheckInsert", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaftyCheckInsert", { changeHash: false });
     setCurrentPage("pageCustomerSaftyCheckInsert");
     if ($("#hdnRequireRefreshPageCustomerSaftyCheckInsert").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerSaftyCheckInsert"); //거래처 요약정보
@@ -3062,7 +3071,7 @@ function showPageCustomerSaftyCheckTankInsert() {
         showPageCustomerDetail();
         return;
     }
-    $.mobile.changePage("#pageCustomerSaftyCheckTankInsert", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaftyCheckTankInsert", { changeHash: false });
     setCurrentPage("pageCustomerSaftyCheckTankInsert");
     if ($("#hdnRequireRefreshPageCustomerSaftyCheckTankInsert").attr("value") == "Y") { //Refresh 가 필요할 경우에만 처리
         injectionCustomerSummary("customerSummaryCustomerSaftyCheckTankInsert"); //거래처 요약정보
@@ -3076,7 +3085,7 @@ function showPageCustomerSaftyCheckTankInsert() {
 
 //거래처 안전점검-저장탱크 안전점검 수정 페이지로 이동
 function showPageCustomerSaftyCheckTankEdit(key, sequenceNumber) {
-    $.mobile.changePage("#pageCustomerSaftyCheckTankEdit", {changeHash: false});
+    $.mobile.changePage("#pageCustomerSaftyCheckTankEdit", { changeHash: false });
     setCurrentPage("pageCustomerSaftyCheckTankEdit");
     injectionCustomerSummary("customerSummaryCustomerSaftyCheckTankEdit"); //거래처 요약정보
     injectionCustomerSaftyCheckTankEdit("divCustomerSaftyCheckTankEdit", key, sequenceNumber); //수정 내역
@@ -3209,7 +3218,7 @@ function choiceCustomer(areaCode, customerCode) {
 
     //이전 페이지가 CID 상세 페이지라면
     if (previousPage == "pageManageCidEdit") {
-        $.mobile.changePage("#pageManageCidEdit", {changeHash: false});
+        $.mobile.changePage("#pageManageCidEdit", { changeHash: false });
         setCurrentPage("pageManageCidEdit");
         $("#hdnCustomerCodeManageCidEdit").attr("value", customerCode);
         var insertMode = $("#hdnInsertModeManageCidEdit").attr("value");
@@ -3304,7 +3313,7 @@ function showPageManageCidList(refresh) {
         alert("권한이 없습니다.");
         return;
     }
-    $.mobile.changePage("#pageManageCidList", {changeHash: false});
+    $.mobile.changePage("#pageManageCidList", { changeHash: false });
     setCurrentPage("pageManageCidList");
     if (refresh == undefined) {
         refresh = true;
@@ -3380,9 +3389,9 @@ function searchManageCidList(defaultAreaAddress, phoneAreaNumber) {
                 var saleTypeName = $(this).find("saleTypeName").text(); //판매구분명 배달, 수금, A/S, 점검, 시설, 기타
                 var phoneNumber = $(this).find("phoneNumber").text();
                 phoneNumber = phoneNumber.replace(phoneAreaNumber + "-", "");
-//				if (phoneNumber.substring(0, 1) != "0"){
-//					phoneNumber = phoneAreaNumber + "-" + phoneNumber;
-//				}
+                //				if (phoneNumber.substring(0, 1) != "0"){
+                //					phoneNumber = phoneAreaNumber + "-" + phoneNumber;
+                //				}
                 var customerType = $(this).find("customerType").text();
                 var customerCode = $(this).find("customerCode").text();
                 var customerName = $(this).find("customerName").text();
@@ -3527,9 +3536,9 @@ function clickMorePageManageCidList(defaultAreaAddress, phoneAreaNumber) {
                 var saleTypeName = $(this).find("saleTypeName").text(); //판매구분명 배달, 수금, A/S, 점검, 시설, 기타
                 var phoneNumber = $(this).find("phoneNumber").text();
                 phoneNumber = phoneNumber.replace(phoneAreaNumber + "-", "");
-//				if (phoneNumber.substring(0, 1) != "0"){
-//					phoneNumber = phoneAreaNumber + "-" + phoneNumber;
-//				}
+                //				if (phoneNumber.substring(0, 1) != "0"){
+                //					phoneNumber = phoneAreaNumber + "-" + phoneNumber;
+                //				}
                 var customerType = $(this).find("customerType").text();
                 var customerCode = $(this).find("customerCode").text();
                 var customerName = $(this).find("customerName").text();
@@ -3646,7 +3655,7 @@ function showPageManageCidEdit(key, refresh) {
             return;
         }
     }
-    $.mobile.changePage("#pageManageCidEdit", {changeHash: false});
+    $.mobile.changePage("#pageManageCidEdit", { changeHash: false });
     setCurrentPage("pageManageCidEdit");
     if (refresh == undefined) {
         refresh = true;
@@ -3658,14 +3667,14 @@ function showPageManageCidEdit(key, refresh) {
 
 //CID 품목 검색 페이지로 이동
 function showPageManageCidEditItemSearch() {
-    $.mobile.changePage("#pageManageCidEditItemSearch", {changeHash: false});
+    $.mobile.changePage("#pageManageCidEditItemSearch", { changeHash: false });
     setCurrentPage("pageManageCidEditItemSearch");
     injectionManageCidEditItemSearch("searchResultManageCidEditItemSearch"); //조회화면
 }
 
 //CID 비고 검색 페이지로 이동
 function showPageManageCidEditRemarkSearch() {
-    $.mobile.changePage("#pageManageCidEditRemarkSearch", {changeHash: false});
+    $.mobile.changePage("#pageManageCidEditRemarkSearch", { changeHash: false });
     setCurrentPage("pageManageCidEditRemarkSearch");
     injectionManageCidEditRemarkSearch("searchResultManageCidEditRemarkSearch"); //조회화면
 }
@@ -3684,11 +3693,11 @@ function showPageManageSaleList(refresh) {
         refresh = true;
     }
     if (refresh == false) {
-        $.mobile.changePage("#pageManageSaleList", {changeHash: false});
+        $.mobile.changePage("#pageManageSaleList", { changeHash: false });
         return;
     }
 
-    $.mobile.changePage("#pageManageSaleList", {changeHash: false});
+    $.mobile.changePage("#pageManageSaleList", { changeHash: false });
     setCurrentPage("pageManageSaleList");
     var html = '<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; ">'
         + '	<tr><td style="text-align: right ; font-size: 16px ; "><span> 합계: ( 0 건) 입금액: 0 원<br />외상(미수): 0 원 DC: 0 원</span></td></tr>'
@@ -3765,8 +3774,8 @@ function searchManageSaleList() {
                 }
                 var saleQuantity = $(this).find("saleQuantity").text(); //납품
                 var withdrawQuantity = $(this).find("withdrawQuantity").text(); //회수
-//				var collectType = $(this).find("collectType").text();
-//				var collectTypeHtml = getPayTypeHtml(collectType, false);
+                //				var collectType = $(this).find("collectType").text();
+                //				var collectTypeHtml = getPayTypeHtml(collectType, false);
                 var itemName = $(this).find("itemName").text();
                 var remark = $(this).find("remark").text();
                 var employeeName = $(this).find("employeeName").text();
@@ -3853,8 +3862,8 @@ function clickMorePageManageSaleList() {
                 }
                 var saleQuantity = $(this).find("saleQuantity").text(); //납품
                 var withdrawQuantity = $(this).find("withdrawQuantity").text(); //회수
-//				var collectType = $(this).find("collectType").text();
-//				var collectTypeHtml = getPayTypeHtml(collectType, false);
+                //				var collectType = $(this).find("collectType").text();
+                //				var collectTypeHtml = getPayTypeHtml(collectType, false);
                 var itemName = $(this).find("itemName").text();
                 var remark = $(this).find("remark").text();
                 var employeeName = $(this).find("employeeName").text();
@@ -3910,11 +3919,11 @@ function showPageManageUnpaidList(refresh) {
         refresh = true;
     }
     if (refresh == false) {
-        $.mobile.changePage("#pageManageUnpaidList", {changeHash: false});
+        $.mobile.changePage("#pageManageUnpaidList", { changeHash: false });
         return;
     }
 
-    $.mobile.changePage("#pageManageUnpaidList", {changeHash: false});
+    $.mobile.changePage("#pageManageUnpaidList", { changeHash: false });
     setCurrentPage("pageManageUnpaidList");
     var html = '<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; ">'
         + '	<tr><td style="text-align: right ; font-size: 16px ; "><span> 합계: ( 0 건) 0 원</span></td></tr>'
@@ -3976,8 +3985,8 @@ function searchManageUnpaidList() {
                 var customerName = $(this).find("customerName").text();
                 var weightUnpaid = $(this).find("weightUnpaid").text();
                 var volumeUnpaid = $(this).find("volumeUnpaid").text();
-//				var collectTypeCode = $(this).find("collectTypeCode").text();
-//				var collectTypeHtml = getCollectTypeHtml(collectTypeCode, false);
+                //				var collectTypeCode = $(this).find("collectTypeCode").text();
+                //				var collectTypeHtml = getCollectTypeHtml(collectTypeCode, false);
                 var unpaidAmount = parseInt(weightUnpaid, 10) + parseInt(volumeUnpaid, 10);
                 var unpaid = insertComma(unpaidAmount);
                 var address1 = $(this).find("address1").text();
@@ -4064,8 +4073,8 @@ function clickMorePageManageUnpaidList() {
                 var customerName = $(this).find("customerName").text();
                 var weightUnpaid = $(this).find("weightUnpaid").text();
                 var volumeUnpaid = $(this).find("volumeUnpaid").text();
-//				var collectTypeCode = $(this).find("collectTypeCode").text();
-//				var collectTypeHtml = getCollectTypeHtml(collectTypeCode, false);
+                //				var collectTypeCode = $(this).find("collectTypeCode").text();
+                //				var collectTypeHtml = getCollectTypeHtml(collectTypeCode, false);
                 var unpaidAmount = parseInt(weightUnpaid, 10) + parseInt(volumeUnpaid, 10);
                 var unpaid = insertComma(unpaidAmount);
                 var address1 = $(this).find("address1").text();
@@ -4129,11 +4138,11 @@ function showPageManageCollectList(refresh) {
         refresh = true;
     }
     if (refresh == false) {
-        $.mobile.changePage("#pageManageCollectList", {changeHash: false});
+        $.mobile.changePage("#pageManageCollectList", { changeHash: false });
         return;
     }
 
-    $.mobile.changePage("#pageManageCollectList", {changeHash: false});
+    $.mobile.changePage("#pageManageCollectList", { changeHash: false });
     setCurrentPage("pageManageCollectList");
     var html = '<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; ">'
         + '	<tr><td style="text-align: right ; font-size: 16px ; "><span> 합계: ( 0 건) 입금액: 0 원 DC: 0 원</span></td></tr>'
@@ -4200,8 +4209,8 @@ function searchManageCollectList() {
                 var customerCode = $(this).find("customerCode").text();
                 var customerName = $(this).find("customerName").text();
                 var remark = $(this).find("remark").text();
-//				var collectTypeCode = $(this).find("collectTypeCode").text();
-//				var collectTypeHtml = getCollectTypeHtml(collectTypeCode, false);
+                //				var collectTypeCode = $(this).find("collectTypeCode").text();
+                //				var collectTypeHtml = getCollectTypeHtml(collectTypeCode, false);
                 var collectTypeName = $(this).find("collectTypeName").text();
                 collectTypeName = '<span style="font-size: 14px ; color: black ; " >[' + collectTypeName + ']</span>';
                 var collectAmount = $(this).find("collectAmount").text();
@@ -4393,11 +4402,11 @@ function showPageManageReadMeterList(refresh) {
         refresh = true;
     }
     if (refresh == false) {
-        $.mobile.changePage("#pageManageReadMeterList", {changeHash: false});
+        $.mobile.changePage("#pageManageReadMeterList", { changeHash: false });
         return;
     }
 
-    $.mobile.changePage("#pageManageReadMeterList", {changeHash: false});
+    $.mobile.changePage("#pageManageReadMeterList", { changeHash: false });
     setCurrentPage("pageManageReadMeterList");
     var html = '<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; ">'
         + '	<tr><td style="text-align: right ; font-size: 16px ; "><span> 합계: ( 0 건) 당월금액: 0 원</span></td></tr>'
@@ -4461,8 +4470,8 @@ function searchManageReadMeterList() {
                 var sumNowAmount = $(this).find("sumNowAmount").text(); //당월금액
                 var otherAmount = $(this).find("otherAmount").text(); //기타금액
                 var chargeAmount = $(this).find("chargeAmount").text(); //연체료
-//				var collectType = $(this).find("collectTypeCode").text();
-//				var collectTypeHtml = getCollectTypeHtml(collectType, false);
+                //				var collectType = $(this).find("collectTypeCode").text();
+                //				var collectTypeHtml = getCollectTypeHtml(collectType, false);
                 var employeeName = $(this).find("employeeName").text();
                 html += '<a href="#" class="ui-btn ui-li ui-btn-up-c ui-btn-text ui-link ui-link-inherit" id="' + customerCode + '">'
                     + '		<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; table-layout: fixed ; ">'
@@ -4569,8 +4578,8 @@ function clickMorePageManageReadMeterList() {
                 var sumNowAmount = $(this).find("sumNowAmount").text(); //당월금액
                 var otherAmount = $(this).find("otherAmount").text(); //기타금액
                 var chargeAmount = $(this).find("chargeAmount").text(); //연체료
-//				var collectType = $(this).find("collectTypeCode").text();
-//				var collectTypeHtml = getCollectTypeHtml(collectType, false);
+                //				var collectType = $(this).find("collectTypeCode").text();
+                //				var collectTypeHtml = getCollectTypeHtml(collectType, false);
                 var employeeName = $(this).find("employeeName").text();
                 var html = '<a href="#" class="ui-btn ui-li ui-btn-up-c ui-btn-text ui-link ui-link-inherit" id="' + customerCode + '">'
                     + '		<table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; table-layout: fixed ; ">'
@@ -4770,16 +4779,16 @@ function clickCustomerSaftyCheckMenu() {
 
 //거래처별 업무 메뉴 다이얼로그로 이동
 function showDialogCustomerBizMenu(customerCode, customerType) {
-//	$("#hdnCustomerDialogPreviousPage").attr("value", $("#hdnCurrentPage").attr("value"));
+    //	$("#hdnCustomerDialogPreviousPage").attr("value", $("#hdnCurrentPage").attr("value"));
     $("#hdnCurrentPage").attr("value", "dialogCustomerBizMenu");
     $("#hdnTapholdCustomerCode").attr("value", customerCode);
     $("#hdnTapholdCustomerType").attr("value", customerType);
     if ((customerCode == "") || (customerCode == undefined)) {
         alert("거래처 정보가 없습니다.");
     } else { //거래처 코드가 있을 때만 메뉴 오픈
-        $.mobile.changePage("#dialogCustomerBizMenu", {changeHash: false, role: "dialog"});
-//		$("#selectCustomerBizMenu").selectmenu();
-//		$("#selectCustomerBizMenu").selectmenu("open");
+        $.mobile.changePage("#dialogCustomerBizMenu", { changeHash: false, role: "dialog" });
+        //		$("#selectCustomerBizMenu").selectmenu();
+        //		$("#selectCustomerBizMenu").selectmenu("open");
     }
 }
 
@@ -4787,7 +4796,7 @@ function showDialogCustomerBizMenu(customerCode, customerType) {
 //거래처별 업무 메뉴 다이얼로그 닫기
 //다이얼로그를 호출한 페이지로 이동하기
 function closeDialogCustomerBizMenu() {
-    $.mobile.changePage("#" + $("#hdnCallPageDiaglogCustomerBizMenu").attr("value"), {changeHash: false});
+    $.mobile.changePage("#" + $("#hdnCallPageDiaglogCustomerBizMenu").attr("value"), { changeHash: false });
     $("#hdnCurrentPage").attr("value", $("#hdnCallPageDiaglogCustomerBizMenu").attr("value"));
 }
 
@@ -4855,7 +4864,7 @@ function customerSearch() {
             var rowCount = 0;
             $(xml).find("CustomerSearch").each(function () {
                 rowCount++;
-//				var sequenceNumber = $(this).find("sequenceNumber").text();
+                //				var sequenceNumber = $(this).find("sequenceNumber").text();
                 var customerTypeCode = $(this).find("customerType").text();
                 if (parseInt(customerTypeCode, 10) > 4) customerTypeCode = "1";
                 var customerTypeIcon = "images/lbl_customer_type_" + customerTypeCode + ".png";
@@ -4935,7 +4944,7 @@ function getParentSpecifiedTagId(sourceTag, tagName, propertyName) {
 
 //거래처 코드 QR코드로 검색
 function searchCustomerQR(customerCode) {
-//	$("#txtCustomerKeyword").attr("value", customerCode);
+    //	$("#txtCustomerKeyword").attr("value", customerCode);
     showPageCustomerSearch();
     $("#btnCustomerSearchMorePage").html("").trigger("create");
     $("#searchCustomerResult").html(getResultMessage("QR코드(" + customerCode + ") 검색 중입니다.", true)).trigger("create");
@@ -5000,7 +5009,7 @@ function clickMorePageCustomerSearch() {
             var rowCount = 0;
             $(xml).find("CustomerSearch").each(function () {
                 rowCount++;
-//				var sequenceNumber = $(this).find("sequenceNumber").text();
+                //				var sequenceNumber = $(this).find("sequenceNumber").text();
                 var customerTypeCode = $(this).find("customerType").text();
                 if (parseInt(customerTypeCode, 10) > 4) customerTypeCode = "1";
                 var customerTypeIcon = "images/lbl_customer_type_" + customerTypeCode + ".png";
@@ -5069,7 +5078,7 @@ function injectionAppUserInsert(tagId) {
     $.ajax({
         url: gasmaxWebappPath + "app_user_insert_rev3.jsp",
         type: "post",
-        data: "macNumber=" +  window.sessionStorage.uuid + "&phoneNumber=" + hpNo,
+        data: "macNumber=" + window.sessionStorage.uuid + "&phoneNumber=" + hpNo,
         dataType: "html",
         timeout: 60000,
         error: function (result) {
@@ -5135,7 +5144,7 @@ function clickSaveAppUserInsert() {
         $("#divSaveMessageAppUserInsert").html(getResultMessage("다시 입력한 비밀번호를 확인해주세요.", false)).trigger("create");
         return;
     }
-//	var phoneAreaNumber = $("#selectPhoneAreaNumberAppUserInsert").attr("value");
+    //	var phoneAreaNumber = $("#selectPhoneAreaNumberAppUserInsert").attr("value");
     var phoneAreaNumber = "";
 
     let hpNo = localStorage.getItem("phoneNumber")
@@ -5610,7 +5619,7 @@ function injectionSearchOptionCustomerBookItemBalanceHPGDetailList(tagId, itemNa
 function injectionCustomerSaleWeightInsert(tagId) {
     $("#" + tagId).html(getResultMessage("잠시만 기다려주세요.", true)).trigger("create");
     $.ajax({
-        url: gasmaxWebappPath + "customer_sale_weight_insert_batch.jsp?uuid=" +  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_sale_weight_insert_batch.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
         timeout: 60000,
@@ -5667,7 +5676,7 @@ function calculateTotalAmountCustomerSaleWeightInsertBatch(currentIndex) {
         var withdrawQuantity = parseInt(deleteComma($("#txtWithdrawQuantityCustomerSaleWeightInsertBatch" + i).attr("value")), 10);
         var quantity = saleQuantity - withdrawQuantity;
         var nowBalance = itemBalance + quantity;
-//		var nowBalance = quantity;
+        //		var nowBalance = quantity;
         $("#txtNowBalanceCustomerSaleWeightInsertBatch" + i).attr("value", insertComma(nowBalance));
         var itemSaleAmount = Math.round(salePrice * saleQuantity);
         var vatType = $("#hdnVatTypeCustomerSaleWeightInsertBatch" + i).attr("value");
@@ -5691,7 +5700,7 @@ function calculateTotalAmountCustomerSaleWeightInsertBatch(currentIndex) {
         totalAmount += itemTotalAmount;
         var itemCollectType = $("#hdnCollectTypeCustomerSaleWeightInsertBatch" + i).attr("value");
         var itemDiscountAmount = parseInt($("#hdnDiscountAmountCustomerSaleWeightInsertBatch" + i).attr("value"), 10);
-//		if (i == currentIndex){
+        //		if (i == currentIndex){
         var currentItemCollectAmount = 0;
         var currentItemUnpaidAmount = 0;
         // 0.현금, 2.예금, 3. 카드, 4.어음, B.현금영수증: 입금액=합계금액, D/C = 0, 미입금액=0
@@ -5704,7 +5713,7 @@ function calculateTotalAmountCustomerSaleWeightInsertBatch(currentIndex) {
         }
         $("#hdnCollectAmountCustomerSaleWeightInsertBatch" + i).attr("value", currentItemCollectAmount);
         $("#hdnUnpaidAmountCustomerSaleWeightInsertBatch" + i).attr("value", currentItemUnpaidAmount);
-//		}
+        //		}
         var itemCollectAmount = parseInt($("#hdnCollectAmountCustomerSaleWeightInsertBatch" + i).attr("value"), 10);
         collectAmount += itemCollectAmount;
         var itemDiscountAmount = parseInt($("#hdnDiscountAmountCustomerSaleWeightInsertBatch" + i).attr("value"), 10);
@@ -6050,11 +6059,11 @@ function changeSaleQuantityCustomerSaleWeightInsertItemDetail() {
 //거래처 판매등록-일반판매 판매 금액 계산 처리
 function calculateTotalAmountCustomerSaleWeightInsertItemDetail() {
     var salePrice = parseFloat(deleteComma($("#txtSalePriceCustomerSaleWeightInsertItemDetail").attr("value")), 10);
-//	var itemBalance = parseInt($("#txtItemBalanceCustomerSaleWeightInsertItemDetail").attr("value"), 10);
+    //	var itemBalance = parseInt($("#txtItemBalanceCustomerSaleWeightInsertItemDetail").attr("value"), 10);
     var saleQuantity = parseInt(deleteComma($("#txtSaleQuantityCustomerSaleWeightInsertItemDetail").attr("value")), 10);
     var withdrawQuantity = parseInt(deleteComma($("#txtWithdrawQuantityCustomerSaleWeightInsertItemDetail").attr("value")), 10);
     var quantity = saleQuantity - withdrawQuantity;
-//	var nowBalance = itemBalance + quantity;
+    //	var nowBalance = itemBalance + quantity;
     var nowBalance = quantity;
     $("#txtNowBalanceCustomerSaleWeightInsertItemDetail").attr("value", insertComma(nowBalance));
     var saleAmount = Math.round(salePrice * saleQuantity);
@@ -6382,7 +6391,7 @@ function clickCustomerSaleWeightInsertItemDetailRemarkSearch(remark) {
 function injectionCustomerSaleVolumeInsert(tagId) {
     $("#" + tagId).html(getResultMessage("잠시만 기다려주세요.", true)).trigger("create");
     $.ajax({
-        url: gasmaxWebappPath + "customer_sale_volume_insert.jsp?uuid="+  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_sale_volume_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
         timeout: 60000,
@@ -6558,7 +6567,7 @@ function injectionCustomerReadMeterInsert(tagId, readMeterDate) {
         dataStr = "readMeterDate=" + readMeterDate;
     }
     $.ajax({
-        url: gasmaxWebappPath + "customer_read_meter_edit.jsp?uuid="+  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_read_meter_edit.jsp?uuid=" + window.sessionStorage.uuid,
         data: dataStr,
         type: "post",
         dataType: "html",
@@ -6736,12 +6745,12 @@ function clickSaveInsertCustomerReadMeterEdit(continueYesNo) {
     }
 
     $("#divResultMessageCustomerReadMeterInsert").html(getResultMessage("저장 중입니다.", true));
-//	var key = saveCustomerReadMeter(true);
+    //	var key = saveCustomerReadMeter(true);
     saveCustomerReadMeter(true);
     if (continueYesNo == true) { // 연속저장이라면, 저장 후 신규 등록할 수 있도록 거래처 검색 화면으로 이동
         showPageCustomerSearch();
     } else { // 연속저장이 아니라면, 저장 후 상세 화면으로 이동=>조회화면으로 이동
-//		showPageCustomerReadMeterEdit(key);
+        //		showPageCustomerReadMeterEdit(key);
         showPageCustomerBookVolume(0);
     }
 }
@@ -6760,9 +6769,9 @@ function clickSaveUpdateCustomerReadMeterEdit() {
     }
 
     $("#divResultMessageCustomerReadMeterEdit").html(getResultMessage("저장 중입니다.", true));
-//	var key = saveCustomerReadMeter(false);
+    //	var key = saveCustomerReadMeter(false);
     saveCustomerReadMeter(false);
-//	showPageCustomerReadMeterEdit(key);
+    //	showPageCustomerReadMeterEdit(key);
     showPageCustomerBookVolume(0);
 }
 
@@ -6859,7 +6868,7 @@ function injectionCustomerCollect(tagId) {
 
 
     $.ajax({
-        url: gasmaxWebappPath + "customer_collect_insert.jsp?uuid=" +  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_collect_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
         timeout: 60000,
@@ -6908,18 +6917,18 @@ function clickSaveAndEditCustomerCollectInsert() {
         return;
     }
 
-//	var customerTypeCode = $('input:radio[name="rdoCollectTypeCustomerCollectInsert"]:checked').val();
-//	var returnCode = saveCustomerCollectInsert();
+    //	var customerTypeCode = $('input:radio[name="rdoCollectTypeCustomerCollectInsert"]:checked').val();
+    //	var returnCode = saveCustomerCollectInsert();
     saveCustomerCollectInsert();
-//	if (returnCode == "S"){ // 저장에 성공했을 때만 페이지 이동
-//		if (customerTypeCode == "J") { //일반(중량)장부의 거래 내역 조회
-//			showPageCustomerBookWeight("0");
-////		$("#rdoCustomerBookWeightCollect").attr("checked", true);
-//		} else { //체적장부의 수금내역 조회
-//			showPageCustomerBookVolume("1");
-////		$("#rdoCustomerBookVolumeCollect").attr("checked", true);
-//		}
-//	}
+    //	if (returnCode == "S"){ // 저장에 성공했을 때만 페이지 이동
+    //		if (customerTypeCode == "J") { //일반(중량)장부의 거래 내역 조회
+    //			showPageCustomerBookWeight("0");
+    ////		$("#rdoCustomerBookWeightCollect").attr("checked", true);
+    //		} else { //체적장부의 수금내역 조회
+    //			showPageCustomerBookVolume("1");
+    ////		$("#rdoCustomerBookVolumeCollect").attr("checked", true);
+    //		}
+    //	}
 }
 
 // 거래처별 수금등록 계속 저장버튼 처리
@@ -7241,7 +7250,7 @@ function injectionCustomerSaftyCheckInsert(tagId) {
     $("#divCustomerSaftyCheckEdit").html("").trigger("create");
     $("#divResultMessageCustomerSaftyCheckInsert").html("").trigger("create");
     $.ajax({
-        url: gasmaxWebappPath + "customer_safty_check_insert_rev3.jsp?uuid="+  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_safty_check_insert_rev3.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
         timeout: 60000,
@@ -7260,7 +7269,7 @@ function injectionCustomerSaftyCheckInsert(tagId) {
         }
     });
 
-// $("#hdnRequireRefreshPageCustomerSaftyCheckInsert").attr("value", "N"); //거래처 안전점검-점검등록이 이제 Refresh되었음을 표시
+    // $("#hdnRequireRefreshPageCustomerSaftyCheckInsert").attr("value", "N"); //거래처 안전점검-점검등록이 이제 Refresh되었음을 표시
 }
 
 //거래처 안전점검 등록 저장 버튼 처리
@@ -7277,7 +7286,7 @@ function clickSaveCustomerSaftyCheckInsert(continueYesNo) {
         return;
     }
 
-//	var key = saveCustomerSaftyCheck(true);
+    //	var key = saveCustomerSaftyCheck(true);
     saveCustomerSaftyCheckInsert();
     if (continueYesNo == true) { // 연속저장이라면, 저장 후 신규 등록할 수 있도록 거래처 검색 화면으로 이동
         showPageCustomerSearch();
@@ -7763,7 +7772,7 @@ function injectionCustomerSaftyCheckTankInsert(tagId) {
     $("#divCustomerSaftyCheckTankEdit").html("").trigger("create");
     $("#divResultMessageCustomerSaftyCheckTankInsert").html("").trigger("create");
     $.ajax({
-        url: gasmaxWebappPath + "customer_safty_check_tank_insert.jsp?uuid="+ window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "customer_safty_check_tank_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
         timeout: 60000,
@@ -8137,9 +8146,9 @@ function clickSaveManageCidList(key) {
         $("#selectEmployeeManageCidList" + key).selectmenu('disable');
     } else {
         $("#selectEmployeeManageCidList" + key).selectmenu('enable');
-//		$("#selectEmployeeManageCidList" + key).attr("aria-disabled", false).trigger("create");
-//		$("#selectEmployeeManageCidList" + key).removeClass("mobile-selectmenu-disabled").trigger("create");
-//		$("#selectEmployeeManageCidList" + key).removeClass("ui-state-disabled").trigger("create");
+        //		$("#selectEmployeeManageCidList" + key).attr("aria-disabled", false).trigger("create");
+        //		$("#selectEmployeeManageCidList" + key).removeClass("mobile-selectmenu-disabled").trigger("create");
+        //		$("#selectEmployeeManageCidList" + key).removeClass("ui-state-disabled").trigger("create");
     }
 
     var deliveryYesNo = "false";
@@ -8744,7 +8753,7 @@ function injectionSearchOptionManageSaleList(tagId) {
 function injectionSearchOptionManageUnpaidList(tagId) {
     showActivityIndicator("로딩중입니다..")
     $.ajax({
-        url: gasmaxWebappPath + "manage_unpaid_list.jsp?uuid=" +  window.sessionStorage.uuid,
+        url: gasmaxWebappPath + "manage_unpaid_list.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
         timeout: 60000,
@@ -8850,10 +8859,10 @@ function uploadSign(fileName, saveDir) {
         imageURI,
         server + "?saveDir=" + saveDir,
         function (response) {
-//			alert("전송완료!!\n" +
-//			"Code = " + response.responseCode + "\n" +
-//			"Response = " + response.response + "\n" +
-//			"Sent = " + response.bytesSent);
+            //			alert("전송완료!!\n" +
+            //			"Code = " + response.responseCode + "\n" +
+            //			"Response = " + response.response + "\n" +
+            //			"Sent = " + response.bytesSent);
         },
         function (error) {
             alert("서명 전송에 실패하였습니다. \n다시 시도해주세요.\n(Error Code = " + error.code + ")");
@@ -8910,11 +8919,11 @@ function clickOkDatePicker() {
     if (day.length == 1) day = "0" + day;
     var result = year + "-" + month + "-" + day;
     $("#" + $("#hdnDatePickerInputId").attr("value")).attr("value", result);
-//	if ($("#hdnDatePickerInputId").attr("value").indexOf("Start") != -1){
-//		$("#hdnStartDateCustomerBiz").attr("value", result);
-//	} else if ($("#hdnDatePickerInputId").attr("value").indexOf("End") != -1){
-//		$("#hdnEndDateCustomerBiz").attr("value", result);
-//	}
+    //	if ($("#hdnDatePickerInputId").attr("value").indexOf("Start") != -1){
+    //		$("#hdnStartDateCustomerBiz").attr("value", result);
+    //	} else if ($("#hdnDatePickerInputId").attr("value").indexOf("End") != -1){
+    //		$("#hdnEndDateCustomerBiz").attr("value", result);
+    //	}
     var date = $("#hdnDatePickerInputId").attr("value");
     if (date == "txtStartDateCustomerBookWeight") {
         $("#hdnStartDateCustomerBookWeight").attr("value", result);
@@ -8940,7 +8949,7 @@ function clickOkDatePicker() {
 
 //날짜 선택 다이얼로그 - 닫기 처리
 function closeDatePicker() {
-    $.mobile.changePage("#" + $("#hdnCallPageDiaglogDatePicker").attr("value"), {changeHash: false, reverse: true});
+    $.mobile.changePage("#" + $("#hdnCallPageDiaglogDatePicker").attr("value"), { changeHash: false, reverse: true });
 }
 
 //날짜 선택 다이얼로그 - 년도 증가
@@ -9116,36 +9125,36 @@ function maskJuminNo(value) {
 
 //천단위마다 쉼표 넣기
 function insertComma(value) {
-//	var reg = /(^[+-]?\d+)(\d{3})/;   //정규식
+    //	var reg = /(^[+-]?\d+)(\d{3})/;   //정규식
     var reg = /(\-?\d+)(\d{3})($|\.\d+)/;   //정규식
     value += "";                          //숫자를 문자열로 변환
     if (reg.test(value)) {
         return value.replace(reg, function (str, p1, p2, p3) {
-                return insertComma(p1) + "," + p2 + "" + p3;
-            }
+            return insertComma(p1) + "," + p2 + "" + p3;
+        }
         );
     } else {
         return value;
     }
-//	while (reg.test(value)) {
-//		value = value.replace(reg, "$1" + "," + "$2");
-//	}
-//	return value;
+    //	while (reg.test(value)) {
+    //		value = value.replace(reg, "$1" + "," + "$2");
+    //	}
+    //	return value;
 }
 
 
 //천단위마다 쉼표 넣기-숫자패드 이용을 위해 쉼표 처리 안하도록 수정됨.
 function insertComma2(value) {
-//	var reg = /(\-?\d+)(\d{3})($|\.\d+)/;   //정규식
-//	value += "";                          //숫자를 문자열로 변환
-//  if(reg.test(value)){
-//	    return value.replace(reg, function(str, p1,p2,p3){
-//	           return insertComma(p1) + "," + p2 + "" + p3;
-//	          }
-//	    );
-//	} else {
+    //	var reg = /(\-?\d+)(\d{3})($|\.\d+)/;   //정규식
+    //	value += "";                          //숫자를 문자열로 변환
+    //  if(reg.test(value)){
+    //	    return value.replace(reg, function(str, p1,p2,p3){
+    //	           return insertComma(p1) + "," + p2 + "" + p3;
+    //	          }
+    //	    );
+    //	} else {
     return value;
-//	}
+    //	}
 }
 
 //숫자에서 콤마 지우기
@@ -9163,7 +9172,7 @@ function deleteComma(value) {
 function focusNumber(input, fixedId) {
     var inputId = input.id;
     var numberInput = $("#" + inputId);
-//	numberInput.attr("pattern", "[0-9]*");
+    //	numberInput.attr("pattern", "[0-9]*");
     var value = deleteComma(numberInput.attr("value"));
     value = parseFloat(value, 10);
     numberInput.attr("value", value);
@@ -9180,7 +9189,7 @@ function blurNumber(input, fixedId) {
     var numberInput = $("#" + inputId);
     var inputType = numberInput.attr("type");
     var value = deleteComma(numberInput.attr("value"));
-//	var value = numberInput.attr("value");
+    //	var value = numberInput.attr("value");
     if (value == "") {
         value = 0;
     }
@@ -9194,7 +9203,7 @@ function blurNumber(input, fixedId) {
         value = insertComma(intValue);
     }
     numberInput.attr("value", value);
-//	numberInput.attr("pattern", "");
+    //	numberInput.attr("pattern", "");
     if (fixedId == undefined) {
     } else {
         enableFixed(fixedId);
@@ -9218,7 +9227,7 @@ function blurSN(input, fixedId) {
         strValue = "0" + strValue;
     }
     numberInput.attr("value", strValue);
-//	numberInput.attr("pattern", "");
+    //	numberInput.attr("pattern", "");
 
     if (fixedId == undefined) {
     } else {
@@ -9540,10 +9549,10 @@ function clickEditCustomerSaftyCheckSign() {
     $("#imgSignImageCustomerSaftyCheckSign").css("display", "none");		// 기존서명 비표시
     $("#divCanvasCustomerSaftyCheckSign").css("display", "inline-block");	// 서명입력란 표시
     /*
-	$("#btnEditCustomerSaftyCheckSign").button("disable");
-	$("#btnResetCustomerSaftyCheckSign").button("enable");
-	$("#btnSaveCustomerSaftyCheckSign").button("enable");
-	*/
+    $("#btnEditCustomerSaftyCheckSign").button("disable");
+    $("#btnResetCustomerSaftyCheckSign").button("enable");
+    $("#btnSaveCustomerSaftyCheckSign").button("enable");
+    */
     $("#divEditCustomerSaftyCheckSign").css("display", "none");				// 수정버튼 비표시
     $("#divSaveCustomerSaftyCheckSign").css("display", "inline-block");		// 초기화/저장버튼 표시
 }
@@ -9954,7 +9963,7 @@ function showDialogPipeLengthOptions(pageId, dataInputId) {
     $("#hdnPageScrollTop").attr("value", $(window).scrollTop());
 
     $("#hdnCallPageDialogPipeLengthOptions").attr("value", pageId);		// 다이얼로그의 부모 ID 저장
-    $.mobile.changePage("#dialogPipeLengthOptions", {changeHash: false, role: "dialog", reverse: true});	// 다이얼로그로 화면전환
+    $.mobile.changePage("#dialogPipeLengthOptions", { changeHash: false, role: "dialog", reverse: true });	// 다이얼로그로 화면전환
     $("#hdnDialogPipeLengthOptionsInputId").attr("value", dataInputId);		// 데이터를 표시할 ID 저장
 
     var currentPipeLengthOption = $("#" + dataInputId).attr("value");	// 현재값을 불러오기

@@ -1,0 +1,59 @@
+<html>
+<ul class="navbar-nav full-width">
+    <li>
+        <ul class="bulk_top_menu">
+            <li class="bulk_charge" onclick="showPageBulkCharge(true)">충&nbsp;전</li>
+            <li class="bulk_status active" onclick="showPageBulkState(true)">현&nbsp;황</li>
+            <li class="bulk_buy" onclick="showPageBulkBuy(true)">매&nbsp;입</li>
+            <li class="bulk_setting" onclick="showPageBulkSetting(true)">설&nbsp;정</li>
+        </ul>
+    </li>
+    <li>
+        <table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; table-layout: fixed ; ">
+            <tr>
+                <td style="min-width: 60px; width: 60px; text-align: left ;"><span
+                        style="font-size: 12px ; ">충전일자</span></td>
+                <td style="width: 120px ; text-align: left ;"><input
+                        style="font-size: 14px ; width: 100px ; text-align: center ;" type="text"
+                        id="txtFindDateBulkState" data-theme="c" data-mini="true" value="" readonly="readonly"
+                        onclick="showDialogDatePicker('pageBulkState', 'txtFindDateBulkState')"/></td>
+                <td style="min-width: 60px; width: 60px; text-align: left ;"><span
+                        style="font-size: 12px ; ">벌크로리</span></td>
+                <td style="width: 125px ; text-align: left ;"><select name="selectBulkCarBulkState"
+                                                                      id="selectBulkCarBulkState" data-mini="true"
+                                                                      style="font-size: 12px ; " disabled>
+                    <option value="" data-placeholder="true">데이터 없음</option>
+                </select></td>
+            </tr>
+        </table>
+    </li>
+    <li class="cust_list">
+        <table>
+            <tr>
+                <td><input style="font-size: 14px ; width: 100% ; text-align: left ;" type="search"
+                           id="txtKeywordBulkState" data-mini="true" placeholder="거래처명"></td>
+                <td>
+                    <button data-icon="search" data-theme="b" data-mini="true" onclick="searchBulkState(false)">검색
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </li>
+</ul>
+<table id="tableHeaderBulkState"
+       style="border: 0px solid #999999 ; border-top: 1px solid #BBBBBB ; border-collapse: collapse ; width: 100% ; background-color: #DDDDDD ; table-layout: fixed ; ">
+    <tr>
+        <td style="width: 5px ; text-align: center ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; ">
+            <span style="font-size:14px ; ">&nbsp;</span></td>
+        <td style="width: 20px ; text-align: center ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; ">
+            <span style="color:#222222 ; font-size:14px ; ">시간</span></td>
+        <td style="width: 80px ; text-align: center ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; white-space: nowrap ; text-overflow: ellipsis ; overflow: hidden ; ">
+            <span style="color:#222222 ; font-size:14px ; ">거래처명</span></td>
+        <td style="width: 40px ; text-align: center ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; ">
+            <span style="color:#222222 ; font-size:14px ; ">충전(L)</span></td>
+        <td style="width: 40px ; text-align: center ; border-left: 1px solid #999999 ; border-right: 1px solid #999999 ; border-bottom: 1px solid #999999 ; ">
+            <span style="color:#222222 ; font-size:14px ; ">충전(kg)</span></td>
+    </tr>
+</table>
+
+</html>

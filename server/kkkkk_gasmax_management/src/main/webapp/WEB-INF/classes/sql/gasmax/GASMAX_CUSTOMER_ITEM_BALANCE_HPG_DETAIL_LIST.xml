@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CustomerItemBalanceHPGDetailList.Select" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE   AS areaCode
+			, PJ_CU_CODE  AS customerCode
+			, TR_DT       AS issueDate
+			, TR_SNO      AS sequenceNumber
+			, TR_GU       AS menuType
+			, TS_GUBUN    AS issueType
+			, TR_SW       AS employeeName
+			, JP_Code     AS itemCode
+			, JP_Name     AS itemName
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_QTY, 0),1),'.00','')      AS outputQuantity
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(PJ_REQTY, 0),1),'.00','')    AS inputQuantity
+			, TR_NAME     AS place
+		FROM $catalogName$.dbo.fn_BOOK_JAEGO_JP_HIGH('$areaCode$','$customerCode$','$startDate$','$endDate$','$itemCode$')
+		WHERE 1=1
+		ORDER BY TR_DT, TR_GU, JP_Code, TR_SNO
+	</select>
+
+     <select id="GASMAX.CustomerItemBalanceLPGDetailList.Select" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE   AS areaCode
+			, PJ_CU_CODE  AS customerCode
+			, TR_DT       AS issueDate
+			, TR_SNO      AS sequenceNumber
+			, TR_GU       AS menuType
+			, TS_GUBUN    AS issueType
+			, TR_SW       AS employeeName
+			, JP_Code     AS itemCode
+			, JP_Name     AS itemName
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_QTY, 0),1),'.00','')      AS outputQuantity
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(PJ_REQTY, 0),1),'.00','')    AS inputQuantity
+			, TR_NAME     AS place
+		FROM $catalogName$.dbo.fn_BOOK_JAEGO_JP_LPG('$areaCode$','$customerCode$','$startDate$','$endDate$','$itemCode$')
+		WHERE 1=1
+		ORDER BY TR_DT, TR_GU, JP_Code, TR_SNO
+	</select>
+	
+</sqlMap>

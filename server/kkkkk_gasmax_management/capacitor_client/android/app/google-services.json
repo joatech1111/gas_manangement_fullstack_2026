@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "80656391423",
+    "project_id": "gas-management-37a2c",
+    "storage_bucket": "gas-management-37a2c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80656391423:android:ebac598125c05cb6d300ca",
+        "android_client_info": {
+          "package_name": "com.joainfo.gas_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwekjpkYoLoWj68Daoz-Dbc-bnqwn0OBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
