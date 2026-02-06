@@ -210,7 +210,6 @@ function authCheck() {
         }
     }
 
-    alert(areaCode)
 
     $.ajax({
         url: gasmaxWebappPath + "auth_check_s3_ajx_v2.jsp",
