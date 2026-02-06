@@ -2,9 +2,10 @@
 function showPageIntro(appExit) {
     try {
         window.sessionStorage["current_AreaSeq"] = "";
-        $("#trAppUserList").empty();
-        var macNumber = $("#hdnUuid").attr("value");
-        getMultiAppUser( window.sessionStorage.uuid);
+        $("#divMultiUserSelect").empty();
+        // uuid는 hdnUuid가 가장 신뢰도 높음 (웹/앱 모두 init에서 세팅)
+        var macNumber = $("#hdnUuid").val() || $("#hdnUuid").attr("value") || window.sessionStorage.uuid || "";
+        getMultiAppUser(macNumber);
         $.mobile.changePage("#pageIntro", {changeHash: false});
         setCurrentPage("pageIntro");
         $("#loginMessage").html("").trigger("create");
@@ -58,32 +59,100 @@ function getMultiAppUser() {
             $("#loginMessage").html("").trigger("create");
         },
         success: function (xml) {
+            console.log("📥 [getMultiAppUser] Response received");
             var totalRowCount = parseInt($(xml).find("totalRowCount").text());
+            console.log("📊 [getMultiAppUser] totalRowCount:", totalRowCount);
+
+            // ⭐ 첫 번째 회사의 areaCode를 저장 (로그인 시 사용)
+            var firstAppUser = $(xml).find("AppUser").first();
+            if (firstAppUser.length > 0) {
+                var firstAreaCode = firstAppUser.find("areaCode").text();
+                var firstAreaName = firstAppUser.find("areaName").text();
+                window.sessionStorage.setItem("login_areaCode", firstAreaCode);
+                console.log("💾 [getMultiAppUser] Saved areaCode to sessionStorage:", firstAreaCode, "(" + firstAreaName + ")");
+            }
+
             /*if ($(xml).find("session").text() == "X"){
 				alert("오랫동안 사용하지 않아서\n접속이 종료되었습니다.\n다시 로그인해 주세요.");
 				showPageIntro(false);
 				return;
 			}*/
 
-            if ($(xml).find("Result").text() == "N") {
+            var resultText = $(xml).find("Result").text();
+            console.log("📊 [getMultiAppUser] Result:", resultText);
+            if (resultText == "N") {
+                console.log("❌ [getMultiAppUser] Result is N, exiting");
                 return;
             }
             if (totalRowCount > 1) {
-                var remember_co = window.localStorage["remember_gasmax_co"];
-                if (remember_co == undefined) remeber_co = "0";
+                console.log("🏢 [getMultiAppUser] Multiple companies found, creating button list");
 
-                var html = '<td>회사명: </td><td><select name="areaSeq" data-mini="true" id="selAreaSeqLogin">';
+                // 과거 키(remember_gasmax_co)가 areaSeq였을 가능성이 있어, areaCode 전용 키를 새로 사용
+                var rememberedAreaCode =
+                    window.localStorage.getItem("remember_gasmax_areaCode")
+                    || window.localStorage.getItem("remember_gasmax_co")
+                    || "";
+
+                var optionCount = 0;
+                var firstAreaCode = "";
+
+                // 버튼 목록(회사 선택) 생성
+                var html = '<div id="loginAreaCodeButtons" data-role="controlgroup" data-mini="true" style="margin: 0 0 12px 0;">';
+                html += '<div style="font-weight: 600; color: #2d3748; font-size: 13px; margin: 0 0 6px 0;">🏢 회사 선택</div>';
+
                 $(xml).find("AppUser").each(function () {
-                    var areaSeq = $(this).find("areaSeq").text(); //순번
-                    var areaCode = $(this).find("areaCode").text(); //업체코드
-                    var areaName = $(this).find("areaName").text(); //회사명
-                    var selected = (areaSeq == remember_co) ? " selected" : "";
+                    var areaCode = ($(this).find("areaCode").text() || "").trim(); //업체코드
+                    var areaName = ($(this).find("areaName").text() || "").trim(); //회사명
 
-                    html += '<option value="' + areaSeq + '"' + selected + '>' + areaName + '</option>';
+                    if (!firstAreaCode) firstAreaCode = areaCode;
+
+                    // 업체명 + areaCode 완전 노출
+                    var btnText = areaName + "  [areaCode: " + areaCode + "]";
+                    html += '<a href="#" class="btnLoginAreaCode" data-areacode="' + areaCode + '" data-role="button">' + btnText + "</a>";
+                    optionCount++;
                 });
-                html += "</select></td>";
 
-                $("#trAppUserList").html(html).trigger("create");
+                html += "</div>";
+
+                $("#divMultiUserSelect").html(html).trigger("create");
+                console.log("✅ [getMultiAppUser] Button list created with " + optionCount + " options");
+
+                function applyLoginAreaCodeSelection(selectedAreaCode) {
+                    if (!selectedAreaCode) return;
+                    window.sessionStorage.setItem("login_areaCode", selectedAreaCode);
+                    window.localStorage.setItem("remember_gasmax_areaCode", selectedAreaCode);
+
+                    // 선택 표시 (jQM active 스타일)
+                    $("#loginAreaCodeButtons .btnLoginAreaCode").removeClass("ui-btn-active");
+                    $("#loginAreaCodeButtons .btnLoginAreaCode[data-areacode='" + selectedAreaCode + "']").addClass("ui-btn-active");
+                    console.log("🔄 [Button Select] Selected areaCode:", selectedAreaCode);
+                }
+
+                // 버튼 클릭 시 선택값 저장
+                $(document)
+                    .off("click", "#loginAreaCodeButtons .btnLoginAreaCode")
+                    .on("click", "#loginAreaCodeButtons .btnLoginAreaCode", function (e) {
+                        e.preventDefault();
+                        var selectedAreaCode = $(this).attr("data-areacode") || "";
+                        applyLoginAreaCodeSelection(selectedAreaCode);
+                    });
+
+                // 최초 선택값(기억값 우선) 저장 및 UI 표시
+                var initialAreaCode = rememberedAreaCode || firstAreaCode;
+                if (initialAreaCode) {
+                    applyLoginAreaCodeSelection(initialAreaCode);
+                }
+            } else {
+                console.log("ℹ️ [getMultiAppUser] Single company or no companies, no dropdown needed");
+                // 단일 회사일 때 areaCode를 localStorage에 저장
+                if (totalRowCount == 1) {
+                    var singleAreaCode = $(xml).find("AppUser").first().find("areaCode").text();
+                    var singleAreaName = $(xml).find("AppUser").first().find("areaName").text();
+                    console.log("📌 [getMultiAppUser] Single company: areaCode=" + singleAreaCode + ", areaName=" + singleAreaName);
+                    window.localStorage["single_company_areaCode"] = singleAreaCode;
+                    window.sessionStorage.setItem("login_areaCode", singleAreaCode);
+                    window.localStorage.setItem("remember_gasmax_areaCode", singleAreaCode);
+                }
             }
         }
     });
@@ -103,10 +172,34 @@ function authCheck() {
     var mobileNumber = $("#hdnMobileNumber").attr("value");
     var remember = $("#ckbRememberLogin").attr("checked");
 
-    var areaSeq = $("#selAreaSeqLogin option:selected").val();
-    if (areaSeq == undefined) {
-        areaSeq = "0";
+    // 선택된 areaCode 가져오기: (1) 버튼 선택값 (2) sessionStorage
+    console.log("🔍 [authCheck] === Get areaCode Start ===");
+
+    var areaCode = "";
+    var btnAreaCode = $("#loginAreaCodeButtons .btnLoginAreaCode.ui-btn-active").attr("data-areacode");
+    if (btnAreaCode != undefined && btnAreaCode !== null && btnAreaCode !== "") {
+        areaCode = btnAreaCode;
+        try { window.sessionStorage.setItem("login_areaCode", areaCode); } catch (e) {}
+        console.log("✅ [authCheck] areaCode from button(active):", areaCode);
+    } else {
+        // 혹시 active가 안 붙었으면 첫번째 버튼/저장값으로 fallback
+        areaCode = window.sessionStorage.getItem("login_areaCode") || "";
+        if (!areaCode) {
+            areaCode = $("#loginAreaCodeButtons .btnLoginAreaCode").first().attr("data-areacode") || "";
+            if (areaCode) {
+                try { window.sessionStorage.setItem("login_areaCode", areaCode); } catch (e) {}
+            }
+        }
+        console.log("📥 [authCheck] areaCode fallback:", areaCode);
     }
+
+    if (!areaCode || areaCode == "" || areaCode == "null") {
+        areaCode = "0";
+        console.log("⚠️ [authCheck] areaCode is empty, using default: 0");
+    } else {
+        console.log("✅ [authCheck] Using areaCode: '" + areaCode + "'");
+    }
+    console.log("🔍 [authCheck] === Get areaCode End ===");
 
 
     //핸드폰 장비 정보에 +82 부분을 0으로 바꿔 010으로 번호가 시작하도록 변경
@@ -117,14 +210,16 @@ function authCheck() {
         }
     }
 
+    alert(areaCode)
+
     $.ajax({
-        url: gasmaxWebappPath + "auth_check_s3_ajx.jsp",
+        url: gasmaxWebappPath + "auth_check_s3_ajx_v2.jsp",
         type: "get",
         data: "loginId=" + loginId
             + "&loginPw=" + sec(loginPw)
             + "&uuid=" + sec(uuid)
             + "&mobileNumber=" + sec(mobileNumber)
-            + "&areaSeq=" + areaSeq
+            + "&areaCode=" + areaCode
         ,
         dataType: "xml",
         timeout: 60000,

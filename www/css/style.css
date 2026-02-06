@@ -92,21 +92,47 @@ html, body {
     height: auto !important;
 }
 
-/* 스플래시 화면 스타일 */
+/* 모던 스플래시 화면 스타일 */
 #splash-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    transition: opacity 0.8s ease-out;
     z-index: 10000;
     opacity: 1;
-    transition: opacity 0.6s ease-out;
+    transition: opacity 0.8s ease-out;
+    overflow: hidden;
+}
+
+/* 배경 애니메이션 파티클 */
+#splash-screen::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+    animation: particleMove 20s linear infinite;
+}
+
+@keyframes particleMove {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+        transform: translate(50px, 50px) rotate(360deg);
+    }
 }
 
 #splash-screen.fade-out {
@@ -115,17 +141,21 @@ html, body {
 
 .splash-content {
     text-align: center;
-    color: #2d3748;
-    font-size: 24px;
+    color: white;
+    font-size: 28px;
     font-weight: bold;
-    margin-top: 15px;
-    animation: fadeInUp 0.8s ease-out;
+    margin-top: 30px;
+    animation: fadeInUp 1s ease-out;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -134,90 +164,104 @@ html, body {
 }
 
 .splash-logo {
-    width: 100%;
+    width: 85%;
     height: auto;
-    max-width: 400px;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    animation: logoFadeIn 1s ease-out, logoPulse 2s ease-in-out infinite 1s;
+    max-width: 350px;
+    border-radius: 24px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: logoFadeIn 1.2s ease-out, logoFloat 3s ease-in-out infinite 1.2s;
+    background: white;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes logoFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.8) translateY(30px);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
-@keyframes logoPulse {
+@keyframes logoFloat {
     0%, 100% {
-        transform: scale(1);
+        transform: translateY(0);
     }
     50% {
-        transform: scale(1.02);
+        transform: translateY(-10px);
     }
 }
 
 .splash-loader-container {
-    margin-top: 40px;
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
 }
 
 .splash-loader {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-top: 4px solid #4facfe;
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-top: 5px solid white;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    box-shadow: 
+        0 0 30px rgba(255, 255, 255, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .splash-progress-bar {
-    width: 200px;
-    height: 4px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
+    width: 220px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
     overflow: hidden;
     position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .splash-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #4facfe, #00d4ff);
-    border-radius: 2px;
-    animation: progressLoad 1.5s ease-in-out infinite;
-    box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+    background: linear-gradient(90deg, #ffffff, #f0f0f0, #ffffff);
+    background-size: 200% 100%;
+    border-radius: 10px;
+    animation: progressShine 2s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
 }
 
-@keyframes progressLoad {
+@keyframes progressShine {
     0% {
-        width: 0%;
-        transform: translateX(0);
+        width: 20%;
+        background-position: 0% 50%;
     }
     50% {
-        width: 70%;
+        width: 60%;
+        background-position: 100% 50%;
     }
     100% {
-        width: 100%;
-        transform: translateX(0);
+        width: 90%;
+        background-position: 0% 50%;
     }
 }
 
 .splash-subtitle {
-    margin-top: 24px;
-    font-size: 16px;
-    color: #4a5568;
+    margin-top: 20px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 400;
-    letter-spacing: 0.5px;
-    animation: fadeIn 1.2s ease-out;
+    letter-spacing: 1px;
+    animation: fadeIn 1.5s ease-out;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes fadeIn {
@@ -229,65 +273,26 @@ html, body {
     }
 }
 
-/* 로더 스타일 */
+/* 모던 로더 오버레이 */
 .custom-loader-overlay {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 20px 30px;
     width: auto;
-    min-width: 150px;
-    max-width: 60%;
-    padding: 5px 20px;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 10px;
-    display: flex;
+    min-width: 160px;
+    max-width: 80%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    display: none;
     flex-direction: column;
-}
-/* 로더 스타일 */
-.loader-logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-/* 스피너 애니메이션 */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top: 5px solid #007bff; /* 파란색 */
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 전체 화면을 덮는 로더 배경 */
-.custom-loader-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 20px; /* 부드러운 모서리 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 살짝 그림자 효과 */
-    padding: 13px 20px;
-    width: auto;
-    min-width: 120px;
-    max-width: 30%;
-    background: linear-gradient(135deg, #4a7495, #90b0d6); /* 더 진한 네이비 블루 혼합 */ /* 네이비 블루 + 연한 회색 혼합 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    display: none;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* 로더 박스 */
@@ -295,16 +300,37 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 15px;
 }
 
-/* 회전 애니메이션 */
+/* 모던 스피너 애니메이션 */
 .spinner {
-    width: 25px;
-    height: 25px;
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top: 5px solid #8400ff; /* 파란색 */
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-right: 4px solid white;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spinModern 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+}
+
+/* 로더 로고 */
+.loader-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    animation: logoFloat 2s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
 }
 
 /* 애니메이션 효과 */
@@ -313,8 +339,24 @@ html, body {
     100% { transform: rotate(360deg); }
 }
 
-/* 텍스트 스타일 */
-/* 로더 텍스트 스타일 */
+@keyframes spinModern {
+    0% { 
+        transform: rotate(0deg);
+        border-top-color: white;
+        border-right-color: white;
+    }
+    50% {
+        border-top-color: rgba(255, 255, 255, 0.8);
+        border-right-color: rgba(255, 255, 255, 0.5);
+    }
+    100% { 
+        transform: rotate(360deg);
+        border-top-color: white;
+        border-right-color: white;
+    }
+}
+
+/* 모던 로더 텍스트 스타일 */
 #loader-text {
     max-width: 90%;
     min-width: 150px;
@@ -323,8 +365,12 @@ html, body {
     overflow-wrap: break-word;
     white-space: normal;
     color: white;
-    font-size: 14px;
-    padding: 5px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+    line-height: 1.5;
 }
 
 /* 점(.) 포함 시 줄바꿈 처리 */
