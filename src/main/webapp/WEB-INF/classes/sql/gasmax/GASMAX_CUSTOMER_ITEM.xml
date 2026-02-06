@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CustomerItem.SelectVolumeHPG" resultClass="java.util.HashMap">
+		SELECT
+		      JP_Code AS itemCode
+		    , JP_Name AS itemName
+		    , ISNULL(JP_Spec, '') AS itemSpec
+		    , JP_Unit AS itemUnit
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Kg, 0),1),'.00','') AS capacity
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_OutDanga, 0),1),'.00','') AS salePrice 
+		FROM $catalogName$.dbo.SangPum
+		WHERE 1=1
+		AND Area_Code = '$areaCode$'
+		<isNotEmpty prepend="AND" property="itemTypeCode"> JP_GUBUN = '$itemTypeCode$' </isNotEmpty>
+		ORDER BY JP_Sort, JP_Code
+	</select>
+
+     <select id="GASMAX.CustomerItem.SelectVolumeAllHPG" resultClass="java.util.HashMap">
+		SELECT
+		      JP_Code AS itemCode
+		    , JP_Name AS itemName
+		    , ISNULL(JP_Spec, '') AS itemSpec
+		    , '' AS itemUnit
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Kg, 0),1),'.00','') AS capacity
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_OutDanga, 0),1),'.00','') AS salePrice 
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_JAEGOCU, 0),1),'.00','') AS itemBalance
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_LAST_QTY, 0),1),'.00','') AS lastSaleQuantity
+		FROM $catalogName$.dbo.fn_CUST_JP_Danga_CJ('$areaCode$', '$customerCode$')
+		WHERE 1=1
+		AND JP_CU_YN = 'Y'
+		ORDER BY JP_LAST_DATE DESC, JP_Sort
+	</select>
+
+    <select id="GASMAX.CustomerItem.SelectWeightHPG" resultClass="java.util.HashMap">
+		SELECT
+		        JP_Code AS itemCode
+		      , '' AS itemUnit
+		      , '0' AS capacity
+		      , JP_Name AS itemName
+		      , ISNULL(JP_Spec, '') AS itemSpec
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Danga_Code, 0),1),'.00','') AS priceType
+		      , CASE CU_Danga_Code 
+		          WHEN 0 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Danga_0, 0),1),'.00','')
+		          WHEN 1 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Danga_1, 0),1),'.00','')
+		          WHEN 2 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Danga_2, 0),1),'.00','')
+		        END AS salePrice
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_JAEGOCU, 0),1),'.00','') AS itemBalance
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_LAST_MISU, 0),1),'.00','') AS lastUnpaidAmount
+		  FROM $catalogName$.dbo.fn_CUST_JP_Danga('$areaCode$','$customerCode$')
+		 WHERE JC_JP_STATE &lt;&gt; '2'
+		 <isNotEmpty prepend="AND" property="itemCode"> JP_Code = '$itemCode$' </isNotEmpty>
+		 ORDER BY JP_Sort
+	 </select>
+	 
+     <select id="GASMAX.CustomerItem.SelectWeightLPG" resultClass="java.util.HashMap">
+		SELECT
+		        JP_Code AS itemCode
+		      , '' AS itemUnit
+		      , '0' AS capacity
+		      , JP_Name AS itemName
+		      , ISNULL(JP_Spec, '') AS itemSpec
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Danga_Code, 0),1),'.00','') AS priceType
+		      , CASE $saleType$
+		          WHEN 0 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Danga, 0),1),'.000000','')
+		          WHEN 1 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_OUTTONG, 0),1),'.00','')
+		        END AS salePrice
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_JAEGOCU, 0),1),'.00','') AS itemBalance
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_DC_Kum , 0),1),'.00','') AS discountAmount
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_LAST_QTY, 0),1),'.00','') AS lastSaleQuantity
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_LAST_MISU, 0),1),'.00','') AS lastUnpaidAmount
+		  FROM $catalogName$.dbo.fn_CUST_JP_Danga_LPG('$areaCode$','$customerCode$')
+		 WHERE 1=1
+		 <isNotEmpty prepend="AND" property="itemCode">  JP_Code = '$itemCode$' </isNotEmpty>
+		 ORDER BY JP_LAST_DATE DESC, JP_Sort            
+	</select>
+
+     <select id="GASMAX.CustomerItem.SelectWeightAllHPG" resultClass="java.util.HashMap">
+		SELECT 
+			  JP_Code AS itemCode
+			, JP_Name AS itemName
+			, ISNULL(JP_Spec, '') AS itemSpec
+			, JP_Unit AS itemUnit
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Kg, 0),1),'.00','') AS capacity
+			, CASE '$saleType$'
+			    WHEN '0' THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_OutDanga, 0),1),'.00','')
+			    WHEN '1' THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_OUTTONG, 0),1),'.00','')
+			  END AS salePrice
+			, '0' AS itemBalance
+			, '0' AS lastUnpaidAmount
+		FROM $catalogName$.dbo.SangPum
+		WHERE Area_Code = '$areaCode$'
+		<isNotEmpty prepend="AND" property="keyword"> ((JP_NAME + ' ' + ISNULL(JP_Spec, '') LIKE '%$keyword$%') OR (JP_Code = '$keyword$')) </isNotEmpty>
+		ORDER BY JP_Sort, JP_Code
+	</select>
+
+     <select id="GASMAX.CustomerItem.SelectWeightAllEquipmentHPG" resultClass="java.util.HashMap">
+		Select 
+			  BP_CODE AS itemCode
+			, BP_NAME AS itemName
+			, ISNULL(BP_TYPE, '') AS itemSpec
+			, BP_DANWI AS itemUnit
+			, '0' AS capacity
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(BP_OUTDANGA, 0),1),'.00','') AS salePrice
+			, '0' AS itemBalance
+		  FROM $catalogName$.dbo.BUPUM
+		 WHERE Area_Code = '$areaCode$'
+		 <isNotEmpty prepend="AND" property="keyword"> BP_NAME + ' ' + ISNULL(BP_TYPE, '') LIKE '%$keyword$%' </isNotEmpty>
+		 ORDER BY BP_CODE
+	</select>
+     
+     
+     <select id="GASMAX.CustomerItem.SelectWeightAllLPG" resultClass="java.util.HashMap">
+		SELECT
+		        JP_Code AS itemCode
+		      , '' AS itemUnit
+		      , '0' AS capacity
+		      , JP_Name AS itemName
+		      , ISNULL(JP_Spec, '') AS itemSpec
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Danga_Code, 0),1),'.00','') AS priceType
+		      , CASE $saleType$
+		          WHEN 0 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_Danga, 0),1),'.000000','')
+		          WHEN 1 THEN REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_OUTTONG, 0),1),'.00','')
+		        END AS salePrice
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_JAEGOCU, 0),1),'.00','') AS itemBalance
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_DC_Kum , 0),1),'.00','') AS discountAmount
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_LAST_QTY, 0),1),'.00','') AS lastSaleQuantity
+		      , REPLACE(CONVERT(VARCHAR(15), ISNULL(JP_LAST_MISU, 0),1),'.00','') AS lastUnpaidAmount
+		  FROM $catalogName$.dbo.fn_CUST_JP_Danga_LPG('$areaCode$','$customerCode$')
+		 WHERE 1=1
+		 <isNotEmpty prepend="AND" property="keyword"> ((JP_NAME + ' ' + ISNULL(JP_Spec, '') LIKE '%$keyword$%') OR (JP_Code = '$keyword$')) </isNotEmpty>
+		 ORDER BY JP_LAST_DATE DESC, JP_Sort            
+	</select>
+     
+</sqlMap>

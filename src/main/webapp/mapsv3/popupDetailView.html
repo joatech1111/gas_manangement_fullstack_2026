@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ko" class="smart">
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- BEGIN LAYOUT FIRST STYLES -->
+    <link href="//fonts.googleapis.com/css?family=Oswald:400,300,700" rel="stylesheet" type="text/css" />
+    <!-- END LAYOUT FIRST STYLES -->
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link href="./assets/global/plugins/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/global/plugins/simple-line-icons/2.3.2/css/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/global/plugins/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/global/plugins/bootstrap-switch/3.3.2/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <link href="./assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="./assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+    <link href="./assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+	<link href="./assets/layouts/layout3/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/layouts/layout3/css/themes/default.min.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="./assets/layouts/layout3/css/custom.css" rel="stylesheet" type="text/css" />
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="/favicon.ico" /> </head>
+<!-- END HEAD -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+<script src="./assets/js/jquery1.7-migration.js" type="text/javascript"></script>
+
+<style type="text/css">
+.portlet.portlet-popup {
+    padding: 0 !important;
+    background-color: #fff !important;
+}
+
+.portlet>.portlet-title-popup {
+    height: 56px;
+    background-color: #0c5e94;
+	margin-bottom: 0px !important;
+}
+
+.portlet>.portlet-title-popup>.caption {
+    float: none !important;
+    display: block !important;
+    padding: 19px 0 !important;
+    font-size: 18px;
+    line-height: 18px;
+    font-family: NanumGothic;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    color: #ffffff;
+}
+
+.tabbable-line>.tab-content {
+    padding: 15px 15px;
+}
+
+.tabbable-line>.nav-tabs>li.active>a {
+    font-weight: 800;
+}
+
+.tabbable-line>.nav-tabs>li.active {
+    background: 0 0;
+    border-bottom: 4px solid #0c5e94;
+    position: relative;
+}
+
+.tabbable-line > .nav-tabs > li.open, .tabbable-line > .nav-tabs > li:hover {
+    border-bottom: 4px solid #0c5e94;
+}
+
+.tabbable-line>.tab-content> .type1 {
+    border: solid 0.5px #e0e0e0;
+    padding:10px;
+    border-radius: 10px !important;
+}
+
+.account_lists_cell {
+    height:116px;
+    background-color: #fff;
+    list-style:none;
+    margin:0px;
+    padding:10px;
+    box-shadow: 0 0.5px 0 0 rgba(0, 0, 0, 0.05);
+    vertical-align:middle;
+}
+
+.account_info_cell {
+    padding-bottom:25px;
+}
+
+.account_info_cell .mark{
+    width: 55px;
+    height: 22px;
+    border-radius: 4px !important;
+    background-color: #f64a3a;
+}
+
+.account_info_cell .cell_title {
+    width:320px;
+    height:22px;
+}
+
+.account_info_cell .cell_mark {
+    float: left;
+    width: 38px;
+    height: 22px;
+    border-radius: 4px !important;
+    /*background-color: #f64a3a;*/
+    color: #fff;
+}
+.account_info_cell .cell_mark.lv1 {
+    background-color: #f54738 !important;
+}
+.account_info_cell .cell_mark.lv2 {
+    background-color: #f238da !important;
+}
+.account_info_cell .cell_mark.lv3 {
+    background-color: #92d050 !important;
+}
+.account_info_cell .cell_mark.lv4 {
+    background-color: #4a90e2 !important;
+}
+
+.account_info_cell .cell_mark span {
+    padding:5px 0 0 5px;
+    font-family: NanumGothic;
+    font-size: 14px;
+}
+.account_info_cell .account_name{
+  float:left;
+  width:150px;
+  height: 22px;
+  margin-top: 2px;
+  padding-left:5px;
+  font-family: NanumGothic;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #4a4a4a;
+  overflow:hidden;
+}
+
+.account_info_cell .tank_name {
+    float:left;
+    width: 108px;
+    height: 22px;
+    padding: 2px;
+    border-radius: 4px !important;
+    border: solid 0.5px #c5c5c5;
+    font-family: NanumGothic;
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    color: #9b9b9b;
+
+    position: absolute;
+    right: 28px;
+}
+
+.account_info_cell .regdate {
+  height: 20px;
+  margin-top:5px;
+  font-family: NanumGothic;
+  font-size: 14px;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  color: #4a4a4a;
+}
+
+.account_info_cell .address {
+  height: 20px;
+  margin-top:5px;
+  font-family: NanumGothic;
+  font-size: 14px;
+  overflow-x:hidden;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  color: #4a4a4a;
+}
+
+.tank_t{
+    margin-left:4px;
+    padding-top:4px;
+}
+
+.tank_i{
+    float:right;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: solid 0.5px #c5c5c5;
+}
+
+.tank_i_i{
+    width: 9px;
+    height: 8px;
+
+    margin-left: 3px;
+    padding-left: 9px;
+    font-size: 10px;
+    background-image: url(./assets/img/common/icon-small-code.png);
+}
+
+.gas_tank_img {
+  position: relative;
+  width: 92px;
+  height: 108px;
+  object-fit: contain;
+  background-image: url(./assets/img/common/img-tank.png);
+}
+
+.indicator-box {
+/*   width: 270px; */
+  height: 46px;
+  border-radius: 8px !important;;
+  background-color: #f74d3c;
+}
+
+.battery-box{
+/*   width: 270px; */
+  height: 46px;
+  margin-top:15px;
+  border-radius: 8px !important;;
+  background-color: #56c459;
+}
+
+.cell_level {
+    width: 100%;
+}
+
+.cell_level .indicator, .cell_level .battery {
+    padding: 9px 10px;
+    height:24px;
+    float:left;
+}
+
+.indicator {
+    width: 120px;
+}
+
+.battery {
+    width: 150px;
+}
+
+.indicator .indicator_i {
+    width: 28px;
+    height: 28px;
+    padding-left: 28px;
+    font-size: 20px;
+    background-image: url(./assets/img/common/icon-big-level.png);
+}
+
+.battery .battery_i {
+    width: 28px;
+    height: 28px;
+    padding-left: 28px;
+    font-size: 20px;
+    background-image: url(./assets/img/common/icon-big-battery.png);
+}
+
+.indicator .indicator_t, .battery .battery_t{
+    margin-top: 3px;
+/*     vertical-align: middle; */
+/*     margin-left:4px;     */
+    height: 16px;
+    font-family: NanumGothic;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-align: right;
+    color: #ffffff;
+    position: absolute;
+    right: 28px;
+/*     right: 48px; */
+}
+
+.state_t {
+	list-style: none;
+	position: absolute;
+	top: 9px;
+	left: 0px;
+}
+
+.indicator_t, .battery_t{
+    height: 16px;
+    font-family: NanumGothic;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-align: left;
+    color: #ffffff;
+}
+
+.cell_level_frame {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+/*게이지 배경*/
+.gague_box {
+    position: absolute;
+    vertical-align: bottom;
+    bottom: 13px;
+    width: 60px;
+    height: 90px;
+    left: 16px;
+    border-radius: 5px !important;;
+    /*background-color: #f74d3c;*/
+}
+
+/*게이지 텍스트*/
+.gague_level {
+    position: absolute;
+    vertical-align:top;
+    padding-top:45px;
+    width: 92px;
+    height: 108px;
+    font-family: NanumGothic;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: #4a4a4a;
+}
+
+.gague_level.reverse {
+    color: #fff;
+}
+
+.gague_box.lv1 {
+    height: 8px;
+    background-color: #f54738 !important;
+}
+
+.gague_box.lv2 {
+    height: 20px;
+    background-color: #f238da !important;
+}
+
+.gague_box.lv3 {
+    height: 40px;
+    background-color: #92d050 !important;
+}
+
+.gague_box.lv4 {
+    height: 60px;
+    background-color: #4a90e2 !important;
+}
+
+.table-light>thead>tr>th{
+   font-family: NanumGothic !important;
+   font-size: 14px !important;
+   font-weight: bold !important;
+   color: #4a4a4a !important;
+   vertical-align: middle !important;
+}
+   
+.table-light>thead>tr{
+	height: 46px;
+	background-color: #fbfbfb;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 12px !important;
+}
+
+.table-scrollable {
+    margin: 0px !important;
+    border-radius: 10px !important;
+}
+
+.portlet.light .portlet-body {
+    padding: 0;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #ddd !important;
+}
+
+.receiveHistory {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.receiveHistory td {
+	text-align: center;
+}
+
+.receiveHistory td + td,
+.receiveHistory th + th { border-left: 1px solid; }
+
+.receiveHistory tr + tr { border-top: 1px solid; }
+</style>
+
+<body class="" oncontextmenu="return false;">
+
+<div class="container-fluid">
+    <div class="page-content-popup">
+
+		<div class="portlet portlet-popup light">
+		    <div class="portlet-title portlet-title-popup clearfix">		    
+		        <div class="caption">
+		            <i class="icon-globe font-dark hide "></i>
+		            <span class="caption-subject font-white bold uppercase"><span id="customer_name"></span></span>
+		        </div>
+				<ul class="state_t">
+	            	<li class="indicator_t"></li>
+					<li class="battery_t"></li>
+				</ul>
+		    </div> 
+		    <div class="portlet-body tabbable-line">
+		    	<!-- 
+		    	<ul class="nav nav-tabs">
+					<li class="active">
+		                <a href="#tab_1_1" class="active" data-toggle="tab" id="level_info_view"> 수신정보 </a>
+		            </li>
+		            <li>
+		                <a href="#tab_1_2" data-toggle="tab" id="level_hist_view"> 수신이력 </a>
+		            </li>
+					<li >
+		                <a href="#tab_1_3" data-toggle="tab" id="tank_info_view"> 탱크정보 </a>
+		            </li>
+		            <li>
+		                <a href="#tab_1_4" data-toggle="tab" id="account_map_view"> 거래처정보 </a>
+		            </li>
+		        </ul>
+				-->
+		        <!--BEGIN TABS-->
+		        <div class="tab-content">
+<!--
+					<div class="tab-pane type1 active" id="tab_1_1"> 
+		                <div class="" style="height: 240px;" data-always-visible="1" data-rail-visible="0">
+		                    <ul class='account_lists_cell'>
+		                 	   <li class="account_info_cell clearfix">
+		                            <div class="cell_title">
+		                                <div class="cell_mark"><span></span></div>
+		                                <div class="account_name"></div>
+									</div>
+		                            <div class="regdate">
+		                            	<span title="address"></span>
+		                                <div class="address"></div>
+		                            </div>
+		                        </li>
+		                    </ul>
+		
+		
+		                    <div class="">
+		                        <div class="col-md-4 col-sm-4 col-xs-4 cell_level_frame">
+		                        	<div class="mt-img gas_tank_img">
+		                        		<div class="gague_box"></div>
+										<span class="gague_level"></span>
+									</div>
+		                        </div>
+		                        <div class="col-md-8 col-sm-8 col-xs-8 cell_level_frame">
+		                            <div class="cell_level">
+		                            	<div class="indicator-box">
+		                                	<div class="indicator"><span class="indicator_i"></span><span class="indicator_t">잔량 : -%</span></div>
+		                               	</div>
+		                               	<div class="battery-box">
+		                                	<div class="battery"><span class="battery_i"></span><span class="battery_t">배터리 : -%</span></div>
+		                               	</div>
+		                            </div>
+		
+		                        </div>
+		                     </div>
+		                </div>
+		            </div>
+		            <div class="tab-pane" id="tab_1_2">
+		            	<div style="float: right;margin-bottom:10px;">
+		            		<div class="btn-group btn-group-circle">
+		                        <button type="button" id="show-check-lists" class="btn btn-outline active blue btn-sm">목록보기</button>
+		                        <button type="button" id="show-check-chart" class="btn btn-outline blue btn-sm">그래프보기</button>
+		                     </div>
+		            	</div>
+		
+		            	<div class="table-scrollable" id="check_list_body">
+		                    <table class="table table-hover table-light">
+		                    	<colgroup>
+		                    		<col width="80%">
+		                    		<col width="20%">
+		                    	</colgroup>
+		                        <thead>
+		                            <tr class="uppercase">
+		                                <th>수신시간 </th>
+		                                <th>잔량 </th>
+		                            </tr>
+		                        </thead>
+		                        <tbody></tbody>
+							</table>
+		                </div>
+		                <div class="portlet-body hidden" id="check_chart_body">
+		                	<div class="col-md-11 margin-top-20" id="linecontainer" style="width: 600px; height: 300px; margin: 0 auto"></div>
+		                </div>
+		            </div>
+		
+		            <div class="tab-pane " id="tab_1_3">
+		            	<div class="table-scrollable" id="tank_into_table">
+		                    <table class="table table-hover table-light">
+		                    	<colgroup>
+		                    		<col width="25%">
+		                    		<col width="75%">
+		                    	</colgroup>
+		                        <tbody></tbody>
+		                    </table>
+		                </div>
+		            </div>
+		            
+		            <div class="tab-pane" id="tab_1_4">
+		                <div class="table-scrollable" id="location_into_table">
+		                    <table class="table table-hover table-light">
+		                    	<colgroup>
+		                    		<col width="30%">
+		                    		<col width="70%">
+		                    	</colgroup>
+		                        <tbody>
+		                        <tr>
+		                            <td colspan="2">
+		                                <div class="form-group hide" id="map_form">
+		                                    <div id="map_canvas" style="width:592px;height:148px;border:1px solid #cccccc;margin-top:3px;"></div>
+		                                </div>
+		                            </td>
+		                        </tr>
+		                        </tbody>
+		                	</table>
+		                </div>
+		
+		            </div>
+-->
+					<div class="tab-pane typ1 active" id="tab_1_4">
+		                <div class="table-scrollable" id="location_into_table">
+		                    <table class="table table-hover table-light">
+		                    	<colgroup>
+		                    		<col width="20%">
+		                    		<col width="80%">
+		                    	</colgroup>
+		                        <tbody>
+		                        </tbody>
+		                	</table>
+		                </div>
+		            </div>
+		        </div>
+		        <!--END TABS-->
+		    </div>
+		</div>
+
+<script type="text/javascript">
+$(function () {
+	/*
+	$('#check_list_body').slimScroll({
+		width: '100%',
+	    height: '300px',
+	});
+	$('#location_into_table').slimScroll({
+		width: '100%',
+	    height: '390px',
+	});
+	$('#tank_info_table').slimScroll({
+		width: '100%',
+	    height: '390px',
+	});
+	*/
+	/*
+	$('#level_hist_view').on('click',function(){
+		if($('#show-check-chart').hasClass('active')) {
+			$('#show-check-lists').trigger('click');
+		}
+	});
+	
+	$('#show-check-lists').on('click', function(){
+		$('#show-check-lists').addClass('active');
+		$('#show-check-chart').removeClass('active');
+
+		$('#check_list_body').removeClass('hidden');
+		$('#check_chart_body').addClass('hidden');
+
+		$('.slimScrollDiv').removeClass('hidden');
+	});
+
+	$('#show-check-chart').on('click', function(){
+		$('#show-check-chart').addClass('active');
+		$('#show-check-lists').removeClass('active');
+
+		$('#check_list_body').addClass('hidden');
+		$('#check_chart_body').removeClass('hidden');
+
+		$('.slimScrollDiv').addClass('hidden');
+	});
+	
+	var showLocationMap = function(flag_show_map){		
+		var lat = Number($("#p_latitude").val());
+		var lng = Number($("#p_longitude").val());
+		
+		if(flag_show_map == '1')
+		{
+    		$('#map_form').removeClass('hide');
+		}
+
+		if (naver.maps) {
+			var latlng = new naver.maps.LatLng(lat, lng);
+			
+			var myOptions = {
+				      zoom : 11,
+				      center : latlng
+				};
+
+			var map = new naver.maps.Map("map_canvas", myOptions);
+
+			new naver.maps.Marker({
+				position : latlng,
+				map : map
+			});
+		}
+	};
+	*/
+});
+</script>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="./assets/global/plugins/jquery.bpopup-0.11.0.min.js"></script>
+<script src="./assets/global/plugins/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="./assets/global/plugins/js.cookie-2.1.3.min.js" type="text/javascript"></script>
+<script src="./assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+<script src="./assets/global/plugins/jquery-slimscroll/1.3.8/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="./assets/global/plugins/jquery.blockUI-2.70.0.min.js" type="text/javascript"></script>
+<script src="./assets/global/plugins/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="./assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+</body>
+
+</html>

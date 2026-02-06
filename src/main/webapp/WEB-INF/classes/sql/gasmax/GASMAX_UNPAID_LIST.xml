@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.UnpaidList.Select" resultClass="java.util.HashMap">
+			SELECT
+			      AREA_CODE AS areaCode
+			    , CU_CODE AS customerCode
+			    , MISU_GUBUN AS unpaidTypeName
+			    , CU_NAME_VIEW AS customerName
+			    , CU_ADDR1 AS address1
+			    , CU_ADDR2 AS address2
+			    , CU_SW_CODE AS employeeCode
+			    , ISNULL(SW_NAME, '') AS employeeName
+			    , CU_TEL AS phoneNumber
+			    , CU_HP AS mobileNumber
+			    , REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_JMISU, 0), 1),'.00','') AS weightUnpaid
+			    , REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_CMISU, 0), 1),'.00','') AS volumeUnpaid
+			    , CU_SUKUMTYPE AS collectTypeCode
+			    , SU_NAME AS collectTypeName
+			FROM $catalogName$.dbo.FN_MISU_LIST('$areaCode$', '$employeeCode$', '$collectTypeCode$', '$keyword$')
+			WHERE 1=1
+			<isNotEmpty prepend="AND" property="weightUnpaidType"> CU_Jmisu &lt;&gt; 0 </isNotEmpty>
+			<isNotEmpty prepend="AND" property="volumeUnpaidType"> CU_Cmisu &lt;&gt; 0 </isNotEmpty>
+			<isNotEmpty prepend="AND" property="noEmployee"> SW_NAME IS NULL </isNotEmpty>
+			ORDER BY CU_NAME_VIEW
+	</select>
+	
+</sqlMap>

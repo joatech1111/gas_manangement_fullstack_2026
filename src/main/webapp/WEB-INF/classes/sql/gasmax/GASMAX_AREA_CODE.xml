@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.AreaCode.Select" resultClass="java.util.HashMap">
+		SELECT
+			      AREA_CODE   AS code
+                , AREA_NAME   AS name
+			    , JN_SSNO     AS registerNumber
+                , JN_SAJANG   AS ownerName
+                , JN_ADDR1    AS address1
+                , JN_ADDR2    AS address2
+                , JN_ZIPCODE  AS postalCode
+                , JN_UPTAE    AS businessCondition
+                , JN_JONGMOK  AS businessType
+                , JN_TEL1     AS phoneNumber1
+                , JN_TEL2     AS phoneNumber2
+                , JN_FAX      AS faxNumber
+                , JN_ANNAME1  AS adminName
+                , JN_ANTEL1   AS adminPhoneNumber
+                , JN_ANNAME2  AS responsibilityName
+                , JN_ANTEL2   AS responsibilityPhoneNumber
+                , JN_CHEKUM   AS calculationMethodType
+                , 'N'         AS useJoabillTaxInvoiceYesNo
+		FROM
+		          $catalogName$.dbo.JNOTRY
+		WHERE 1=1
+		ORDER BY AREA_CODE
+	</select>
+    
+</sqlMap>
