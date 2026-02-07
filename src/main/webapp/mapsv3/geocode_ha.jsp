@@ -33,6 +33,10 @@ page import="java.net.URL" %><%
 			//URL url = new URL("https://openapi.naver.com/v1/map/geocode?query=" + newQuery);
 			URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(newQuery, "UTF-8"));
 			
+			// TLS 1.2 사용을 위한 설정
+			System.setProperty("https.protocols", "TLSv1.2");
+			System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
+			
 			HttpURLConnection con = (HttpURLConnection)url.openConnection();
 			
 			con.setRequestMethod("GET");

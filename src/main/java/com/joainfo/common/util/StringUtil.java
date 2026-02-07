@@ -1,6 +1,6 @@
 package com.joainfo.common.util;
 
-import sun.misc.BASE64Decoder;
+import java.util.Base64;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -348,8 +348,8 @@ public class StringUtil {
 	public static String decodeBase64(String encode) {
 		if (encode != null && !encode.isEmpty()) {
 			try {
-				BASE64Decoder decoder = new BASE64Decoder();
-				return new String(decoder.decodeBuffer(encode));
+				byte[] decodedBytes = Base64.getDecoder().decode(encode);
+				return new String(decodedBytes, "UTF-8");
 			} catch(Exception ex) {
 				// Nothing
 			}

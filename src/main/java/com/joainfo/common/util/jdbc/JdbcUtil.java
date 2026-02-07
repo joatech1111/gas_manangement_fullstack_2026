@@ -4,14 +4,21 @@ import com.ibatis.common.resources.Resources;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JdbcUtil {
     /**
@@ -33,7 +40,7 @@ public class JdbcUtil {
      */
     public static final String DEFAULT_SQL_CONFIG = "default_gasmax_app";
     //public static final String DEFAULT_SQL_CONFIG_PATH = "C:/gasmax_db_config";
-    public static final String DEFAULT_SQL_CONFIG_PATH = "./gasmax_db_config";
+    public static final String DEFAULT_SQL_CONFIG_PATH = "/usr/local/tomcat/gasmax_db_config";
     public static String sqlConfigPath = "";
 
     /**
@@ -125,15 +132,108 @@ public class JdbcUtil {
      * @throws JdbcIOException
      */
     private SqlMapClient getSqlMap(String serverIp) throws JdbcIOException {
-        Reader reader;
         try {
-//			reader = Resources.getResourceAsReader("file:///C:/sql/" + serverIp + ".xml");
-            reader = Resources.getUrlAsReader("file:///" + getSQLConfigPath() + "/" + serverIp + ".xml");
+            Reader reader = openSqlMapConfigReader(serverIp);
+            return SqlMapClientBuilder.buildSqlMapClient(reader);
         } catch (IOException e) {
             e.printStackTrace();
             throw new JdbcIOException(e.getMessage() + "\n JDBC Connection Error.");
         }
-        return SqlMapClientBuilder.buildSqlMapClient(reader);
+    }
+
+    private static final Pattern XML_ENCODING_PATTERN =
+            Pattern.compile("encoding\\s*=\\s*['\\\"]([^'\\\"]+)['\\\"]", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * iBatis 2 는 Reader 기반으로 XML을 파싱하는데, Reader 를 만들 때 OS/JVM 기본 charset 을 타면
+     * UTF-8 BOM, UTF-16 파일, 혹은 file.encoding 불일치로 "Content is not allowed in prolog" 가 발생할 수 있다.
+     *
+     * - URL 에서 바이트로 읽는다
+     * - BOM 제거
+     * - XML 선언의 encoding 값을 우선 적용 (없으면 UTF-8)
+     * - StringReader 로 넘겨서 파서가 깨지지 않게 한다
+     */
+    private Reader openSqlMapConfigReader(String serverIp) throws IOException {
+        String urlString = "file:///" + getSQLConfigPath() + "/" + serverIp + ".xml";
+        URL url = new URL(urlString);
+
+        byte[] bytes;
+        try (InputStream is = url.openStream()) {
+            bytes = readFully(is);
+        }
+
+        if (bytes == null) {
+            throw new IOException("SQLMapConfig is null: " + urlString);
+        }
+
+        Charset charset = detectXmlCharset(bytes);
+        bytes = stripBom(bytes);
+        String xml = new String(bytes, charset);
+        return new StringReader(xml);
+    }
+
+    private static byte[] readFully(InputStream is) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buf = new byte[8192];
+        int n;
+        while ((n = is.read(buf)) >= 0) {
+            bos.write(buf, 0, n);
+        }
+        return bos.toByteArray();
+    }
+
+    private static Charset detectXmlCharset(byte[] bytes) {
+        if (bytes.length >= 2) {
+            // UTF-16 BOM
+            if ((bytes[0] == (byte) 0xFE) && (bytes[1] == (byte) 0xFF)) return StandardCharsets.UTF_16BE;
+            if ((bytes[0] == (byte) 0xFF) && (bytes[1] == (byte) 0xFE)) return StandardCharsets.UTF_16LE;
+        }
+        if (bytes.length >= 3) {
+            // UTF-8 BOM
+            if ((bytes[0] == (byte) 0xEF) && (bytes[1] == (byte) 0xBB) && (bytes[2] == (byte) 0xBF)) {
+                return StandardCharsets.UTF_8;
+            }
+        }
+
+        // Read a small ASCII-safe prefix to find encoding="..."
+        int len = Math.min(bytes.length, 256);
+        String prefix = new String(bytes, 0, len, StandardCharsets.ISO_8859_1);
+        Matcher m = XML_ENCODING_PATTERN.matcher(prefix);
+        if (m.find()) {
+            String enc = m.group(1);
+            try {
+                return Charset.forName(enc);
+            } catch (Exception ignore) {
+                // fall through
+            }
+        }
+        return StandardCharsets.UTF_8;
+    }
+
+    private static byte[] stripBom(byte[] bytes) {
+        if (bytes.length >= 3
+                && (bytes[0] == (byte) 0xEF)
+                && (bytes[1] == (byte) 0xBB)
+                && (bytes[2] == (byte) 0xBF)) {
+            byte[] out = new byte[bytes.length - 3];
+            System.arraycopy(bytes, 3, out, 0, out.length);
+            return out;
+        }
+        if (bytes.length >= 2
+                && (bytes[0] == (byte) 0xFE)
+                && (bytes[1] == (byte) 0xFF)) {
+            byte[] out = new byte[bytes.length - 2];
+            System.arraycopy(bytes, 2, out, 0, out.length);
+            return out;
+        }
+        if (bytes.length >= 2
+                && (bytes[0] == (byte) 0xFF)
+                && (bytes[1] == (byte) 0xFE)) {
+            byte[] out = new byte[bytes.length - 2];
+            System.arraycopy(bytes, 2, out, 0, out.length);
+            return out;
+        }
+        return bytes;
     }
 
     /**
