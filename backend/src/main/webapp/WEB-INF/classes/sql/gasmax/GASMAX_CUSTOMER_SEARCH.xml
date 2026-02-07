@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CustomerSearch.Select" resultClass="java.util.HashMap">
+         <![CDATA[
+			SELECT
+				  ISNULL(AREA_CODE, '')           AS areaCode
+				, ISNULL(CU_CODE, '')             AS customerCode
+				, ISNULL(CU_Type, '')             AS customerType
+				, ISNULL(CU_Type_Name, '')        AS customerTypeName
+				, ISNULL(CU_STae, '')             AS customerStatusCode
+				, ISNULL(CU_STae_Name, '')        AS customerStatusName
+				, ISNULL(CU_Name_View, '')        AS customerName
+				, ISNULL(CU_NAME, '')             AS buildingName
+				, ISNULL(CU_USERNAME, '')         AS userName
+				, ISNULL(CU_TEL, '')              AS phoneNumber
+				, ISNULL(CU_HP, '')               AS mobileNumber
+				, ISNULL(CU_TEL2, '')             AS phoneNumber2
+				, ISNULL(CU_TELFIND, '')          AS phoneNumberFind
+				, ISNULL(CU_HPFIND, '')           AS mobileNumberFind
+				, ISNULL(CU_TELFIND2, '')         AS phoneNumberFind2
+				, ISNULL(CU_ADDR1, '')            AS address1
+				, ISNULL(CU_ADDR2, '')            AS address2
+				, ISNULL(CU_Bigo1, '')            AS remark1
+				, ISNULL(CU_Bigo2, '')            AS remark2
+				, ISNULL(CU_SW_CODE, '')          AS employeeCode
+				, ISNULL(SW_NAME, '')             AS employeeName
+				, ISNULL(CU_CUTYPE, '')           AS consumeTypeCode
+				, ISNULL(CU_CUTYPE_Name, '')      AS consumerTypeName
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_SV_KumAck, 0)), '.00','')   AS freeInstallationFee
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_TONGKUM, 0)), '.00','')     AS containerDeposit
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_JMisu, 0)), '.00','')       AS weightReceivable
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_CMisu, 0)), '.00','')       AS volumeReceivable
+				, ISNULL(CU_MEMO, '')             AS memo
+				, ISNULL(CU_VAT_KIND, '')         AS vatType
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_JDC, 0)), '.00','')         AS weightPriceType
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_JDC_PER, 0)), '.00','')     AS salePriceDiscountRate
+				, ISNULL(CU_SekumYN, '')          AS issueTaxbillYesNo
+				, ISNULL(CU_NO_TYPE, '')          AS registerNumberType
+				, ISNULL(CU_NO, '')               AS registerNumber
+				, ISNULL(CU_SANGHO, '')           AS registerName
+				, ISNULL(CU_SAJANG, '')           AS registerOwner
+				, ISNULL(CU_SADDR1, '')           AS registerAddress1
+				, ISNULL(CU_SADDR2, '')           AS registerAddress2
+				, ISNULL(CU_UPTAE, '')            AS businessCondition
+				, ISNULL(CU_JONGMOK, '')          AS businessType
+				, ISNULL(CU_SE_Sawon, '')         AS contactName
+				, ISNULL(CU_Department, '')       AS contactDepartment
+				, ISNULL(CU_SE_Email, '')         AS contactEmail
+				, ISNULL(CU_SE_SMS_No, '')        AS contactPhoneNumber
+				, ISNULL(CU_SE_FAX_No, '')        AS contactFaxNumber
+				, ISNULL(CU_RH2O, '')             AS regulatorPressure
+				, ISNULL(CU_RDANGA_TYPE, '')      AS priceType
+				, ISNULL(CU_TYPE_Danga, '')       AS applyPrice
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Basic_Danga, 0)), '.00','')      AS environmentPrice
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_User_Danga, 0)), '.00','')       AS individualPrice
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_DC_Danga, 0)), '.000','')         AS discountPrice
+				, ISNULL(CU_RDANGA_SIGN, '')         AS priceMode       
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_RDANGA_AMT, 0)), '.00','')       AS discountAmount
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_Per, 0)), '.00','')              AS defaultRate
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_CDC, 0)), '.00','')              AS discountRate
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_AnKum, 0)), '.00','')            AS maintenanceFee
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_SisulKum, 0)), '.00','')         AS installationFee
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_MeterKum, 0)), '.00','')         AS gaugeReplacementFee
+				, ISNULL(CU_SukumType, '')        AS paymentType
+				, ISNULL(CU_SukumType_Name, '')   AS paymentTypeName
+				, ISNULL(CU_CNo, '')              AS serialNumber
+				, ISNULL(CU_GumDate, '')          AS readMeterDay
+				, ISNULL(CU_GongNo, '')           AS contractNumber
+				, ISNULL(CU_GongDate, '')         AS contractDate
+				, ISNULL(CU_HDate, '')            AS latestSaftyCheckDate
+				, ISNULL(CU_GongName, '')         AS contractName
+				, ISNULL(CU_JuminNO, '')          AS contracterResidentNumber
+				, ISNULL(CU_UserTong, '')         AS containerOwnerType
+				, ISNULL(CU_UserSisul, '')        AS facilityOwnerType
+				, ISNULL(CU_SisulYN, '')          AS facilityOkYesNo
+				, ISNULL(CU_Rtype, '')            AS switcherCapacity
+				, ISNULL(CU_GiWha, '')            AS vaporizerCapacity
+				, ISNULL(CU_M3, '')               AS gaugeVolume
+				, ISNULL(CU_P, '')                AS fuseCockQuantity
+				, ISNULL(CU_H, '')                AS hoseLength
+				, ISNULL(CU_V_VEa, '')            AS valve
+				, ISNULL(CU_G1A_G1M, '')          AS supplyPipe1
+				, ISNULL(CU_G2A_G2M, '')          AS supplyPipe2
+			FROM 
+				$catalogName$.dbo.fn_CUST_FIND( 
+					  '$areaCode$'
+					, '$customerCode$'
+					, '$keyword$'
+					, '$customerSearchType$'
+					, '$employeeCode$'
+					, '$grantCode$'
+				)
+			ORDER BY CU_Name_View
+		]]>
+	</select>
+	
+	<parameterMap id="GASMAX.CustomerSearch.Insert.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerType"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerName"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="userName"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="phoneNumber"         javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="phoneNumberFind"     javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="mobileNumber"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="mobileNumberFind"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="address1"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="address2"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="remark1"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="remark2"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="employeeCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="employeeName"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="consumeTypeCode"     javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="appUserMobileNumber" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="outputCustomerCode"  javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	    <parameter property="outputMessage"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+     
+	<resultMap id="GASMAX.CustomerSearch.Insert.ReturnValue" class="java.util.HashMap">
+		<result property="outputCustomerCode" column="@po_CU_CODE" jdbcType="VARCHAR"/>
+		<result property="outputMessage" column="@po_TRAN_INFO" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CustomerSearch.Insert" resultMap="GASMAX.CustomerSearch.Insert.ReturnValue" parameterMap="GASMAX.CustomerSearch.Insert.ParameterValue">
+	  <![CDATA[
+	  {
+		   CALL $catalogName$.dbo.sp_CUST_EDIT (
+				'I',
+				?,
+				'',
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				? 
+			)
+		}
+	   ]]>
+	 </procedure>
+	
+     <procedure id="GASMAX.CustomerSearch.Update" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+	  <![CDATA[
+		   EXECUTE $catalogName$.dbo.sp_CUST_EDIT 
+				@pi_DIV = 'U',
+				@pi_AREA_CODE = '$areaCode$',
+				@pi_CU_CODE = '$customerCode$',
+				@pi_CU_Type = '$customerType$',
+				@pi_CU_NAME = '$customerName$',
+				@pi_CU_USERNAME = '$userName$',
+				@pi_CU_TEL = '$phoneNumber$',
+				@pi_CU_TELFIND = '$phoneNumberFind$',
+				@pi_CU_HP = '$mobileNumber$',
+				@pi_CU_HPFIND = '$mobileNumberFind$',
+				@pi_CU_ADDR1 = '$address1$',
+				@pi_CU_ADDR2 = '$address2$',
+				@pi_CU_Bigo1 = '$remark1$',
+				@pi_CU_Bigo2 = '$remark2$',
+				@pi_CU_SW_CODE = '$employeeCode$',
+				@pi_CU_SW_NAME = '$employeeName$',
+				@pi_CU_CUTYPE = '$consumeTypeCode$',
+				@pi_APP_User = '$appUserMobileNumber$'
+	   ]]>
+	 </procedure>
+</sqlMap>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CustomerWeightCollect.Select" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE   AS areaCode
+			, CU_CODE     AS customerCode
+			, TR_GU       AS typeCode
+			, TR_Date     AS collectDate
+			, TR_Sno      AS sequenceNumber
+			, JP_CODE     AS itemCode
+			, JP_Name     AS itemName
+			, REPLACE(CAST(ISNULL(PJ_QTY,0) AS CHAR(15))  ,'.00','')           AS saleQuantity
+			, REPLACE(CAST(ISNULL(PJ_REQTY,0) AS CHAR(15))  ,'.00','')         AS withdrawQuantity
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(PJ_QTY, 0),1),'.00','')      AS saleQuantityOld
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(PJ_REQTY, 0),1),'.00','')    AS withdrawQuantityOld
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_Danga, 0),1),'.00','')    AS price
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_Sup, 0),1),'.00','')      AS amount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_Vat, 0),1),'.00','')      AS tax
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_KUM, 0),1),'.00','')      AS totalAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_IN, 0),1),'.00','')       AS collectAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_DC, 0),1),'.00','')       AS discountAmount
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(TR_MISU, 0),1),'.00','')     AS unpaidAmount
+			, SW_CODE     AS employeeCode
+			, SW_Name     AS employeeName
+			, TR_NAME     AS remark
+			, TR_InKumType   AS collectType
+			, PJ_TS_SNO   AS equipmentInOutSequenceNumber
+			, PJ_PAP_NO   AS unpaidSequenceNumber
+		FROM $catalogName$.dbo.fn_BOOK_JR_LIST('$areaCode$','$customerCode$','$startDate$','$endDate$')
+		WHERE 1=1
+		ORDER BY TR_Date, TR_GU, TR_Sno 
+	</select>
+	
+	<select id="GASMAX.CustomerWeightCollect.SelectCarriedOverAmount" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE   AS areaCode
+			, CU_CODE     AS customerCode
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(CU_JMisu_Date, 0),1),'.00','')      AS carriedOverAmount
+		FROM $catalogName$.dbo.fn_BOOK_DATE_JMISU('$areaCode$','$customerCode$','$startDate$')
+		WHERE 1=1
+	</select>
+	
+	<parameterMap id="GASMAX.CustomerCollect.Delete.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="collectType"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="collectDate"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="sequenceNumber"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="transactionDate"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="userId"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="outputMessage"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+     
+	<resultMap id="GASMAX.CustomerCollect.Delete.ReturnValue" class="java.util.HashMap">
+		<result property="outputMessage" column="@po_ERROR_CODE" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CustomerCollect.Delete" resultMap="GASMAX.CustomerCollect.Delete.ReturnValue" parameterMap="GASMAX.CustomerCollect.Delete.ParameterValue">
+	  <![CDATA[
+		   execute $catalogName$.dbo.sp_SUKUM 
+				@pi_AREA_CODE      =?,
+				@pi_CU_CODE        =?,
+				@pi_SU_Gubun       =?,
+				@pi_SU_DIV         ='D',
+				@pi_SU_DATE        =?,
+				@pi_SU_SNO         =?,
+				@pi_SU_Date_Time         =?,
+				@pi_SU_APP_User          =?,
+				@po_ERROR_CODE     =?
+			
+	   ]]>
+	 </procedure>
+</sqlMap>

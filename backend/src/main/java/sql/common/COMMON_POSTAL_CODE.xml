@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="COMMON.PostalCode.Select" resultClass="java.util.HashMap">
+		SELECT
+		      ZIP_CD    AS postalCode
+		    , LTRIM(STR(ZIP_SNO)) AS sequenceNumber
+		    , SIDO      AS city
+		    , GUGUN     AS state
+		    , DONG      AS town
+		    , ZIP_ADDR  AS address
+		    , DDD       AS dialAreaCode
+		FROM
+		    $catalogName$.dbo.ZIPCODE
+		WHERE 1=1
+		ORDER BY ZIP_CD
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+     
+     <select id="GASMAX.CustomerSaftyCheck.Select" resultClass="java.util.HashMap">
+		SELECT
+			  Area_Code         AS areaCode
+			, ANZ_Cu_Code       AS customerCode
+			, ANZ_Sno           AS sequenceNumber
+			, ANZ_GongDate      AS contractDate
+			, ANZ_Date          AS scheduledCheckDate
+			, ANZ_SW_Code       AS employeeCode
+			, ANZ_SW_Name       AS employeeName
+			, ANZ_CustName      AS contractName
+			, ANZ_Tel           AS phoneNumber
+			, ANZ_A_01          AS pipeLength1
+			, ANZ_A_02          AS pipeLength2
+			, ANZ_A_03          AS pipeLength3
+			, ANZ_A_04          AS pipeLength4
+			, ANZ_A_05          AS pipeLength5
+			, ANZ_B_01          AS valveQuantity1
+			, ANZ_B_02          AS valveQuantity2
+			, ANZ_B_03          AS valveQuantity3
+			, ANZ_B_04          AS valveQuantity4
+			, ANZ_B_05          AS valveQuantity5
+			, ANZ_C_01          AS etcEquipmentName1
+			, ANZ_C_02          AS etcEquipmentQuantity1
+			, ANZ_C_03          AS etcEquipmentName2
+			, ANZ_C_04          AS etcEquipmentQuantity2
+			, ANZ_C_05          AS etcEquipmentName3
+			, ANZ_C_06          AS etcEquipmentQuantity3
+			, ANZ_C_07          AS etcEquipmentName4
+			, ANZ_C_08          AS etcEquipmentQuantity4
+			, ANZ_D_01          AS combustorRange1
+			, ANZ_D_02          AS combustorRange2
+			, ANZ_D_03          AS combustorRange3
+			, ANZ_D_04          AS combustorRangeEtcName
+			, ANZ_D_05          AS combustorRangeEtcQuantity
+			, ANZ_E_01          AS combustorBoilerType
+			, ANZ_E_02          AS combustorBoilerPosition
+			, ANZ_E_03          AS combustorBoilerConsumption
+			, ANZ_E_04          AS combustorBoilerInstaller
+			, ANZ_F_01          AS combustorHeaterType
+			, ANZ_F_02          AS combustorHeaterPosition
+			, ANZ_F_03          AS combustorHeaterConsumption
+			, ANZ_F_04          AS combustorHeaterInstaller
+			, ANZ_G_01          AS combustorEtcName1
+			, ANZ_G_02          AS combustorEtcQuantity1
+			, ANZ_G_03          AS combustorEtcName2
+			, ANZ_G_04          AS combustorEtcQuantity2
+			, ANZ_G_05          AS combustorEtcName3
+			, ANZ_G_06          AS combustorEtcQuantity3
+			, ANZ_G_07          AS combustorEtcName4
+			, ANZ_G_08          AS combustorEtcQuantity4
+			, ANZ_Ga            AS acceptable1
+			, ANZ_Na            AS acceptable2
+			, ANZ_Da            AS acceptable3
+			, ANZ_Ra            AS acceptable4
+			, ANZ_Ma            AS acceptable5
+			, ANZ_Ba            AS acceptable6
+			, ANZ_Sa            AS acceptable7
+			, ANZ_AA            AS acceptable8
+			, ANZ_Ja            AS acceptable9
+			, ANZ_Cha           AS acceptable10
+			, ANZ_Car           AS acceptable11
+			, ANZ_Gae_01        AS notifyRemark1
+			, ANZ_Gae_02        AS notifyRemark2
+			, ANZ_Gae_03        AS recommendation1
+			, ANZ_Gae_04        AS recommendation2
+			, ANZ_Folder        AS signatureFilePath
+			, ANZ_FileName      AS signatureFileName
+			, ANZ_App_User       AS userId
+			, ANZ_Date_Time     AS modifyDate
+		FROM
+		    $catalogName$.dbo.ANSobi
+		WHERE 1=1
+		AND Area_Code = '$areaCode$'
+		AND ANZ_Cu_Code = '$customerCode$'
+		<isNotEmpty prepend="AND" property="sequenceNumber"> ANZ_Sno = '$sequenceNumber$' </isNotEmpty>
+		Order BY ANZ_Date Desc, ANZ_Sno Desc
+	</select>
+
+	<select id="GASMAX.CustomerSaftyCheck.Select.Rev2" resultClass="java.util.HashMap">
+		SELECT
+			  ANZ.Area_Code         AS areaCode
+			, ANZ.ANZ_Cu_Code       AS customerCode
+			, ANZ.ANZ_Sno           AS sequenceNumber
+			, ANZ.ANZ_GongDate      AS contractDate
+			, ANZ.ANZ_Date          AS scheduledCheckDate
+			, ANZ.ANZ_SW_Code       AS employeeCode
+			, ANZ.ANZ_SW_Name       AS employeeName
+			, ANZ.ANZ_CustName      AS contractName
+			, ANZ.ANZ_Tel           AS phoneNumber
+			, ANZ.ANZ_A_01          AS pipeLength1
+			, ANZ.ANZ_A_02          AS pipeLength2
+			, ANZ.ANZ_A_03          AS pipeLength3
+			, ANZ.ANZ_A_04          AS pipeLength4
+			, ANZ.ANZ_A_05          AS pipeLength5
+			, ANZ.ANZ_B_01          AS valveQuantity1
+			, ANZ.ANZ_B_02          AS valveQuantity2
+			, ANZ.ANZ_B_03          AS valveQuantity3
+			, ANZ.ANZ_B_04          AS valveQuantity4
+			, ANZ.ANZ_B_05          AS valveQuantity5
+			, ANZ.ANZ_C_01          AS etcEquipmentName1
+			, ANZ.ANZ_C_02          AS etcEquipmentQuantity1
+			, ANZ.ANZ_C_03          AS etcEquipmentName2
+			, ANZ.ANZ_C_04          AS etcEquipmentQuantity2
+			, ANZ.ANZ_C_05          AS etcEquipmentName3
+			, ANZ.ANZ_C_06          AS etcEquipmentQuantity3
+			, ANZ.ANZ_C_07          AS etcEquipmentName4
+			, ANZ.ANZ_C_08          AS etcEquipmentQuantity4
+			, ANZ.ANZ_D_01          AS combustorRange1
+			, ANZ.ANZ_D_02          AS combustorRange2
+			, ANZ.ANZ_D_03          AS combustorRange3
+			, ANZ.ANZ_D_04          AS combustorRangeEtcName
+			, ANZ.ANZ_D_05          AS combustorRangeEtcQuantity
+			, ANZ.ANZ_E_01          AS combustorBoilerType
+			, ANZ.ANZ_E_02          AS combustorBoilerPosition
+			, ANZ.ANZ_E_03          AS combustorBoilerConsumption
+			, ANZ.ANZ_E_04          AS combustorBoilerInstaller
+			, ANZ.ANZ_F_01          AS combustorHeaterType
+			, ANZ.ANZ_F_02          AS combustorHeaterPosition
+			, ANZ.ANZ_F_03          AS combustorHeaterConsumption
+			, ANZ.ANZ_F_04          AS combustorHeaterInstaller
+			, ANZ.ANZ_G_01          AS combustorEtcName1
+			, ANZ.ANZ_G_02          AS combustorEtcQuantity1
+			, ANZ.ANZ_G_03          AS combustorEtcName2
+			, ANZ.ANZ_G_04          AS combustorEtcQuantity2
+			, ANZ.ANZ_G_05          AS combustorEtcName3
+			, ANZ.ANZ_G_06          AS combustorEtcQuantity3
+			, ANZ.ANZ_G_07          AS combustorEtcName4
+			, ANZ.ANZ_G_08          AS combustorEtcQuantity4
+			, ANZ.ANZ_Ga            AS acceptable1
+			, ANZ.ANZ_Na            AS acceptable2
+			, ANZ.ANZ_Da            AS acceptable3
+			, ANZ.ANZ_Ra            AS acceptable4
+			, ANZ.ANZ_Ma            AS acceptable5
+			, ANZ.ANZ_Ba            AS acceptable6
+			, ANZ.ANZ_Sa            AS acceptable7
+			, ANZ.ANZ_AA            AS acceptable8
+			, ANZ.ANZ_Ja            AS acceptable9
+			, ANZ.ANZ_Cha           AS acceptable10
+			, ANZ.ANZ_Car           AS acceptable11
+			, ANZ.ANZ_Gae_01        AS notifyRemark1
+			, ANZ.ANZ_Gae_02        AS notifyRemark2
+			, ANZ.ANZ_Gae_03        AS recommendation1
+			, ANZ.ANZ_Gae_04        AS recommendation2
+			, ANZ.ANZ_Folder        AS signatureFilePath
+			, ANZ.ANZ_FileName      AS signatureFileName
+			, ISNULL(ANZ_S.ANZ_Sign, '') AS signatureImage
+			, ANZ.ANZ_App_User      AS userId
+			, ANZ.ANZ_Date_Time     AS modifyDate
+		FROM
+		    $catalogName$.dbo.ANSobi ANZ 
+		    	LEFT OUTER JOIN ANSobi_Sign ANZ_S ON 
+						ANZ.Area_Code = ANZ_S.Area_Code
+					AND ANZ.ANZ_Cu_Code = ANZ_S.ANZ_Cu_Code
+					AND ANZ.ANZ_Sno = ANZ_S.ANZ_Sno
+		WHERE 1=1
+		AND ANZ.Area_Code = '$areaCode$'
+		AND ANZ.ANZ_Cu_Code = '$customerCode$'
+		<isNotEmpty prepend="AND" property="sequenceNumber"> ANZ.ANZ_Sno = '$sequenceNumber$' </isNotEmpty>
+		Order BY ANZ.ANZ_Date Desc, ANZ.ANZ_Sno Desc
+	</select>
+	
+	<select id="GASMAX.CustomerSaftyCheck.Select.Rev3" resultClass="java.util.HashMap">
+		SELECT
+			  ANZ.Area_Code         AS areaCode
+			, ANZ.ANZ_Cu_Code       AS customerCode
+			, ANZ.ANZ_Sno           AS sequenceNumber
+			, ANZ.ANZ_GongDate      AS contractDate
+			, ANZ.ANZ_Date          AS scheduledCheckDate
+			, ANZ.ANZ_SW_Code       AS employeeCode
+			, ANZ.ANZ_SW_Name       AS employeeName
+			, ANZ.ANZ_CustName      AS contractName
+			, ANZ.ANZ_Tel           AS phoneNumber
+			, ANZ.ANZ_A_01          AS pipeLength1
+			, ANZ.ANZ_A_02          AS pipeLength2
+			, ANZ.ANZ_A_03          AS pipeLength3
+			, ANZ.ANZ_A_04          AS pipeLength4
+			, ANZ.ANZ_A_05          AS pipeLength5
+			, ANZ.ANZ_B_01          AS valveQuantity1
+			, ANZ.ANZ_B_02          AS valveQuantity2
+			, ANZ.ANZ_B_03          AS valveQuantity3
+			, ANZ.ANZ_B_04          AS valveQuantity4
+			, ANZ.ANZ_B_05          AS valveQuantity5
+			, ANZ.ANZ_C_01          AS etcEquipmentName1
+			, ANZ.ANZ_C_02          AS etcEquipmentQuantity1
+			, ANZ.ANZ_C_03          AS etcEquipmentName2
+			, ANZ.ANZ_C_04          AS etcEquipmentQuantity2
+			, ANZ.ANZ_C_05          AS etcEquipmentName3
+			, ANZ.ANZ_C_06          AS etcEquipmentQuantity3
+			, ANZ.ANZ_C_07          AS etcEquipmentName4
+			, ANZ.ANZ_C_08          AS etcEquipmentQuantity4
+			, ANZ.ANZ_D_01          AS combustorRange1
+			, ANZ.ANZ_D_02          AS combustorRange2
+			, ANZ.ANZ_D_03          AS combustorRange3
+			, ANZ.ANZ_D_04          AS combustorRangeEtcName
+			, ANZ.ANZ_D_05          AS combustorRangeEtcQuantity
+			, ANZ.ANZ_E_01          AS combustorBoilerType
+			, ANZ.ANZ_E_02          AS combustorBoilerPosition
+			, ANZ.ANZ_E_03          AS combustorBoilerConsumption
+			, ANZ.ANZ_E_04          AS combustorBoilerInstaller
+			, ANZ.ANZ_F_01          AS combustorHeaterType
+			, ANZ.ANZ_F_02          AS combustorHeaterPosition
+			, ANZ.ANZ_F_03          AS combustorHeaterConsumption
+			, ANZ.ANZ_F_04          AS combustorHeaterInstaller
+			, ANZ.ANZ_G_01          AS combustorEtcName1
+			, ANZ.ANZ_G_02          AS combustorEtcQuantity1
+			, ANZ.ANZ_G_03          AS combustorEtcName2
+			, ANZ.ANZ_G_04          AS combustorEtcQuantity2
+			, ANZ.ANZ_G_05          AS combustorEtcName3
+			, ANZ.ANZ_G_06          AS combustorEtcQuantity3
+			, ANZ.ANZ_G_07          AS combustorEtcName4
+			, ANZ.ANZ_G_08          AS combustorEtcQuantity4
+			, ANZ.ANZ_Ga            AS acceptable1
+			, ANZ.ANZ_Na            AS acceptable2
+			, ANZ.ANZ_Da            AS acceptable3
+			, ANZ.ANZ_Ra            AS acceptable4
+			, ANZ.ANZ_Ma            AS acceptable5
+			, ANZ.ANZ_Ba            AS acceptable6
+			, ANZ.ANZ_Sa            AS acceptable7
+			, ANZ.ANZ_AA            AS acceptable8
+			, ANZ.ANZ_Ja            AS acceptable9
+			, ANZ.ANZ_Cha           AS acceptable10
+			, ANZ.ANZ_Car           AS acceptable11
+			, ANZ.ANZ_Cha_IN        AS acceptable12
+			, ANZ.ANZ_Gae_01        AS notifyRemark1
+			, ANZ.ANZ_Gae_02        AS notifyRemark2
+			, ANZ.ANZ_Gae_03        AS recommendation1
+			, ANZ.ANZ_Gae_04        AS recommendation2
+			, ANZ.ANZ_Folder        AS signatureFilePath
+			, ANZ.ANZ_FileName      AS signatureFileName
+			, ISNULL(ANZ_S.ANZ_Sign, '') AS signatureImage
+			, ANZ.ANZ_App_User      AS userId
+			, ANZ.ANZ_Date_Time     AS modifyDate
+		FROM
+		    $catalogName$.dbo.ANSobi ANZ 
+		    	LEFT OUTER JOIN ANSobi_Sign ANZ_S ON 
+						ANZ.Area_Code = ANZ_S.Area_Code
+					AND ANZ.ANZ_Cu_Code = ANZ_S.ANZ_Cu_Code
+					AND ANZ.ANZ_Sno = ANZ_S.ANZ_Sno
+		WHERE 1=1
+		AND ANZ.Area_Code = '$areaCode$'
+		AND ANZ.ANZ_Cu_Code = '$customerCode$'
+		<isNotEmpty prepend="AND" property="sequenceNumber"> ANZ.ANZ_Sno = '$sequenceNumber$' </isNotEmpty>
+		Order BY ANZ.ANZ_Date Desc, ANZ.ANZ_Sno Desc
+	</select>
+	
+	<select id="GASMAX.CustomerSaftyCheckLast.Select" resultClass="java.util.HashMap">
+		SELECT
+			  ANZ.AREA_CODE         AS areaCode
+			, ANZ.CU_CODE           AS customerCode
+			, ANZ.ANZ_Sno           AS sequenceNumber
+			, ANZ.CU_NAME           AS buildingName
+			, ANZ.CU_GongNo         AS contractNumber
+			, ANZ.CU_GongName       AS contractName
+			, ANZ.CU_Tel            AS phoneNumber
+			, ANZ.CU_ADDR1          AS address1
+			, ANZ.CU_ADDR2          AS address2
+			, ANZ.ANZ_GongDate      AS contractDate
+			, ANZ.ANZ_Date          AS scheduledCheckDate
+			, ANZ.ANZ_A_01          AS pipeLength1
+			, ANZ.ANZ_A_02          AS pipeLength2
+			, ANZ.ANZ_A_03          AS pipeLength3
+			, ANZ.ANZ_A_04          AS pipeLength4
+			, ANZ.ANZ_A_05          AS pipeLength5
+			, ANZ.ANZ_B_01          AS valveQuantity1
+			, ANZ.ANZ_B_02          AS valveQuantity2
+			, ANZ.ANZ_B_03          AS valveQuantity3
+			, ANZ.ANZ_B_04          AS valveQuantity4
+			, ANZ.ANZ_B_05          AS valveQuantity5
+			, ANZ.ANZ_C_01          AS etcEquipmentName1
+			, ANZ.ANZ_C_02          AS etcEquipmentQuantity1
+			, ANZ.ANZ_C_03          AS etcEquipmentName2
+			, ANZ.ANZ_C_04          AS etcEquipmentQuantity2
+			, ANZ.ANZ_C_05          AS etcEquipmentName3
+			, ANZ.ANZ_C_06          AS etcEquipmentQuantity3
+			, ANZ.ANZ_C_07          AS etcEquipmentName4
+			, ANZ.ANZ_C_08          AS etcEquipmentQuantity4
+			, ANZ.ANZ_D_01          AS combustorRange1
+			, ANZ.ANZ_D_02          AS combustorRange2
+			, ANZ.ANZ_D_03          AS combustorRange3
+			, ANZ.ANZ_D_04          AS combustorRangeEtcName
+			, ANZ.ANZ_D_05          AS combustorRangeEtcQuantity
+			, ANZ.ANZ_E_01          AS combustorBoilerType
+			, ANZ.ANZ_E_02          AS combustorBoilerPosition
+			, ANZ.ANZ_E_03          AS combustorBoilerConsumption
+			, ANZ.ANZ_E_04          AS combustorBoilerInstaller
+			, ANZ.ANZ_F_01          AS combustorHeaterType
+			, ANZ.ANZ_F_02          AS combustorHeaterPosition
+			, ANZ.ANZ_F_03          AS combustorHeaterConsumption
+			, ANZ.ANZ_F_04          AS combustorHeaterInstaller
+			, ANZ.ANZ_G_01          AS combustorEtcName1
+			, ANZ.ANZ_G_02          AS combustorEtcQuantity1
+			, ANZ.ANZ_G_03          AS combustorEtcName2
+			, ANZ.ANZ_G_04          AS combustorEtcQuantity2
+			, ANZ.ANZ_G_05          AS combustorEtcName3
+			, ANZ.ANZ_G_06          AS combustorEtcQuantity3
+			, ANZ.ANZ_G_07          AS combustorEtcName4
+			, ANZ.ANZ_G_08          AS combustorEtcQuantity4
+			, ANZ.ANZ_Ga            AS acceptable1
+			, ANZ.ANZ_Na            AS acceptable2
+			, ANZ.ANZ_Da            AS acceptable3
+			, ANZ.ANZ_Ra            AS acceptable4
+			, ANZ.ANZ_Ma            AS acceptable5
+			, ANZ.ANZ_Ba            AS acceptable6
+			, ANZ.ANZ_Sa            AS acceptable7
+			, ANZ.ANZ_AA            AS acceptable8
+			, ANZ.ANZ_Ja            AS acceptable9
+			, ANZ.ANZ_Cha           AS acceptable10
+			, ANZ.ANZ_Car           AS acceptable11
+			, ANZ.ANZ_Cha_IN        AS acceptable12
+			, ANZ.ANZ_Gae_01        AS notifyRemark1
+			, ANZ.ANZ_Gae_02        AS notifyRemark2
+			, ANZ.ANZ_Gae_03        AS recommendation1
+			, ANZ.ANZ_Gae_04        AS recommendation2
+		FROM
+		    $catalogName$.dbo.fn_Sobi_INSERT_CU
+		    (
+		    	'$areaCode$',
+		    	'$customerCode$'
+		    ) ANZ 
+	</select>
+	
+	<select id="GASMAX.CustomerSaftyCheckList.Select" resultClass="java.util.HashMap">
+		SELECT
+			  Area_Code         AS areaCode
+			, ANZ_Cu_Code       AS customerCode
+			, ANZ_Sno           AS sequenceNumber
+			, Check_TYPE        AS checkType
+			, Check_Name        AS checkName
+			, ANZ_Date          AS scheduledCheckDate
+			, ANZ_SW_Code       AS employeeCode
+			, ANZ_SW_Name       AS employeeName
+			, ANZ_01            AS acceptable1
+			, ANZ_02            AS acceptable2
+			, ANZ_03            AS acceptable3
+			, ANZ_04            AS acceptable4
+			, ANZ_05            AS acceptable5
+			, ANZ_06            AS acceptable6
+			, ANZ_07            AS acceptable7
+			, ANZ_08            AS acceptable8
+			, ANZ_09            AS acceptable9
+			, ANZ_10            AS acceptable10
+			, ANZ_11            AS acceptable11
+			, ANZ_12            AS acceptable12
+			, ANZ_Sign_YN       AS signatureYn
+			, ANZ_Date_Time     AS modifyDate
+		FROM
+		    $catalogName$.dbo.fn_Sobi_LIST_CU(
+		    	'$areaCode$', 
+		    	'$customerCode$',
+		    	'$customerCodeTankFormat$'
+		    )
+		Order BY ANZ_Date Desc, ANZ_Date_Time Desc
+	</select>
+	
+    <insert id="GASMAX.CustomerSaftyCheck.Insert" parameterClass="java.util.HashMap">
+		INSERT INTO $catalogName$.dbo.ANSobi (
+		   Area_Code
+		 , ANZ_Cu_Code
+		 , ANZ_Sno
+		 , ANZ_GongDate
+		 , ANZ_Date
+		 , ANZ_SW_Code
+		 , ANZ_SW_Name
+		 , ANZ_CustName
+		 , ANZ_Tel
+		 , ANZ_A_01
+		 , ANZ_A_02
+		 , ANZ_A_03
+		 , ANZ_A_04
+		 , ANZ_A_05
+		 , ANZ_B_01
+		 , ANZ_B_02
+		 , ANZ_B_03
+		 , ANZ_B_04
+		 , ANZ_B_05
+		 , ANZ_C_01
+		 , ANZ_C_02
+		 , ANZ_C_03
+		 , ANZ_C_04
+		 , ANZ_C_05
+		 , ANZ_C_06
+		 , ANZ_C_07
+		 , ANZ_C_08
+		 , ANZ_D_01
+		 , ANZ_D_02
+		 , ANZ_D_03
+		 , ANZ_D_04
+		 , ANZ_D_05
+		 , ANZ_E_01
+		 , ANZ_E_02
+		 , ANZ_E_03
+		 , ANZ_E_04
+		 , ANZ_F_01
+		 , ANZ_F_02
+		 , ANZ_F_03
+		 , ANZ_F_04
+		 , ANZ_G_01
+		 , ANZ_G_02
+		 , ANZ_G_03
+		 , ANZ_G_04
+		 , ANZ_G_05
+		 , ANZ_G_06
+		 , ANZ_G_07
+		 , ANZ_G_08
+		 , ANZ_Ga
+		 , ANZ_Na
+		 , ANZ_Da
+		 , ANZ_Ra
+		 , ANZ_Ma
+		 , ANZ_Ba
+		 , ANZ_Sa
+		 , ANZ_AA
+		 , ANZ_Ja
+		 , ANZ_Cha
+		 , ANZ_Car
+		 , ANZ_Gae_01
+		 , ANZ_Gae_02
+		 , ANZ_Gae_03
+		 , ANZ_Gae_04
+		 , ANZ_Folder
+		 , ANZ_FileName
+		 , ANZ_App_User
+		 , ANZ_Date_Time
+		) VALUES (
+		  '$areaCode$'
+		, '$customerCode$'
+		, '$sequenceNumber$'
+		, '$contractDate$'
+		, '$scheduledCheckDate$'
+		, '$employeeCode$'
+		, '$employeeName$'
+		, '$contractName$'
+		, '$phoneNumber$'
+		, '$pipeLength1$'
+		, '$pipeLength2$'
+		, '$pipeLength3$'
+		, '$pipeLength4$'
+		, '$pipeLength5$'
+		, '$valveQuantity1$'
+		, '$valveQuantity2$'
+		, '$valveQuantity3$'
+		, '$valveQuantity4$'
+		, '$valveQuantity5$'
+		, '$etcEquipmentName1$'
+		, '$etcEquipmentQuantity1$'
+		, '$etcEquipmentName2$'
+		, '$etcEquipmentQuantity2$'
+		, '$etcEquipmentName3$'
+		, '$etcEquipmentQuantity3$'
+		, '$etcEquipmentName4$'
+		, '$etcEquipmentQuantity4$'
+		, '$combustorRange1$'
+		, '$combustorRange2$'
+		, '$combustorRange3$'
+		, '$combustorRangeEtcName$'
+		, '$combustorRangeEtcQuantity$'
+		, '$combustorBoilerType$'
+		, '$combustorBoilerPosition$'
+		, '$combustorBoilerConsumption$'
+		, '$combustorBoilerInstaller$'
+		, '$combustorHeaterType$'
+		, '$combustorHeaterPosition$'
+		, '$combustorHeaterConsumption$'
+		, '$combustorHeaterInstaller$'
+		, '$combustorEtcName1$'
+		, '$combustorEtcQuantity1$'
+		, '$combustorEtcName2$'
+		, '$combustorEtcQuantity2$'
+		, '$combustorEtcName3$'
+		, '$combustorEtcQuantity3$'
+		, '$combustorEtcName4$'
+		, '$combustorEtcQuantity4$'
+		, '$acceptable1$'
+		, '$acceptable2$'
+		, '$acceptable3$'
+		, '$acceptable4$'
+		, '$acceptable5$'
+		, '$acceptable6$'
+		, '$acceptable7$'
+		, '$acceptable8$'
+		, '$acceptable9$'
+		, '$acceptable10$'
+		, '$acceptable11$'
+		, '$notifyRemark1$'
+		, '$notifyRemark2$'
+		, '$recommendation1$'
+		, '$recommendation2$'
+		, '$signatureFilePath$'
+		, '$signatureFileName$'
+		, '$userId$'
+		, '$modifyDate$'
+		)
+    </insert>
+    
+    <insert id="GASMAX.CustomerSaftyCheck.Insert.Rev3" parameterClass="java.util.HashMap">
+		INSERT INTO $catalogName$.dbo.ANSobi (
+		   Area_Code
+		 , ANZ_Cu_Code
+		 , ANZ_Sno
+		 , ANZ_GongDate
+		 , ANZ_Date
+		 , ANZ_SW_Code
+		 , ANZ_SW_Name
+		 , ANZ_CustName
+		 , ANZ_Tel
+		 , ANZ_A_01
+		 , ANZ_A_02
+		 , ANZ_A_03
+		 , ANZ_A_04
+		 , ANZ_A_05
+		 , ANZ_B_01
+		 , ANZ_B_02
+		 , ANZ_B_03
+		 , ANZ_B_04
+		 , ANZ_B_05
+		 , ANZ_C_01
+		 , ANZ_C_02
+		 , ANZ_C_03
+		 , ANZ_C_04
+		 , ANZ_C_05
+		 , ANZ_C_06
+		 , ANZ_C_07
+		 , ANZ_C_08
+		 , ANZ_D_01
+		 , ANZ_D_02
+		 , ANZ_D_03
+		 , ANZ_D_04
+		 , ANZ_D_05
+		 , ANZ_E_01
+		 , ANZ_E_02
+		 , ANZ_E_03
+		 , ANZ_E_04
+		 , ANZ_F_01
+		 , ANZ_F_02
+		 , ANZ_F_03
+		 , ANZ_F_04
+		 , ANZ_G_01
+		 , ANZ_G_02
+		 , ANZ_G_03
+		 , ANZ_G_04
+		 , ANZ_G_05
+		 , ANZ_G_06
+		 , ANZ_G_07
+		 , ANZ_G_08
+		 , ANZ_Ga
+		 , ANZ_Na
+		 , ANZ_Da
+		 , ANZ_Ra
+		 , ANZ_Ma
+		 , ANZ_Ba
+		 , ANZ_Sa
+		 , ANZ_AA
+		 , ANZ_Ja
+		 , ANZ_Cha
+		 , ANZ_Car
+		 , ANZ_Cha_IN
+		 , ANZ_Gae_01
+		 , ANZ_Gae_02
+		 , ANZ_Gae_03
+		 , ANZ_Gae_04
+		 , ANZ_Folder
+		 , ANZ_FileName
+		 , ANZ_App_User
+		 , ANZ_Date_Time
+		) VALUES (
+		  '$areaCode$'
+		, '$customerCode$'
+		, '$sequenceNumber$'
+		, '$contractDate$'
+		, '$scheduledCheckDate$'
+		, '$employeeCode$'
+		, '$employeeName$'
+		, '$contractName$'
+		, '$phoneNumber$'
+		, '$pipeLength1$'
+		, '$pipeLength2$'
+		, '$pipeLength3$'
+		, '$pipeLength4$'
+		, '$pipeLength5$'
+		, '$valveQuantity1$'
+		, '$valveQuantity2$'
+		, '$valveQuantity3$'
+		, '$valveQuantity4$'
+		, '$valveQuantity5$'
+		, '$etcEquipmentName1$'
+		, '$etcEquipmentQuantity1$'
+		, '$etcEquipmentName2$'
+		, '$etcEquipmentQuantity2$'
+		, '$etcEquipmentName3$'
+		, '$etcEquipmentQuantity3$'
+		, '$etcEquipmentName4$'
+		, '$etcEquipmentQuantity4$'
+		, '$combustorRange1$'
+		, '$combustorRange2$'
+		, '$combustorRange3$'
+		, '$combustorRangeEtcName$'
+		, '$combustorRangeEtcQuantity$'
+		, '$combustorBoilerType$'
+		, '$combustorBoilerPosition$'
+		, '$combustorBoilerConsumption$'
+		, '$combustorBoilerInstaller$'
+		, '$combustorHeaterType$'
+		, '$combustorHeaterPosition$'
+		, '$combustorHeaterConsumption$'
+		, '$combustorHeaterInstaller$'
+		, '$combustorEtcName1$'
+		, '$combustorEtcQuantity1$'
+		, '$combustorEtcName2$'
+		, '$combustorEtcQuantity2$'
+		, '$combustorEtcName3$'
+		, '$combustorEtcQuantity3$'
+		, '$combustorEtcName4$'
+		, '$combustorEtcQuantity4$'
+		, '$acceptable1$'
+		, '$acceptable2$'
+		, '$acceptable3$'
+		, '$acceptable4$'
+		, '$acceptable5$'
+		, '$acceptable6$'
+		, '$acceptable7$'
+		, '$acceptable8$'
+		, '$acceptable9$'
+		, '$acceptable10$'
+		, '$acceptable11$'
+		, '$acceptable12$'
+		, '$notifyRemark1$'
+		, '$notifyRemark2$'
+		, '$recommendation1$'
+		, '$recommendation2$'
+		, '$signatureFilePath$'
+		, '$signatureFileName$'
+		, '$userId$'
+		, '$modifyDate$'
+		)
+    </insert>
+    
+    <update id="GASMAX.CustomerSaftyCheck.Update" parameterClass="java.util.HashMap">
+		UPDATE $catalogName$.dbo.ANSobi SET 
+			ANZ_Cu_Code = ANZ_Cu_Code
+			<isNotEmpty prepend="," property="contractDate"> ANZ_GongDate =  '$contractDate$'                   </isNotEmpty>
+			<isNotEmpty prepend="," property="scheduledCheckDate"> ANZ_Date =      '$scheduledCheckDate$'             </isNotEmpty>
+			<isNotEmpty prepend="," property="employeeCode"> ANZ_SW_Code =   '$employeeCode$'                   </isNotEmpty>
+			<isNotEmpty prepend="," property="employeeName"> ANZ_SW_Name =   '$employeeName$'                   </isNotEmpty>
+			<isNotEmpty prepend="," property="contractName"> ANZ_CustName =  '$contractName$'                   </isNotEmpty>
+			<isNotEmpty prepend="," property="phoneNumber"> ANZ_Tel =       '$phoneNumber$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="pipeLength1"> ANZ_A_01 =      '$pipeLength1$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="pipeLength2"> ANZ_A_02 =      '$pipeLength2$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="pipeLength3"> ANZ_A_03 =      '$pipeLength3$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="pipeLength4"> ANZ_A_04 =      '$pipeLength4$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="pipeLength5"> ANZ_A_05 =      '$pipeLength5$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="valveQuantity1"> ANZ_B_01 =      '$valveQuantity1$'                 </isNotEmpty>
+			<isNotEmpty prepend="," property="valveQuantity2"> ANZ_B_02 =      '$valveQuantity2$'                 </isNotEmpty>
+			<isNotEmpty prepend="," property="valveQuantity3"> ANZ_B_03 =      '$valveQuantity3$'                 </isNotEmpty>
+			<isNotEmpty prepend="," property="valveQuantity4"> ANZ_B_04 =      '$valveQuantity4$'                 </isNotEmpty>
+			<isNotEmpty prepend="," property="valveQuantity5"> ANZ_B_05 =      '$valveQuantity5$'                 </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentName1"> ANZ_C_01 =      '$etcEquipmentName1$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentQuantity1"> ANZ_C_02 =      '$etcEquipmentQuantity1$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentName2"> ANZ_C_03 =      '$etcEquipmentName2$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentQuantity2"> ANZ_C_04 =      '$etcEquipmentQuantity2$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentName3"> ANZ_C_05 =      '$etcEquipmentName3$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentQuantity3"> ANZ_C_06 =      '$etcEquipmentQuantity3$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentName4"> ANZ_C_07 =      '$etcEquipmentName4$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="etcEquipmentQuantity4"> ANZ_C_08 =      '$etcEquipmentQuantity4$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorRange1"> ANZ_D_01 =      '$combustorRange1$'                </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorRange2"> ANZ_D_02 =      '$combustorRange2$'                </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorRange3"> ANZ_D_03 =      '$combustorRange3$'                </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorRangeEtcName"> ANZ_D_04 =      '$combustorRangeEtcName$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorRangeEtcQuantity"> ANZ_D_05 =      '$combustorRangeEtcQuantity$'      </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorBoilerType"> ANZ_E_01 =      '$combustorBoilerType$'            </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorBoilerPosition"> ANZ_E_02 =      '$combustorBoilerPosition$'        </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorBoilerConsumption"> ANZ_E_03 =      '$combustorBoilerConsumption$'     </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorBoilerInstaller"> ANZ_E_04 =      '$combustorBoilerInstaller$'       </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorHeaterType"> ANZ_F_01 =      '$combustorHeaterType$'            </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorHeaterPosition"> ANZ_F_02 =      '$combustorHeaterPosition$'        </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorHeaterConsumption"> ANZ_F_03 =      '$combustorHeaterConsumption$'     </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorHeaterInstaller"> ANZ_F_04 =      '$combustorHeaterInstaller$'       </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcName1"> ANZ_G_01 =      '$combustorEtcName1$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcQuantity1"> ANZ_G_02 =      '$combustorEtcQuantity1$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcName2"> ANZ_G_03 =      '$combustorEtcName2$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcQuantity2"> ANZ_G_04 =      '$combustorEtcQuantity2$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcName3"> ANZ_G_05 =      '$combustorEtcName3$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcQuantity3"> ANZ_G_06 =      '$combustorEtcQuantity3$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcName4"> ANZ_G_07 =      '$combustorEtcName4$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="combustorEtcQuantity4"> ANZ_G_08 =      '$combustorEtcQuantity4$'          </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable1"> ANZ_Ga =        '$acceptable1$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable2"> ANZ_Na =        '$acceptable2$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable3"> ANZ_Da =        '$acceptable3$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable4"> ANZ_Ra =        '$acceptable4$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable5"> ANZ_Ma =        '$acceptable5$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable6"> ANZ_Ba =        '$acceptable6$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable7"> ANZ_Sa =        '$acceptable7$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable8"> ANZ_AA =        '$acceptable8$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable9"> ANZ_Ja =        '$acceptable9$'                    </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable10"> ANZ_Cha =       '$acceptable10$'                   </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable11"> ANZ_Car =       '$acceptable11$'                   </isNotEmpty>
+			<isNotEmpty prepend="," property="acceptable12"> ANZ_Cha_IN =       '$acceptable12$'                   </isNotEmpty>
+			<isNotNull prepend="," property="notifyRemark1"> ANZ_Gae_01 =    '$notifyRemark1$'                  </isNotNull>
+			<isNotNull prepend="," property="notifyRemark2"> ANZ_Gae_02 =    '$notifyRemark2$'                  </isNotNull>
+			<isNotNull prepend="," property="recommendation1"> ANZ_Gae_03 =    '$recommendation1$'                </isNotNull>
+			<isNotNull prepend="," property="recommendation2"> ANZ_Gae_04 =    '$recommendation2$'                </isNotNull>
+			<isNotEmpty prepend="," property="signatureFilePath"> ANZ_Folder =    '$signatureFilePath$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="signatureFileName"> ANZ_FileName =  '$signatureFileName$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="userId"> ANZ_App_User =   '$userId$'         </isNotEmpty>
+			<!-- <isNotEmpty prepend="," property="modifyDate"> ANZ_Date_Time =  '$modifyDate$' </isNotEmpty> -->
+		WHERE  Area_Code =     '$areaCode$'                        
+			  AND ANZ_Cu_Code =   '$customerCode$'                   
+			  AND ANZ_Sno =       '$sequenceNumber$'                 
+    </update>
+    
+    <delete id="GASMAX.CustomerSaftyCheck.Delete" parameterClass="java.util.HashMap">
+        DELETE FROM $catalogName$.dbo.ANSobi
+		WHERE  Area_Code =     '$areaCode$'                        
+			  AND ANZ_Cu_Code =   '$customerCode$'                   
+			  AND ANZ_Sno =       '$sequenceNumber$'
+    </delete>
+    
+    
+    <parameterMap id="GASMAX.CustomerSaftyCheck.UpdateCustomerInfo.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="phoneNumber"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="phoneNumberFind"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="address1"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="address2"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="contractNumber"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="contractName"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="contractDate"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="latestSaftyCheckDate"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="facilityOkYesNo"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="appUserName"     javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="registerDate" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="outputMessage"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+     
+	<resultMap id="GASMAX.CustomerSaftyCheck.UpdateCustomerInfo.ReturnValue" class="java.util.HashMap">
+		<result property="outputMessage" column="@po_TRAN_INFO" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CustomerSaftyCheck.UpdateCustomerInfo" resultMap="GASMAX.CustomerSaftyCheck.UpdateCustomerInfo.ReturnValue" parameterMap="GASMAX.CustomerSaftyCheck.UpdateCustomerInfo.ParameterValue">
+	  <![CDATA[
+	  {
+		   CALL $catalogName$.dbo.sp_CUST_EDIT_SOBI (
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				? 
+			)
+		}
+	   ]]>
+	 </procedure>
+    
+    <parameterMap id="GASMAX.CustomerSaftyCheck.SelectSno.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="sequenceNumber"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+     
+	<resultMap id="GASMAX.CustomerSaftyCheck.SelectSno.ReturnValue" class="java.util.HashMap">
+		<result property="sequenceNumber" column="@po_PC_SNO" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CustomerSaftyCheck.SelectSno" resultMap="GASMAX.CustomerSaftyCheck.SelectSno.ReturnValue" parameterMap="GASMAX.CustomerSaftyCheck.SelectSno.ParameterValue">
+	  <![CDATA[
+	  {
+		   CALL $catalogName$.dbo.sp_ANSobi_SNO (
+				?,
+				?,
+				? 
+			)
+		}
+	   ]]>
+	 </procedure>
+	 
+     <select id="GASMAX.CustomerSaftyCheckSignature.Select" resultClass="java.util.HashMap">
+		SELECT
+			  Area_Code         AS areaCode
+			, ANZ_Cu_Code       AS customerCode
+			, ANZ_Sno           AS sequenceNumber
+			, ANZ_Date          AS scheduledCheckDate
+			, ANZ_Sign			AS signatureImage
+			, ANZ_ID     		AS userId
+			<!--, ANZ_Date_DT		AS modifyDate-->
+		FROM
+		    $catalogName$.dbo.ANSobi_Sign
+		WHERE 1=1
+		AND Area_Code = '$areaCode$'
+		AND ANZ_Cu_Code = '$customerCode$'
+		<isNotEmpty prepend="AND" property="sequenceNumber"> ANZ_Sno = '$sequenceNumber$' </isNotEmpty>
+		Order BY ANZ_Date Desc, ANZ_Sno Desc
+	</select>
+	
+    <insert id="GASMAX.CustomerSaftyCheckSignature.Insert" parameterClass="java.util.HashMap">
+		INSERT INTO $catalogName$.dbo.ANSobi_Sign (
+		   Area_Code
+		 , ANZ_Cu_Code
+		 , ANZ_Sno
+		 , ANZ_Date
+		 , ANZ_Sign
+		 , ANZ_ID
+		 <!--, ANZ_Date_DT-->
+		) VALUES (
+		  '$areaCode$'
+		, '$customerCode$'
+		, '$sequenceNumber$'
+		, '$scheduledCheckDate$'
+		, '$signatureImage$'
+		, '$userId$'
+		<!--, '$modifyDate$'-->
+		)
+    </insert>
+    
+    <update id="GASMAX.CustomerSaftyCheckSignature.Update" parameterClass="java.util.HashMap">
+		UPDATE $catalogName$.dbo.ANSobi_Sign SET 
+			ANZ_Cu_Code = ANZ_Cu_Code
+			<isNotEmpty prepend="," property="scheduledCheckDate"> ANZ_Date =      '$scheduledCheckDate$'             </isNotEmpty>
+			<isNotEmpty prepend="," property="signatureImage"> ANZ_Sign =    '$signatureImage$'              </isNotEmpty>
+			<isNotEmpty prepend="," property="userId"> ANZ_ID =   '$userId$'         </isNotEmpty>
+			<!--<isNotEmpty prepend="," property="modifyDate">, ANZ_Date_DT =  '$modifyDate$' </isNotEmpty>-->
+		WHERE  Area_Code =     '$areaCode$'                        
+			  AND ANZ_Cu_Code =   '$customerCode$'                   
+			  AND ANZ_Sno =       '$sequenceNumber$'                 
+    </update>
+    
+    <delete id="GASMAX.CustomerSaftyCheckSignature.Delete" parameterClass="java.util.HashMap">
+        DELETE FROM $catalogName$.dbo.ANSobi_Sign
+		WHERE  Area_Code =     '$areaCode$'                        
+			  AND ANZ_Cu_Code =   '$customerCode$'                   
+			  AND ANZ_Sno =       '$sequenceNumber$'
+    </delete>
+    
+
+    <select id="GASMAX.CustomerSaftyCheckTank.Select" resultClass="java.util.HashMap">
+		SELECT
+			  ANZ.Area_Code         AS areaCode
+			, ANZ.ANZ_Cu_Code       AS customerCode
+			, ANZ.ANZ_Sno           AS sequenceNumber
+			, ANZ.ANZ_Date          AS scheduledCheckDate
+			, ANZ.ANZ_SW_Code       AS employeeCode
+			, ANZ.ANZ_SW_Name       AS employeeName
+			<!--
+			, ANZ.ANZ_TANK_KG_01    AS tankCapacity1
+			, ANZ.ANZ_TANK_KG_02    AS tankCapacity2
+			-->
+			<!-- 
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(ANZ.ANZ_TANK_KG_01, 0),1),'.00','') AS tankCapacity1
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(ANZ.ANZ_TANK_KG_02, 0),1),'.00','') AS tankCapacity2
+			-->
+			, CAST(CAST(ISNULL(ANZ.ANZ_TANK_KG_01, 0) AS NUMERIC(9)) AS VARCHAR)     AS tankCapacity1
+			, CAST(CAST(ISNULL(ANZ.ANZ_TANK_KG_02, 0) AS NUMERIC(9)) AS VARCHAR)     AS tankCapacity2
+			, ANZ.ANZ_TANK_01       AS acceptable1
+			, ANZ.ANZ_TANK_01_Bigo  AS acceptable1Comment
+			, ANZ.ANZ_TANK_02       AS acceptable2
+			, ANZ.ANZ_TANK_02_Bigo  AS acceptable2Comment
+			, ANZ.ANZ_TANK_03       AS acceptable3
+			, ANZ.ANZ_TANK_03_Bigo  AS acceptable3Comment
+			, ANZ.ANZ_TANK_04       AS acceptable4
+			, ANZ.ANZ_TANK_04_Bigo  AS acceptable4Comment
+			, ANZ.ANZ_TANK_05       AS acceptable5
+			, ANZ.ANZ_TANK_05_Bigo  AS acceptable5Comment
+			, ANZ.ANZ_TANK_06       AS acceptable6
+			, ANZ.ANZ_TANK_06_Bigo  AS acceptable6Comment
+			, ANZ.ANZ_TANK_07       AS acceptable7
+			, ANZ.ANZ_TANK_07_Bigo  AS acceptable7Comment
+			, ANZ.ANZ_TANK_08       AS acceptable8
+			, ANZ.ANZ_TANK_08_Bigo  AS acceptable8Comment
+			, ANZ.ANZ_TANK_09       AS acceptable9
+			, ANZ.ANZ_TANK_09_Bigo  AS acceptable9Comment
+			, ANZ.ANZ_Check_item_10 AS acceptable10Content
+			, ANZ.ANZ_TANK_10       AS acceptable10
+			, ANZ.ANZ_TANK_10_Bigo  AS acceptable10Comment
+			, ANZ.ANZ_Check_item_11 AS acceptable11Content
+			, ANZ.ANZ_TANK_11       AS acceptable11
+			, ANZ.ANZ_TANK_11_Bigo  AS acceptable11Comment
+			, ANZ.ANZ_Check_item_12 AS acceptable12Content
+			, ANZ.ANZ_TANK_12       AS acceptable12
+			, ANZ.ANZ_TANK_12_Bigo  AS acceptable12Comment
+			, ANZ.ANZ_TANK_SW_Bigo1 AS employeeComment1
+			, ANZ.ANZ_TANK_SW_Bigo2 AS employeeComment2
+			, ANZ.ANZ_CustName      AS customerName
+			, ANZ.ANZ_Sign_YN       AS signatureYn
+			, ISNULL(ANZ_S.ANZ_Sign, '') AS signatureImage
+			, ANZ.ANZ_User_ID       AS userId
+			, ANZ.ANZ_Date_Time     AS modifyDate
+		FROM
+		    $catalogName$.dbo.ANSobi_TANK ANZ 
+		    	LEFT OUTER JOIN ANSobi_Sign ANZ_S ON 
+						ANZ.Area_Code = ANZ_S.Area_Code
+					AND ANZ.ANZ_Cu_Code = ANZ_S.ANZ_Cu_Code
+					AND ANZ.ANZ_Sno = ANZ_S.ANZ_Sno
+		WHERE 1=1
+		AND ANZ.Area_Code = '$areaCode$'
+		AND ANZ.ANZ_Cu_Code = '$customerCode$'
+		<isNotEmpty prepend="AND" property="sequenceNumber"> ANZ.ANZ_Sno = '$sequenceNumber$' </isNotEmpty>
+		Order BY ANZ.ANZ_Date Desc, ANZ.ANZ_Sno Desc
+	</select>
+	
+    <select id="GASMAX.CustomerSaftyCheckTankLast.Select" resultClass="java.util.HashMap">
+		SELECT
+			  AREA_CODE         AS areaCode
+			, CU_CODE       AS customerCode
+			, ANZ_Date          AS scheduledCheckDate
+			, ANZ_SW_Code       AS employeeCode
+			, ANZ_SW_Name       AS employeeName
+			<!--
+			, ANZ_TANK_KG_01    AS tankCapacity1
+			, ANZ_TANK_KG_02    AS tankCapacity2
+			-->
+			<!--
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(ANZ_TANK_KG_01, 0),1),'.00','') AS tankCapacity1
+			, REPLACE(CONVERT(VARCHAR(15), ISNULL(ANZ_TANK_KG_02, 0),1),'.00','') AS tankCapacity2
+			-->
+			, CAST(CAST(ISNULL(ANZ_TANK_KG_01, 0) AS NUMERIC(9)) AS VARCHAR)     AS tankCapacity1
+			, CAST(CAST(ISNULL(ANZ_TANK_KG_02, 0) AS NUMERIC(9)) AS VARCHAR)     AS tankCapacity2
+			, ANZ_TANK_01       AS acceptable1
+			, ANZ_TANK_01_Bigo  AS acceptable1Comment
+			, ANZ_TANK_02       AS acceptable2
+			, ANZ_TANK_02_Bigo  AS acceptable2Comment
+			, ANZ_TANK_03       AS acceptable3
+			, ANZ_TANK_03_Bigo  AS acceptable3Comment
+			, ANZ_TANK_04       AS acceptable4
+			, ANZ_TANK_04_Bigo  AS acceptable4Comment
+			, ANZ_TANK_05       AS acceptable5
+			, ANZ_TANK_05_Bigo  AS acceptable5Comment
+			, ANZ_TANK_06       AS acceptable6
+			, ANZ_TANK_06_Bigo  AS acceptable6Comment
+			, ANZ_TANK_07       AS acceptable7
+			, ANZ_TANK_07_Bigo  AS acceptable7Comment
+			, ANZ_TANK_08       AS acceptable8
+			, ANZ_TANK_08_Bigo  AS acceptable8Comment
+			, ANZ_TANK_09       AS acceptable9
+			, ANZ_TANK_09_Bigo  AS acceptable9Comment
+			, ANZ_Check_item_10 AS acceptable10Content
+			, ANZ_TANK_10       AS acceptable10
+			, ANZ_TANK_10_Bigo  AS acceptable10Comment
+			, ANZ_Check_item_11 AS acceptable11Content
+			, ANZ_TANK_11       AS acceptable11
+			, ANZ_TANK_11_Bigo  AS acceptable11Comment
+			, ANZ_Check_item_12 AS acceptable12Content
+			, ANZ_TANK_12       AS acceptable12
+			, ANZ_TANK_12_Bigo  AS acceptable12Comment
+			, ANZ_TANK_SW_Bigo1 AS employeeComment1
+			, ANZ_TANK_SW_Bigo2 AS employeeComment2
+			, ANZ_CustName      AS customerName
+			, ANZ_Sign_YN      AS signatureYn
+			, ANZ_User_ID      AS userId
+			, ANZ_Date_Time     AS modifyDate
+		FROM
+		    $catalogName$.dbo.fn_Sobi_TANK_INSERT_CU(
+		    	'$areaCode$', 
+		    	'$customerCode$'
+		    )
+	</select>
+	
+    <insert id="GASMAX.CustomerSaftyCheckTank.Insert" parameterClass="java.util.HashMap">
+		INSERT INTO $catalogName$.dbo.ANSobi_TANK (
+		   Area_Code
+		 , ANZ_Cu_Code
+		 , ANZ_Sno
+		 , ANZ_Date
+		 , ANZ_SW_Code
+		 , ANZ_SW_Name
+		 , ANZ_TANK_KG_01
+		 , ANZ_TANK_KG_02
+		 , ANZ_TANK_01
+		 , ANZ_TANK_01_Bigo
+		 , ANZ_TANK_02
+		 , ANZ_TANK_02_Bigo
+		 , ANZ_TANK_03
+		 , ANZ_TANK_03_Bigo
+		 , ANZ_TANK_04
+		 , ANZ_TANK_04_Bigo
+		 , ANZ_TANK_05
+		 , ANZ_TANK_05_Bigo
+		 , ANZ_TANK_06
+		 , ANZ_TANK_06_Bigo
+		 , ANZ_TANK_07
+		 , ANZ_TANK_07_Bigo
+		 , ANZ_TANK_08
+		 , ANZ_TANK_08_Bigo
+		 , ANZ_TANK_09
+		 , ANZ_TANK_09_Bigo
+		 , ANZ_Check_item_10
+		 , ANZ_TANK_10
+		 , ANZ_TANK_10_Bigo
+		 , ANZ_Check_item_11
+		 , ANZ_TANK_11
+		 , ANZ_TANK_11_Bigo
+		 , ANZ_Check_item_12
+		 , ANZ_TANK_12
+		 , ANZ_TANK_12_Bigo
+		 , ANZ_TANK_SW_Bigo1
+		 , ANZ_TANK_SW_Bigo2
+		 , ANZ_CustName
+		 , ANZ_Sign_YN
+		 , ANZ_User_ID
+		 , ANZ_Date_Time
+		) VALUES (
+		  '$areaCode$'
+		, '$customerCode$'
+		, '$sequenceNumber$'
+		, '$scheduledCheckDate$'
+		, '$employeeCode$'
+		, '$employeeName$'
+		, '$tankCapacity1$'
+		, '$tankCapacity2$'
+		, '$acceptable1$'
+		, '$acceptable1Comment$'
+		, '$acceptable2$'
+		, '$acceptable2Comment$'
+		, '$acceptable3$'
+		, '$acceptable3Comment$'
+		, '$acceptable4$'
+		, '$acceptable4Comment$'
+		, '$acceptable5$'
+		, '$acceptable5Comment$'
+		, '$acceptable6$'
+		, '$acceptable6Comment$'
+		, '$acceptable7$'
+		, '$acceptable7Comment$'
+		, '$acceptable8$'
+		, '$acceptable8Comment$'
+		, '$acceptable9$'
+		, '$acceptable9Comment$'
+		, '$acceptable10Content$'
+		, '$acceptable10$'
+		, '$acceptable10Comment$'
+		, '$acceptable11Content$'
+		, '$acceptable11$'
+		, '$acceptable11Comment$'
+		, '$acceptable12Content$'
+		, '$acceptable12$'
+		, '$acceptable12Comment$'
+		, '$employeeComment1$'
+		, '$employeeComment2$'
+		, '$customerName$'
+		, '$signatureYn$'
+		, '$userId$'
+		, '$modifyDate$'
+		)
+    </insert>
+    
+    <update id="GASMAX.CustomerSaftyCheckTank.Update" parameterClass="java.util.HashMap">
+		UPDATE $catalogName$.dbo.ANSobi_TANK SET 
+			ANZ_Cu_Code = ANZ_Cu_Code
+			<isNotEmpty prepend="," property="scheduledCheckDate"> ANZ_Date = '$scheduledCheckDate$' </isNotEmpty>
+			<isNotEmpty prepend="," property="employeeCode"> ANZ_SW_Code = '$employeeCode$' </isNotEmpty>
+			<isNotEmpty prepend="," property="employeeName"> ANZ_SW_Name = '$employeeName$' </isNotEmpty>
+			<isNotNull prepend="," property="tankCapacity1"> ANZ_TANK_KG_01 = '$tankCapacity1$' </isNotNull>
+			<isNotNull prepend="," property="tankCapacity2"> ANZ_TANK_KG_02 = '$tankCapacity2$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable1"> ANZ_TANK_01 = '$acceptable1$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable1Comment"> ANZ_TANK_01_Bigo = '$acceptable1Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable2"> ANZ_TANK_02 = '$acceptable2$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable2Comment"> ANZ_TANK_02_Bigo = '$acceptable2Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable3"> ANZ_TANK_03 = '$acceptable3$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable3Comment"> ANZ_TANK_03_Bigo = '$acceptable3Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable4"> ANZ_TANK_04 = '$acceptable4$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable4Comment"> ANZ_TANK_04_Bigo = '$acceptable4Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable5"> ANZ_TANK_05 = '$acceptable5$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable5Comment"> ANZ_TANK_05_Bigo = '$acceptable5Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable6"> ANZ_TANK_06 = '$acceptable6$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable6Comment"> ANZ_TANK_06_Bigo = '$acceptable6Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable7"> ANZ_TANK_07 = '$acceptable7$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable7Comment"> ANZ_TANK_07_Bigo = '$acceptable7Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable8"> ANZ_TANK_08 = '$acceptable8$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable8Comment"> ANZ_TANK_08_Bigo = '$acceptable8Comment$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable9"> ANZ_TANK_09 = '$acceptable9$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable9Comment"> ANZ_TANK_09_Bigo = '$acceptable9Comment$' </isNotNull>
+			<isNotNull prepend="," property="acceptable10Content"> ANZ_Check_item_10 = '$acceptable10Content$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable10"> ANZ_TANK_10 = '$acceptable10$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable10Comment"> ANZ_TANK_10_Bigo = '$acceptable10Comment$' </isNotNull>
+			<isNotNull prepend="," property="acceptable11Content"> ANZ_Check_item_11 = '$acceptable11Content$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable11"> ANZ_TANK_11 = '$acceptable11$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable11Comment"> ANZ_TANK_11_Bigo = '$acceptable11Comment$' </isNotNull>
+			<isNotNull prepend="," property="acceptable12Content"> ANZ_Check_item_12 = '$acceptable12Content$' </isNotNull>
+			<isNotEmpty prepend="," property="acceptable12"> ANZ_TANK_12 = '$acceptable12$' </isNotEmpty>
+			<isNotNull prepend="," property="acceptable12Comment"> ANZ_TANK_12_Bigo = '$acceptable12Comment$' </isNotNull>
+			<isNotNull prepend="," property="employeeComment1"> ANZ_TANK_SW_Bigo1 = '$employeeComment1$' </isNotNull>
+			<isNotNull prepend="," property="employeeComment2"> ANZ_TANK_SW_Bigo2 = '$employeeComment2$' </isNotNull>
+			<isNotNull prepend="," property="customerName"> ANZ_CustName = '$customerName$' </isNotNull>
+			<isNotEmpty prepend="," property="signatureYn"> ANZ_Sign_YN = '$signatureYn$' </isNotEmpty>
+			<isNotEmpty prepend="," property="userId"> ANZ_User_ID = '$userId$' </isNotEmpty>
+			<!-- <isNotEmpty prepend="," property="modifyDate"> ANZ_Date_Time = '$modifyDate$' </isNotEmpty> -->
+		WHERE  Area_Code =     '$areaCode$'
+			  AND ANZ_Cu_Code =   '$customerCode$'
+			  AND ANZ_Sno =       '$sequenceNumber$'
+    </update>
+    
+    <delete id="GASMAX.CustomerSaftyCheckTank.Delete" parameterClass="java.util.HashMap">
+        DELETE FROM $catalogName$.dbo.ANSobi_TANK
+		WHERE  Area_Code =     '$areaCode$'                        
+			  AND ANZ_Cu_Code =   '$customerCode$'                   
+			  AND ANZ_Sno =       '$sequenceNumber$'
+    </delete>
+    
+	<select id="GASMAX.CustomerSaftyCheckTank.SelectSno" resultClass="java.util.HashMap">
+		SELECT
+			$catalogName$.dbo.fn_ANSobi_TANK_SNO(
+				'$areaCode$', 
+				'$customerCode$'
+			) AS sequenceNumber
+	</select>
+    
+</sqlMap>

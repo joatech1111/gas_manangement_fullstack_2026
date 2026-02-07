@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.CollectList.Select" resultClass="java.util.HashMap">
+		SELECT
+		      SU_GUBUN AS collectClass
+		    , AREA_CODE AS areaCode
+		    , S_DATE AS collectDate
+		    , S_CU_CODE AS customerCode
+		    , S_SNO AS sequenceNumber
+		    , CU_NAME_VIEW AS customerName
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(S_KUMACK, 0),1),'.00','') AS collectAmount
+		    , REPLACE(CONVERT(VARCHAR(15), ISNULL(S_DC, 0),1),'.00','') AS discountAmount
+		    , SW_CODE AS employeeCode
+		    , SW_NAME AS employeeName
+		    , SUKUMTYPE AS collectTypeCode
+		    , SU_NAME AS collectTypeName
+		    , BIGO AS remark
+		    , INS_DATE AS registerDate
+		    , USER_ID AS registerName
+		FROM $catalogName$.dbo.FN_SUKUM_LIST('$areaCode$','$employeeCode$','$collectTypeCode$','$keyword$','$startDate$','$endDate$')
+		WHERE 1=1
+		<isNotEmpty prepend="AND" property="collectClass"> SU_GUBUN = '$collectClass$' </isNotEmpty>
+		<isNotEmpty prepend="AND" property="noEmployee"> SW_NAME IS NULL </isNotEmpty>
+		ORDER BY S_DATE DESC, CU_NAME_VIEW ASC
+	</select>
+	
+	<parameterMap id="GASMAX.CollectList.Insert.ParameterValue" class="java.util.HashMap">
+	    <parameter property="areaCode"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="customerCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="collectType"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="collectDate"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="buildingName"    javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="userName"            javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="collectAmount"            javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="discountAmount"             javaType="java.lang.Float" jdbcType="FLOAT" mode="IN" />
+	    <parameter property="collectMethodType"             javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="employeeCode"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="employeeName"        javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="remark"     javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="registerDate" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="mobileNumber" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+	    <parameter property="outputMessage"       javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+	</parameterMap>
+
+     
+	<resultMap id="GASMAX.CollectList.Insert.ReturnValue" class="java.util.HashMap">
+		<result property="outputMessage" column="@po_ERROR_CODE" jdbcType="VARCHAR"/>
+	</resultMap>
+
+     <procedure id="GASMAX.CollectList.Insert" resultMap="GASMAX.CollectList.Insert.ReturnValue" parameterMap="GASMAX.CollectList.Insert.ParameterValue">
+	  <![CDATA[
+	  {
+		   CALL $catalogName$.dbo.sp_SUKUM (
+				?,
+				?,
+				?,
+				'I',
+				?,
+				'',
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?,
+				? 
+			)
+		}
+	   ]]>
+	 </procedure>
+	 
+</sqlMap>

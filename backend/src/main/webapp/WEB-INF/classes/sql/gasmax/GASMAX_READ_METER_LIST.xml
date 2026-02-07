@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+       PUBLIC 
+             "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+              "http://ibatis.apache.org/dtd/sql-map-2.dtd"
+ >
+ 
+ <sqlMap>
+
+     <select id="GASMAX.ReadMeterList.Select" resultClass="java.util.HashMap">
+			SELECT
+				  Area_Code    AS areaCode       
+				, GJ_CU_Code   AS customerCode   
+				, GJ_Date      AS readMeterDate  
+				, GJ_GUMYMSNO  AS sequenceNumber 
+				, CU_Name_View AS customerName   
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_JunGum, 0), 1),'.00','')    AS preReadMeter   
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_Gum, 0), 1),'.00','')       AS nowReadMeter   
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_JanKg, 0), 1),'.00','')     AS remainQuantity 
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_Gage, 0), 1),'.00','')      AS useQuantity    
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_DangKum, 0), 1),'.00','')   AS nowAmount      
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_ANKUM, 0), 1),'.00','')     AS otherAmount    
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_Misu, 0), 1),'.00','')      AS unpaidAmount   
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_PerKum, 0), 1),'.00','')    AS chargeAmount   
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_Total, 0), 1),'.00','')     AS sumNowAmount   
+				, REPLACE(CONVERT(VARCHAR(15), ISNULL(GJ_MISUJAN, 0), 1),'.00','')   AS sumUnpaidAmount
+				, GJ_SDate     AS useStartDate   
+				, GJ_LDate     AS useEndDate     
+				, GJ_JiroDate  AS printGiroDate  
+				, GJ_Zdate     AS payClosingDate 
+				, GJ_Bigo      AS remark         
+				, CU_SukumType AS collectTypeCode
+				, CU_SW_Code   AS employeeCode   
+				, SW_Name      AS employeeName   
+			FROM $catalogName$.dbo.fn_CJGUM_LIST('$areaCode$', '$employeeCode$', '$collectTypeCode$', '$keyword$', '$startDate$', '$endDate$')
+			WHERE 1=1
+			<isNotEmpty prepend="AND" property="noEmployee"> SW_NAME IS NULL </isNotEmpty>
+			ORDER BY CU_Name_View, GJ_Date, GJ_GUMYMSNO
+	</select>
+	
+</sqlMap>
