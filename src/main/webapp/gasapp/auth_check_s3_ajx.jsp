@@ -26,7 +26,7 @@
     //if ((_uuid==null) || "".equals(_uuid)) {
     //_uuid = "01012345678";
     //}
-    String areaCode = request.getParameter("areaCode");
+    String areaSeq = request.getParameter("areaSeq");
 
     String userId = request.getParameter("loginId");
     String password = request.getParameter("loginPw");
@@ -58,27 +58,7 @@
             System.out.println("sdlfkdlskflsdkflkdsf");// 사용자 객체
             System.out.println("sdlfkdlskflsdkflkdsf");// 사용자 객체
         }else{
-
-            System.out.println("sdflksdlkflskdlfksdlfklsdkf");
-            System.out.println("sdflksdlkflskdlfksdlfklsdkf");
-            System.out.println("sdflksdlkflskdlfksdlfklsdkf");
-            System.out.println("sdflksdlkflskdlfksdlfklsdkf");
-            System.out.println("sdflksdlkflskdlfksdlfklsdkf");
-            System.out.println("sdflksdlkflskdlfksdlfklsdkf");
-            // areaCode가 있으면 해당 회사로 필터링, 없거나 "0"이면 전체 조회
-            if (areaCode != null && !areaCode.isEmpty() && !"0".equals(areaCode)) {
-                appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid_areaCode(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid, areaCode);
-
-
-                System.out.println(appUser);
-                System.out.println(appUser);
-                System.out.println(appUser);
-                System.out.println(appUser);
-                System.out.println(appUser);
-                System.out.println(appUser);
-            } else {
-                appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid);
-            }
+            appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid);
         }
 
 

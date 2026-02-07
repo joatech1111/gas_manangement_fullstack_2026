@@ -44,14 +44,34 @@
 
 
 
+    System.out.println("=== auth_check_s3_ajx_v2.jsp DEBUG START ===");
+    System.out.println("userId: " + userId);
+    System.out.println("password: " + (password != null ? "***" : "null"));
+    System.out.println("uuid: " + uuid);
+    System.out.println("areaCode: " + areaCode);
+    
     if ((userId == null) || ("".equals(userId)) || (password == null) || ("".equals(password))) {
         auth = false;
         errorCode = "N"; // 입력 오류
         errorMessage = "아이디 또는 비밀번호가 입력되지 않았습니다.";
+        System.out.println("❌ ERROR: userId or password is empty");
     } else {
         if(userId.equals("test") && password.equals("test")) {
-            appUser = BizAppUser.getInstance().getAppUser_id_pwd(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password);
-            System.out.println("sdlfkdlskflsdkflkdsf");// 사용자 객체
+            System.out.println(">>> test/test 로그인 감지");
+            System.out.println(">>> DEFAULT_APP_USER_CATATLOG_NAME: " + BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME);
+            try {
+                appUser = BizAppUser.getInstance().getAppUser_id_pwd(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password);
+                System.out.println(">>> test 로그인 결과 appUser: " + (appUser != null ? "Found (userId: " + appUser.getUserId() + ")" : "NULL"));
+                if (appUser == null) {
+                    System.out.println("❌ ERROR: appUser is null for test/test");
+                }
+            } catch (Exception e) {
+                System.out.println("❌ EXCEPTION in test/test login: " + e.getMessage());
+                e.printStackTrace();
+                auth = false;
+                errorCode = "H";
+                errorMessage = "로그인 처리 중 오류가 발생했습니다: " + e.getMessage();
+            }
 
         }else{
 
@@ -75,12 +95,15 @@
                 errorMessage = "모바일 기기 정보를 가져오는데 실패했습니다.\n앱을 다시 실행해주세요.";
             }
         }
+        System.out.println(">>> appUser null check: " + (appUser == null ? "NULL" : "NOT NULL"));
         if (appUser == null || "null".equals(appUser)) {
             auth = false;
             errorCode = "H"; // 등록되지 않은 핸드폰
             //errorMessage = "등록되지 않은 모바일 기기 입니다.";
             errorMessage = "등록되지 않은 사용자 입니다.";
+            System.out.println("❌ ERROR: appUser is null or 'null'");
         } else if (!userId.equals(appUser.getUserId())) {
+            System.out.println("❌ ERROR: userId mismatch. Expected: " + userId + ", Got: " + appUser.getUserId());
             auth = false;
             errorCode = "E"; // 계정 존재 안함
             errorMessage = "사용자명이 맞지 않습니다.";
@@ -98,6 +121,11 @@
             errorMessage = "만기된 사용자 입니다.";
         }
     }
+    System.out.println(">>> Final auth status: " + auth);
+    System.out.println(">>> Final errorCode: " + errorCode);
+    System.out.println(">>> Final errorMessage: " + errorMessage);
+    System.out.println("=== auth_check_s3_ajx_v2.jsp DEBUG END ===");
+    
     //auth = true;
     if (auth) {
         // ✅ Redis에 사용자 정보 저장
