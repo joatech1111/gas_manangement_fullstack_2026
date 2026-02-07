@@ -420,6 +420,38 @@ public class BizAppUser {
         return null;
     }
 
+    public AppUserMap selectAppUsers_idPwdUUid_hpSeq(String catalogName, String userId, String password, String uuid, String hpSeq) {
+        try {
+            AppUserMap appUsers = new AppUserMap();
+            HashMap<String, String> condition = new HashMap<String, String>();
+            condition.put("catalogName", catalogName);
+            condition.put("userId", userId);
+            condition.put("password", password);
+            condition.put("uuid", uuid);
+            condition.put("hpSeq", hpSeq);
+            @SuppressWarnings("rawtypes")
+            List<HashMap> list = JdbcUtil.getInstance(JdbcUtil.DEFAULT_SQL_CONFIG).selectQuery("GASMAX.AppUser.Select_userIdPwdUUid_hpSeq", condition);
+            for (HashMap<String, String> map : list) {
+                AppUser appUser = convertAppUser(map);
+                appUsers.setAppUser(appUser.getKeyValue() + "_" + hpSeq, appUser);
+            }
+            return appUsers;
+        } catch (Exception e) {
+            System.out.println("Error in selectAppUsers_idPwdUUid_hpSeq: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public AppUser getAppUser_id_pwd_uuid_hpSeq(String catalogName, String id, String pwd, String uuid, String hpSeq) {
+        AppUserMap appUsers = selectAppUsers_idPwdUUid_hpSeq(catalogName, id, pwd, uuid, hpSeq);
+        AppUser appUser = appUsers.getAppUser(uuid.toLowerCase() + "_" + hpSeq);
+
+        System.out.println("getAppUser_id_pwd_uuid_hpSeq called with hpSeq: " + hpSeq);
+        System.out.println(appUsers);
+        return appUser;
+    }
+
     protected AppUserMap selectMultiAppUsers(String catalogName, String macNumber) {
         try {
             AppUserMap appUsers = new AppUserMap();

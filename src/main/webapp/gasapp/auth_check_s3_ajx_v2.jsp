@@ -27,6 +27,7 @@
     //_uuid = "01012345678";
     //}
     String areaCode = request.getParameter("areaCode");
+    String hpSeq = request.getParameter("hpSeq");
 
     String userId = request.getParameter("loginId");
     String password = request.getParameter("loginPw");
@@ -49,6 +50,7 @@
     System.out.println("password: " + (password != null ? "***" : "null"));
     System.out.println("uuid: " + uuid);
     System.out.println("areaCode: " + areaCode);
+    System.out.println("hpSeq: " + hpSeq);
     
     if ((userId == null) || ("".equals(userId)) || (password == null) || ("".equals(password))) {
         auth = false;
@@ -74,15 +76,17 @@
             }
 
         }else{
-
-            // areaCode가 있으면 해당 회사로 필터링, 없거나 "0"이면 전체 조회
-            if (areaCode != null && !areaCode.isEmpty() && !"0".equals(areaCode)) {
+            // hpSeq가 있으면 hpSeq로 필터링, 없으면 areaCode로 필터링, 둘 다 없으면 전체 조회
+            if (hpSeq != null && !hpSeq.isEmpty() && !"0".equals(hpSeq)) {
+                System.out.println(">>> hpSeq로 필터링: " + hpSeq);
+                appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid_hpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid, hpSeq);
+                System.out.println("hpSeq 필터링 결과 appUser: " + appUser);
+            } else if (areaCode != null && !areaCode.isEmpty() && !"0".equals(areaCode)) {
+                System.out.println(">>> areaCode로 필터링: " + areaCode);
                 appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid_areaCode(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid, areaCode);
-                System.out.println(appUser);
-                System.out.println(appUser);
-                System.out.println(appUser);
-                System.out.println(appUser);
+                System.out.println("areaCode 필터링 결과 appUser: " + appUser);
             } else {
+                System.out.println(">>> 필터링 없음 - 전체 조회");
                 appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid);
             }
         }
