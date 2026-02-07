@@ -38,5 +38,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
-/front_app/gas3/node_modules/
 logs.log
+
+### Node.js ###
+node_modules/
+/front_app/gas3/node_modules/
