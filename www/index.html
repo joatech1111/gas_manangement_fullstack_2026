@@ -544,6 +544,7 @@
                                 var employeeName = ($user.find("employeeName").text() || "").trim();
                                 var areaSeq = ($user.find("areaSeq").text() || "").trim();
                                 var areaCode = ($user.find("areaCode").text() || "").trim();
+                                var hpSeq = areaSeq; // HP_SEQ는 areaSeq와 동일
 
                                 if (!firstAreaCode) firstAreaCode = areaCode;
 
@@ -551,14 +552,15 @@
                                 if (catalogName) displayName += catalogName;
                                 if (areaName) displayName += (displayName ? " - " : "") + areaName;
                                 if (employeeName) displayName += " (" + employeeName + ")";
-                                // areaCode는 반드시 노출
-                                displayName += "  [areaCode: " + areaCode + "]";
+                                // hpSeq와 areaCode 모두 노출
+                                displayName += "  [hpSeq: " + hpSeq + ", areaCode: " + areaCode + "]";
 
                                 var activeClass = (rememberedAreaCode && areaCode === rememberedAreaCode) ? " ui-btn-active" : "";
                                 html += '<a href="#" class="btnMultiAppUser' + activeClass + '"'
                                     + ' data-role="button"'
                                     + ' data-userid="' + userId + '"'
                                     + ' data-password="' + userPassword + '"'
+                                    + ' data-hpseq="' + hpSeq + '"'
                                     + ' data-areacode="' + areaCode + '"'
                                     + ' data-areaseq="' + areaSeq + '"'
                                     + ' data-svrdbname="' + catalogName + '"'
@@ -573,10 +575,27 @@
 
                             // 초기 선택(기억값 우선, 없으면 첫번째)
                             var initialAreaCode = rememberedAreaCode || firstAreaCode;
+                            var initialHpSeq = "";
+                            var initialSvrDbName = "";
+
+                            appUsers.each(function () {
+                                if (($(this).find("areaCode").text() || "").trim() === initialAreaCode) {
+                                    initialHpSeq = ($(this).find("areaSeq").text() || "").trim();
+                                    initialSvrDbName = ($(this).find("dbCatalogName").text() || "").trim();
+                                    return false;
+                                }
+                            });
+
                             if (initialAreaCode) {
+                                sessionStorage.setItem("login_hpSeq", initialHpSeq);
                                 sessionStorage.setItem("login_areaCode", initialAreaCode);
+                                localStorage.setItem("remember_gasmax_hpSeq", initialHpSeq);
                                 localStorage.setItem("remember_gasmax_areaCode", initialAreaCode);
-                                console.log("💾 Initial login_areaCode:", initialAreaCode);
+                                if (initialSvrDbName) {
+                                    sessionStorage.setItem("login_svrDbName", initialSvrDbName);
+                                    localStorage.setItem("remember_gasmax_svrDbName", initialSvrDbName);
+                                }
+                                console.log("💾 Initial login_hpSeq:", initialHpSeq, "login_areaCode:", initialAreaCode, "svrDbName:", initialSvrDbName);
                             }
 
                             console.log("✅ Multi user buttons created with " + appUsers.length + " users");
@@ -586,15 +605,19 @@
                             var $user = appUsers.first();
                             var userId = $user.find("userId").text();
                             var areaCode = ($user.find("areaCode").text() || "").trim();
+                            var areaSeq = ($user.find("areaSeq").text() || "").trim();
+                            var hpSeq = areaSeq; // HP_SEQ는 areaSeq와 동일
                             var svrDbName = ($user.find("dbCatalogName").text() || "").trim();
                             $("#txtLoginId").val(userId);
                             $("#divMultiUserSelect").html('');
                             if (areaCode) {
+                                sessionStorage.setItem("login_hpSeq", hpSeq);
                                 sessionStorage.setItem("login_areaCode", areaCode);
                                 sessionStorage.setItem("login_svrDbName", svrDbName);
+                                localStorage.setItem("remember_gasmax_hpSeq", hpSeq);
                                 localStorage.setItem("remember_gasmax_areaCode", areaCode);
                                 localStorage.setItem("remember_gasmax_svrDbName", svrDbName);
-                                console.log("💾 Single user login_areaCode:", areaCode, "svrDbName:", svrDbName);
+                                console.log("💾 Single user login_hpSeq:", hpSeq, "login_areaCode:", areaCode, "svrDbName:", svrDbName);
                             }
                             console.log("✅ Single user, auto-filled:", userId);
                         } else {
@@ -669,6 +692,7 @@
                 var $btn = $(this);
                 var userId = ($btn.attr("data-userid") || "").trim();
                 var userPassword = ($btn.attr("data-password") || "").trim();
+                var hpSeq = ($btn.attr("data-hpseq") || $btn.attr("data-areaseq") || "").trim();
                 var areaCode = ($btn.attr("data-areacode") || "").trim();
                 var areaSeq = ($btn.attr("data-areaseq") || "").trim();
                 var svrDbName = ($btn.attr("data-svrdbname") || "").trim();
@@ -682,6 +706,13 @@
                     if (userPassword) $("#txtLoginPw").val(userPassword);
                 }
 
+                // hpSeq 저장 (가장 중요! 서버 전달용)
+                if (hpSeq) {
+                    sessionStorage.setItem("login_hpSeq", hpSeq);
+                    localStorage.setItem("remember_gasmax_hpSeq", hpSeq);
+                    console.log("💾 [Button Click] Saved hpSeq:", hpSeq);
+                }
+
                 if (areaCode) {
                     sessionStorage.setItem("login_areaCode", areaCode);
                     sessionStorage.setItem("login_svrDbName", svrDbName);
@@ -692,7 +723,7 @@
                 // 기존 areaSeq도 유지 (필요시)
                 window.sessionStorage.selectedAreaSeq = areaSeq;
 
-                console.log("🎯 Button selected:", { userId: userId, areaCode: areaCode, areaSeq: areaSeq, svrDbName: svrDbName });
+                console.log("🎯 Button selected:", { userId: userId, hpSeq: hpSeq, areaCode: areaCode, areaSeq: areaSeq, svrDbName: svrDbName });
             });
 
         // 메인 화면이나 인트로 화면에서 뒤로버튼을 누르면 프로그램 종료, 그렇지 않다면 메인 화면으로 이동
@@ -1170,10 +1201,10 @@ todo: ================ 홈 페이지 시작 ==================
     <section id="pageMain" data-role="page">
         <header data-role="header" data-theme="b" data-position="inline">
             <a href="#" data-icon="arrow-l" data-mini="true" onclick="showPageIntro(true)">종료</a>
-            <h3 style="margin-top: 10px !important;">
-                가스경영
-                <div id="headerSvrDbName"
-                    style="font-size: 11px; font-weight: normal; color: #cbd5e1; margin-top: 2px;"></div>
+            <h3>가스경영 <span id="headerSvrDbName"
+                    style="font-size: 11px; color: #3333FF !important; font-weight: bold; background: #ffff00; padding: 0 4px; border-radius: 4px; display: none;"></span>
+                    <span id="headerHpSeq"
+                    style="font-size: 11px; color: #FF3333 !important; font-weight: bold; background: #ffff00; padding: 0 4px; border-radius: 4px; margin-left: 4px; display: none;"></span>
             </h3>
             <a href="#" data-icon="info" data-mini="true" onclick="showPageAppUserEdit()">설정</a>
         </header>

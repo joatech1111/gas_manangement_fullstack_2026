@@ -1,1 +1,0 @@
-//var gasmaxServer = "http://127.0.0.1:8080/gasmax/";//var gasmaxServer = "http://192.168.42.120:8080/gasmax/";//var gasmaxServer = "http://joatech2.dyndns.org:8080/gasmax/";var gasmaxServer = "http://joawebapp.dyndns.org:8181/gasmax/";var gasmaxWebappPath = gasmaxServer + "gasapp/";

@@ -308,16 +308,31 @@ async function openJoaTechWebsite() {
 }
 
 function showPageMain() {
-    try {
-        var svrDbName = window.sessionStorage.getItem("login_svrDbName") || window.localStorage.getItem("remember_gasmax_svrDbName") || "";
-        if (svrDbName) {
-            $("#headerSvrDbName").html("[" + svrDbName + "]").show();
-        } else {
-            $("#headerSvrDbName").hide();
+    // 접속 디비명 및 hpSeq 업데이트 실행 함수 (localStorage 우선)
+    var updateDbNameDisplay = function () {
+        try {
+            var svrDbName = window.localStorage.getItem("remember_gasmax_svrDbName") || window.sessionStorage.getItem("login_svrDbName") || "";
+            var hpSeq = window.localStorage.getItem("remember_gasmax_hpSeq") || window.sessionStorage.getItem("login_hpSeq") || "";
+            
+            // DB명 표시
+            if (svrDbName && svrDbName !== "null" && svrDbName !== "undefined") {
+                $("#headerSvrDbName").text(svrDbName).css("display", "inline-block");
+                console.log("🏙️ AppBar DB Name updated:", svrDbName);
+            } else {
+                $("#headerSvrDbName").hide();
+            }
+            
+            // hpSeq 표시
+            if (hpSeq && hpSeq !== "null" && hpSeq !== "undefined" && hpSeq !== "0") {
+                $("#headerHpSeq").text("hpSeq:" + hpSeq).css("display", "inline-block");
+                console.log("🔢 AppBar hpSeq updated:", hpSeq);
+            } else {
+                $("#headerHpSeq").hide();
+            }
+        } catch (e) {
+            console.error("Error updating SvrDbName/hpSeq display:", e);
         }
-    } catch (e) {
-        console.error("Error updating SvrDbName display:", e);
-    }
+    };
 
     if ($("#hdnCidCustomerSearchYesNo").attr("value") == "Y") { //만일 CID 편집화면에서 검색한 경우에는 CID 편집화면으로 이동함.
         $("#hdnCidCustomerSearchYesNo").attr("value", "N");
@@ -325,9 +340,17 @@ function showPageMain() {
         setCurrentPage("pageManageCidEdit");
         return;
     }
+
     $.mobile.changePage("#pageMain", { changeHash: false });
     $("#txtHomeCustomerKeyword").attr("value", "");
     setCurrentPage("pageMain");
+
+    // 페이지 변경 후 UI 업데이트 (지연 실행으로 안정성 확보)
+    updateDbNameDisplay();
+    setTimeout(updateDbNameDisplay, 500);
+
+    // pageMain이 보여질 때마다 업데이트되도록 이벤트 등록 (중복 방지)
+    $(document).off("pageshow", "#pageMain").on("pageshow", "#pageMain", updateDbNameDisplay);
 
     showActivityIndicator("로딩중...")
     $.ajax({

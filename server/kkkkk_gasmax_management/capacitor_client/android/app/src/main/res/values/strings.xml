@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">가스경영_2025</string>
-    <string name="title_activity_main">가스경영_2025</string>
-    <string name="package_name">com.joainfo.gas_management</string>
-    <string name="custom_url_scheme">com.joainfo.gas_management</string>
-</resources>

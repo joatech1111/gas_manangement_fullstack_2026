@@ -104,13 +104,15 @@ function getMultiAppUser() {
                 $(xml).find("AppUser").each(function () {
                     var areaCode = ($(this).find("areaCode").text() || "").trim(); //업체코드
                     var areaName = ($(this).find("areaName").text() || "").trim(); //회사명
+                    var areaSeq = ($(this).find("areaSeq").text() || "").trim(); //HP_SEQ
+                    var hpSeq = areaSeq; // HP_SEQ는 areaSeq와 동일
                     var svrDbName = ($(this).find("svrDbName").text() || $(this).find("SVR_DBName").text() || $(this).find("dbCatalogName").text() || "").trim(); //서버DB명
 
                     if (!firstAreaCode) firstAreaCode = areaCode;
 
-                    // 업체명 + areaCode 완전 노출
-                    var btnText = areaName + "  [areaCode: " + areaCode + "]";
-                    html += '<a href="#" class="btnLoginAreaCode" data-areacode="' + areaCode + '" data-svrdbname="' + svrDbName + '" data-role="button">' + btnText + "</a>";
+                    // 업체명 + hpSeq + areaCode 완전 노출
+                    var btnText = areaName + "  [hpSeq: " + hpSeq + ", areaCode: " + areaCode + "]";
+                    html += '<a href="#" class="btnLoginAreaCode" data-hpseq="' + hpSeq + '" data-areacode="' + areaCode + '" data-areaseq="' + areaSeq + '" data-svrdbname="' + svrDbName + '" data-role="button">' + btnText + "</a>";
                     optionCount++;
                 });
 
@@ -119,17 +121,19 @@ function getMultiAppUser() {
                 $("#divMultiUserSelect").html(html).trigger("create");
                 console.log("✅ [getMultiAppUser] Button list created with " + optionCount + " options");
 
-                function applyLoginAreaCodeSelection(selectedAreaCode, selectedSvrDbName) {
+                function applyLoginAreaCodeSelection(selectedHpSeq, selectedAreaCode, selectedSvrDbName) {
                     if (!selectedAreaCode) return;
+                    window.sessionStorage.setItem("login_hpSeq", selectedHpSeq || "");
                     window.sessionStorage.setItem("login_areaCode", selectedAreaCode);
                     window.sessionStorage.setItem("login_svrDbName", selectedSvrDbName || "");
+                    window.localStorage.setItem("remember_gasmax_hpSeq", selectedHpSeq || "");
                     window.localStorage.setItem("remember_gasmax_areaCode", selectedAreaCode);
                     window.localStorage.setItem("remember_gasmax_svrDbName", selectedSvrDbName || "");
 
                     // 선택 표시 (jQM active 스타일)
                     $("#loginAreaCodeButtons .btnLoginAreaCode").removeClass("ui-btn-active");
                     $("#loginAreaCodeButtons .btnLoginAreaCode[data-areacode='" + selectedAreaCode + "']").addClass("ui-btn-active");
-                    console.log("🔄 [Button Select] Selected areaCode:", selectedAreaCode, "svrDbName:", selectedSvrDbName);
+                    console.log("🔄 [Button Select] Selected hpSeq:", selectedHpSeq, "areaCode:", selectedAreaCode, "svrDbName:", selectedSvrDbName);
                 }
 
                 // 버튼 클릭 시 선택값 저장
@@ -137,21 +141,45 @@ function getMultiAppUser() {
                     .off("click", "#loginAreaCodeButtons .btnLoginAreaCode")
                     .on("click", "#loginAreaCodeButtons .btnLoginAreaCode", function (e) {
                         e.preventDefault();
+                        var selectedHpSeq = $(this).attr("data-hpseq") || $(this).attr("data-areaseq") || "";
                         var selectedAreaCode = $(this).attr("data-areacode") || "";
                         var selectedSvrDbName = $(this).attr("data-svrdbname") || "";
-                        applyLoginAreaCodeSelection(selectedAreaCode, selectedSvrDbName);
+                        applyLoginAreaCodeSelection(selectedHpSeq, selectedAreaCode, selectedSvrDbName);
                     });
 
                 // 최초 선택값(기억값 우선) 저장 및 UI 표시
                 var initialAreaCode = rememberedAreaCode || firstAreaCode;
+                var initialHpSeq = "";
                 var initialSvrDbName = window.localStorage.getItem("remember_gasmax_svrDbName") || (initialAreaCode === firstAreaCode ? ($(xml).find("AppUser").first().find("svrDbName").text() || $(xml).find("AppUser").first().find("SVR_DBName").text() || "") : "");
+                
+                // initialAreaCode에 해당하는 hpSeq 찾기
+                $(xml).find("AppUser").each(function() {
+                    if (($(this).find("areaCode").text() || "").trim() === initialAreaCode) {
+                        initialHpSeq = ($(this).find("areaSeq").text() || "").trim();
+                        return false;
+                    }
+                });
+                
                 if (initialAreaCode) {
-                    applyLoginAreaCodeSelection(initialAreaCode, initialSvrDbName);
+                    applyLoginAreaCodeSelection(initialHpSeq, initialAreaCode, initialSvrDbName);
                 }
             } else {
                 console.log("ℹ️ [getMultiAppUser] Single company or no companies, no dropdown needed");
-                // 단일 회사일 때 areaCode를 localStorage에 저장
+                // 단일 회사일 때 hpSeq와 areaCode를 localStorage에 저장
                 if (totalRowCount == 1) {
+                    var firstUser = $(xml).find("AppUser").first();
+                    var firstHpSeq = (firstUser.find("areaSeq").text() || "").trim();
+                    var firstAreaCode = (firstUser.find("areaCode").text() || "").trim();
+                    var firstSvrDbName = (firstUser.find("svrDbName").text() || firstUser.find("SVR_DBName").text() || firstUser.find("dbCatalogName").text() || "").trim();
+                    if (firstAreaCode) {
+                        window.sessionStorage.setItem("login_hpSeq", firstHpSeq);
+                        window.sessionStorage.setItem("login_areaCode", firstAreaCode);
+                        window.sessionStorage.setItem("login_svrDbName", firstSvrDbName);
+                        window.localStorage.setItem("remember_gasmax_hpSeq", firstHpSeq);
+                        window.localStorage.setItem("remember_gasmax_areaCode", firstAreaCode);
+                        window.localStorage.setItem("remember_gasmax_svrDbName", firstSvrDbName);
+                        console.log("💾 [getMultiAppUser] Single company - Saved hpSeq:", firstHpSeq, "areaCode:", firstAreaCode, "svrDbName:", firstSvrDbName);
+                    }
                     var firstUser = $(xml).find("AppUser").first();
                     var singleAreaCode = firstUser.find("areaCode").text();
                     var singleAreaName = firstUser.find("areaName").text();
@@ -183,30 +211,50 @@ function authCheck() {
     var mobileNumber = $("#hdnMobileNumber").attr("value");
     var remember = $("#ckbRememberLogin").attr("checked");
 
-    // 선택된 areaCode 및 svrDbName 가져오기
+    // 선택된 hpSeq 및 svrDbName 가져오기 (areaCode 대신 hpSeq 사용)
     console.log("🔍 [authCheck] === Get Login Info Start ===");
 
-    var areaCode = "";
+    var hpSeq = "";
+    var areaCode = ""; // 하위 호환성을 위해 유지
     var svrDbName = "";
+    
+    // 두 가지 버튼 그룹 모두 확인 (#loginAreaCodeButtons와 #multiUserButtons)
     var activeBtn = $("#loginAreaCodeButtons .btnLoginAreaCode.ui-btn-active");
+    if (activeBtn.length === 0) {
+        activeBtn = $("#multiUserButtons .btnMultiAppUser.ui-btn-active");
+    }
 
     if (activeBtn.length > 0) {
+        hpSeq = activeBtn.attr("data-hpseq") || activeBtn.attr("data-areaseq") || "";
         areaCode = activeBtn.attr("data-areacode") || "";
         svrDbName = activeBtn.attr("data-svrdbname") || "";
-        try {
-            window.sessionStorage.setItem("login_areaCode", areaCode);
-            window.sessionStorage.setItem("login_svrDbName", svrDbName);
-        } catch (e) { }
-        console.log("✅ [authCheck] areaCode from active button:", areaCode, "svrDbName:", svrDbName);
+        
+        // 값이 있으면 저장
+        if (hpSeq) {
+            try {
+                window.sessionStorage.setItem("login_hpSeq", hpSeq);
+                window.localStorage.setItem("remember_gasmax_hpSeq", hpSeq);
+            } catch (e) { }
+        }
+        if (areaCode) {
+            try {
+                window.sessionStorage.setItem("login_areaCode", areaCode);
+                window.sessionStorage.setItem("login_svrDbName", svrDbName);
+            } catch (e) { }
+        }
+        console.log("✅ [authCheck] hpSeq from active button:", hpSeq, "areaCode:", areaCode, "svrDbName:", svrDbName);
     } else {
+        hpSeq = window.sessionStorage.getItem("login_hpSeq") || "";
         areaCode = window.sessionStorage.getItem("login_areaCode") || "";
         svrDbName = window.sessionStorage.getItem("login_svrDbName") || "";
-        console.log("📥 [authCheck] Login Info from sessionStorage fallback:", areaCode, svrDbName);
+        console.log("📥 [authCheck] Login Info from sessionStorage fallback:", hpSeq, areaCode, svrDbName);
     }
 
-    if (!areaCode || areaCode == "" || areaCode == "null") {
-        areaCode = "0";
+    if (!hpSeq || hpSeq == "" || hpSeq == "null") {
+        hpSeq = "0";
     }
+    
+    console.log("🔍 [authCheck] Final hpSeq to send:", hpSeq);
     console.log("🔍 [authCheck] === Get Login Info End ===");
 
 
@@ -226,6 +274,7 @@ function authCheck() {
             + "&loginPw=" + sec(loginPw)
             + "&uuid=" + sec(uuid)
             + "&mobileNumber=" + sec(mobileNumber)
+            + "&hpSeq=" + hpSeq
             + "&areaCode=" + areaCode
             + "&svrDbName=" + svrDbName
         ,
@@ -257,9 +306,25 @@ function authCheck() {
 
             var result = $(xml).find("result").text();
             var areaCode = $(xml).find("areaCode").text();
+            var svrDbName = $(xml).find("svrDbName").text();
             var gasType = $(xml).find("gasType").text();
             var signImagePath = $(xml).find("signImagePath").text();
             var menuPermission = $(xml).find("menuPermission").text();
+
+            // SVR_DBName 저장 (상단 표시용)
+            if (svrDbName) {
+                window.localStorage.setItem("remember_gasmax_svrDbName", svrDbName);
+                window.sessionStorage.setItem("login_svrDbName", svrDbName);
+                console.log("💾 Saved svrDbName to storage:", svrDbName);
+            }
+            
+            // hpSeq 저장 (상단 표시용) - 로그인 시 전달한 hpSeq 유지
+            var currentHpSeq = window.sessionStorage.getItem("login_hpSeq") || window.localStorage.getItem("remember_gasmax_hpSeq") || "";
+            if (currentHpSeq && currentHpSeq !== "0" && currentHpSeq !== "null") {
+                window.localStorage.setItem("remember_gasmax_hpSeq", currentHpSeq);
+                window.sessionStorage.setItem("login_hpSeq", currentHpSeq);
+                console.log("💾 Saved hpSeq to storage:", currentHpSeq);
+            }
 
             let sessionToken = $(xml).find("sessionToken").text();
             //alert(sessionToken);
