@@ -1,8 +1,8 @@
 package com.joainfo.servlet;
 
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -67,7 +67,7 @@ public class Uploader extends HttpServlet {
 
 //			 List<FileItem> list = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
 
-            List<FileItem> list = upload.parseRequest(null);
+            List<FileItem> list = upload.parseRequest(request);
 
 
             for (int i = 0, ii = list.size(); i < ii; i++) {
