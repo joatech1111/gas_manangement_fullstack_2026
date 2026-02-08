@@ -46,10 +46,10 @@ function getMultiAppUser() {
             + "&appVersion=" + appVersion
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result, errorText, errorThrown) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -279,12 +279,12 @@ function authCheck() {
             + "&svrDbName=" + svrDbName
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
 
             alert(JSON.stringify(result));
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
 
             } else {
                 alert("error occured. Status:" + result.status
@@ -492,10 +492,10 @@ function initializeAppConfig() {
         url: gasmaxWebappPath + "reset_session_customer_ajx.jsp",
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -531,7 +531,7 @@ function showPageAppUserEdit() {
                     var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                     $("#" + tagId).html(html).trigger("create");
                 } else if (result.status == 0) {
-                    alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                    console.log("서버 응답 지연 (timeout 또는 연결 실패)");
                 }
             }
 
@@ -554,10 +554,10 @@ function changeAreaCodeAppUserEdit() {
         data: "areaCode=" + areaCode
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -641,10 +641,10 @@ function clickSaveAppUserEdit() {
             + "&areaSeq=" + areaSeq
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -995,14 +995,14 @@ function searchCustomerBookWeightCollect() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookWeight").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1086,14 +1086,14 @@ function clickMorePageCustomerBookWeightCollect() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookWeight").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookWeight").append(html).trigger("create");
                 $("#btnMorePageCustomerBookWeight").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1181,13 +1181,13 @@ function injectionCustomerBookWeightCollectDetail(tagId, key) {
         type: "post",
         data: "key=" + key,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1302,13 +1302,13 @@ function deleteCustomerBookWeightCollectDetail(key, typeCode, collectDate) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerBookWeightCollectDetail").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1341,13 +1341,13 @@ function navigateCustomerBookWeightCollectDetail(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerBookWeightCollectDetail").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1399,14 +1399,14 @@ function searchCustomerBookWeightSale() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookWeight").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1468,14 +1468,14 @@ function clickMorePageCustomerBookWeightSale() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookWeight").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookWeight").append(html).trigger("create");
                 $("#btnMorePageCustomerBookWeight").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1594,14 +1594,14 @@ function searchCustomerBookVolumeReadMeter() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
             $("#footerSummaryCustomerBookVolume").html("<table><tr><td>&nbsp;</td></tr></table>").trigger("create");
         },
@@ -1680,14 +1680,14 @@ function clickMorePageCustomerBookVolumeReadMeter() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookVolume").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").append(html).trigger("create");
                 $("#btnMorePageCustomerBookVolume").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1775,13 +1775,13 @@ function searchCustomerBookVolumeCollect() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
             $("#footerSummaryCustomerBookVolume").html("<table><tr><td>&nbsp;</td></tr></table>").trigger("create");
         },
@@ -1846,14 +1846,14 @@ function clickMorePageCustomerBookVolumeCollect() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookVolume").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").append(html).trigger("create");
                 $("#btnMorePageCustomerBookVolume").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1933,13 +1933,13 @@ function deleteCustomerBookVolumeCollect(key) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerBookVolume").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -1993,7 +1993,7 @@ function searchCustomerBookVolumeSale() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             hideActivityIndicator()
@@ -2001,7 +2001,7 @@ function searchCustomerBookVolumeSale() {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
             $("#footerSummaryCustomerBookVolume").html("<table><tr><td>&nbsp;</td></tr></table>").trigger("create");
         },
@@ -2066,14 +2066,14 @@ function clickMorePageCustomerBookVolumeSale() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookVolume").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").append(html).trigger("create");
                 $("#btnMorePageCustomerBookVolume").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2156,13 +2156,13 @@ function deleteCustomerBookVolumeSale(key) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerBookVolume").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2205,14 +2205,14 @@ function injectionCustomerBookVolumeReadMeterDetail(tagId, key) {
         type: "post",
         data: "key=" + key,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2312,13 +2312,13 @@ function deleteCustomerBookVolumeReadMeterDetail(key) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerBookVolumeReadMeterDetail").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2351,13 +2351,13 @@ function navigateCustomerBookVolumeReadMeterDetail(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerBookVolumeReadMeterDetail").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2416,14 +2416,14 @@ function searchCustomerBookTaxInvoice() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookTaxInvoice").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2505,14 +2505,14 @@ function clickMorePageCustomerBookTaxInvoice() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookTaxInvoice").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookTaxInvoice").append(html).trigger("create");
                 $("#btnMorePageCustomerBookTaxInvoice").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2590,13 +2590,13 @@ function injectionCustomerBookTaxInvoiceDetail(tagId, key, period) {
             + "&period=" + period
         ,
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -2615,13 +2615,13 @@ function navigateCustomerBookTaxInvoiceDetail(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerTaxInvoiceDetail").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2682,14 +2682,14 @@ function searchCustomerBookItemBalanceHPG() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookItemBalance").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2748,14 +2748,14 @@ function clickMorePageCustomerBookItemBalanceHPG() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookItemBalance").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookItemBalance").append(html).trigger("create");
                 $("#btnMorePageCustomerBookItemBalance").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2838,14 +2838,14 @@ function injectionCustomerBookItemBalanceHPGDetailList(key, preBalance) {
             + "&preBalance=" + preBalance
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookItemBalanceDetailList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -2898,14 +2898,14 @@ function clickMorePageCustomerBookItemBalanceHPGDetailList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookItemBalanceDetailList").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookItemBalanceDetailList").append(html).trigger("create");
                 $("#btnMorePageCustomerBookItemBalanceDetailList").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -3185,11 +3185,11 @@ function popupSignatureCustomerSaftyCheckTankInsert(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -3231,11 +3231,11 @@ function popupSignatureCustomerSaftyCheckTankEdit(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -3295,14 +3295,14 @@ function choiceCustomer(areaCode, customerCode) {
             ,
             type: "post",
             dataType: "html",
-            timeout: 60000,
+            timeout: 120000,
             error: function (result) {
                 if (result.status == 200) {
                     var html = getResultMessage("검색된 자료가 없습니다.", false);
                     ;
                     $("#" + tagId).html(html).trigger("create");
                 } else if (result.status == 0) {
-                    alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                    console.log("서버 응답 지연 (timeout 또는 연결 실패)");
                 }
             },
             success: function (html) {
@@ -3325,10 +3325,10 @@ function choiceCustomer(areaCode, customerCode) {
         type: "post",
         data: "customerCode=" + customerCode + "&areaCode=" + areaCode,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else if (result.status == 200) {
                 alert("해당 거래처를 조회할 수 없습니다.");
             } else {
@@ -3349,10 +3349,10 @@ function choiceCustomer(areaCode, customerCode) {
         url: gasmaxWebappPath + "reset_session_customer_ajx.jsp",
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -3414,14 +3414,14 @@ function searchManageCidList(defaultAreaAddress, phoneAreaNumber) {
             + "&deliveryComplete=" + deliveryComplete
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageCidList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -3563,14 +3563,14 @@ function clickMorePageManageCidList(defaultAreaAddress, phoneAreaNumber) {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageCidList").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultManageCidList").append(html).trigger("create");
                 $("#btnMorePageManageCidList").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -3796,14 +3796,14 @@ function searchManageSaleList() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageSaleList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -3890,14 +3890,14 @@ function clickMorePageManageSaleList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageSaleList").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultManageSaleList").append(html).trigger("create");
                 $("#btnMorePageManageSaleList").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4017,14 +4017,14 @@ function searchManageUnpaidList() {
             + "&employeeCode=" + employeeCode
             + "&collectTypeCode=" + collectTypeCode,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageUnpaidList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4109,14 +4109,14 @@ function clickMorePageManageUnpaidList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageUnpaidList").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultManageUnpaidList").append(html).trigger("create");
                 $("#btnMorePageManageUnpaidList").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4239,14 +4239,14 @@ function searchManageCollectList() {
             + "&endDate=" + endDate
             + "&collectTypeCode=" + collectTypeCode,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageCollectList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4348,14 +4348,14 @@ function clickMorePageManageCollectList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageCollectList").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultManageCollectList").append(html).trigger("create");
                 $("#btnMorePageManageCollectList").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4502,14 +4502,14 @@ function searchManageReadMeterList() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageReadMeterList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4614,14 +4614,14 @@ function clickMorePageManageReadMeterList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageReadMeterList").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#divSearchResultManageReadMeterList").append(html).trigger("create");
                 $("#btnMorePageManageReadMeterList").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -4907,7 +4907,7 @@ function customerSearch() {
         type: "post",
         data: "keyword=" + encodeURIComponent($("#txtCustomerKeyword").val()),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -4915,7 +4915,7 @@ function customerSearch() {
                 $("#searchCustomerResult").html(html).trigger("create");
                 $("#btnCustomerSearchMorePage").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -5018,13 +5018,13 @@ function searchCustomerQR(customerCode) {
         type: "post",
         data: "customerCode=" + customerCode,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#searchCustomerResult").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -5055,14 +5055,14 @@ function clickMorePageCustomerSearch() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberSearchCustomer").attr("value"),
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
                 $("#searchCustomerResult").append(html).trigger("create");
                 $("#btnCustomerSearchMorePage").html("").trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -5145,10 +5145,10 @@ function injectionAppUserInsert(tagId) {
         type: "post",
         data: "macNumber=" + window.sessionStorage.uuid + "&phoneNumber=" + hpNo,
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5231,10 +5231,10 @@ function clickSaveAppUserInsert() {
             + "&phoneAreaNumber=" + phoneAreaNumber
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5266,10 +5266,10 @@ function injectionCustomerInsert(tagId) {
         url: gasmaxWebappPath + "customer_insert.jsp",
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5290,10 +5290,10 @@ function injectionCustomerUpdate(tagId) {
         url: gasmaxWebappPath + "customer_update.jsp",
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5356,10 +5356,10 @@ function clickCustomerSearchInsertSave() {
                 + "&remark2=" + remark2
                 + "&consumeTypeCode=" + consumeTypeCode,
             dataType: "xml",
-            timeout: 60000,
+            timeout: 120000,
             error: function (result) {
                 if (result.status == 0) {
-                    alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                    console.log("서버 응답 지연 (timeout 또는 연결 실패)");
                 } else {
                     alert("error occured. Status:" + result.status
                         + " --Status Text:" + result.statusText
@@ -5427,10 +5427,10 @@ function clickCustomerUpdateSave() {
                 + "&remark2=" + remark2
                 + "&consumeTypeCode=" + consumeTypeCode,
             dataType: "xml",
-            timeout: 60000,
+            timeout: 120000,
             error: function (result) {
                 if (result.status == 0) {
-                    alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                    console.log("서버 응답 지연 (timeout 또는 연결 실패)");
                 } else {
                     alert("error occured. Status:" + result.status
                         + " --Status Text:" + result.statusText
@@ -5546,11 +5546,11 @@ function injectionSearchOptionCustomerBookWeight(tagId, pageType) {
             + "&radioIndex=" + pageType
         ,
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5578,10 +5578,10 @@ function injectionSearchOptionCustomerBookVolume(tagId, pageType) {
         ,
         dataType: "html",
         async: false,
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5603,10 +5603,10 @@ function injectionSearchOptionCustomerBookTaxInvoice(tagId) {
         data: "startDate=" + $("#hdnStartDateCustomerBookTaxInvoice").attr("value")
             + "&endDate=" + $("#hdnEndDateCustomerBookTaxInvoice").attr("value"),
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5628,10 +5628,10 @@ function injectionSearchOptionCustomerBookItemBalance(tagId) {
         data: "startDate=" + $("#hdnStartDateCustomerBookItemBalance").attr("value")
             + "&endDate=" + $("#hdnEndDateCustomerBookItemBalance").attr("value"),
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5658,10 +5658,10 @@ function injectionSearchOptionCustomerBookItemBalanceHPGDetailList(tagId, itemNa
             + "&endDate=" + endDate
         ,
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5687,10 +5687,10 @@ function injectionCustomerSaleWeightInsert(tagId) {
         url: gasmaxWebappPath + "customer_sale_weight_insert_batch.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -5948,10 +5948,10 @@ function saveInsertCustomerSaleWeightInsertBatch() {
             type: "post",
             async: false,
             dataType: "html",
-            timeout: 60000,
+            timeout: 120000,
             error: function (result) {
                 if (result.status == 0) {
-                    alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                    console.log("서버 응답 지연 (timeout 또는 연결 실패)");
                 } else {
                     alert("error occured. Status:" + result.status
                         + " --Status Text:" + result.statusText
@@ -6067,10 +6067,10 @@ function injectionCustomerSaleWeightInsertItemDetail(tagId, insertMode, itemInde
         data: dataStr,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6349,10 +6349,10 @@ function injectionCustomerSaleWeightInsertItemSearch(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6374,10 +6374,10 @@ function injectionCustomerSaleWeightInsertRemarkSearch(tagId) {
         data: "customerCode=" + customerCode,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6429,10 +6429,10 @@ function injectionCustomerSaleWeightInsertItemDetailRemarkSearch(tagId) {
         data: "customerCode=" + customerCode,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6459,10 +6459,10 @@ function injectionCustomerSaleVolumeInsert(tagId) {
         url: gasmaxWebappPath + "customer_sale_volume_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6587,14 +6587,14 @@ function saveCustomerSaleVolume(insertYesNo) {
             + "&uuid=" + device.uuid						// 비고
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageSaleList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -6636,10 +6636,10 @@ function injectionCustomerReadMeterInsert(tagId, readMeterDate) {
         data: dataStr,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6675,10 +6675,10 @@ function changeApplyDelayDateCustomerReadMeterEdit() {
         data: "readMeterDate=" + applyDelayDate,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -6892,13 +6892,13 @@ function saveCustomerReadMeter(insertYesNo) {
             + "&defaultAmountYesNo=" + $("#hdnDefaultAmountYesNoCustomerReadMeterEdit").attr("value")
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageSaleList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -6936,10 +6936,10 @@ function injectionCustomerCollect(tagId) {
         url: gasmaxWebappPath + "customer_collect_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7050,11 +7050,11 @@ function saveCustomerCollectInsert() {
             + "&employeeName=" + employeeName
             + "&remark=" + remark,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7098,11 +7098,11 @@ function injectionSearchOptionCustomerSaftyCheckList(tagId) {
         url: gasmaxWebappPath + "customer_safty_check_list_search_option_rev3.jsp",
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7122,7 +7122,7 @@ function injectionSearchOptionCustomerSaftyCheckList(tagId) {
         type: "post",
         data: "customerCode=" + customerCode,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             hideActivityIndicator()
@@ -7130,7 +7130,7 @@ function injectionSearchOptionCustomerSaftyCheckList(tagId) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerSaftyCheckList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -7243,11 +7243,11 @@ function injectionCustomerSaftyCheckEdit(tagId, key) {
         data: "key=" + key,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7318,11 +7318,11 @@ function injectionCustomerSaftyCheckInsert(tagId) {
         url: gasmaxWebappPath + "customer_safty_check_insert_rev3.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7464,13 +7464,13 @@ function saveCustomerSaftyCheckInsert() {
         ,
         dataType: "xml",
         async: async,
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageSaleList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -7577,13 +7577,13 @@ function saveCustomerSaftyCheckEdit(insertYesNo) {
         ,
         dataType: "xml",
         async: async,
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultManageSaleList").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -7627,13 +7627,13 @@ function clickDeleteCustomerSaftyCheckEdit() {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerSaftyCheckEdit").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -7679,11 +7679,11 @@ function injectionCustomerSaftyCheckSign(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7714,11 +7714,11 @@ function popupSignatureCustomerSaftyCheckInsert(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7760,11 +7760,11 @@ function popupSignatureCustomerSaftyCheckEdit(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7813,11 +7813,11 @@ function injectionCustomerSaftyCheckTankEdit(tagId, key, sequenceNumber) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7840,11 +7840,11 @@ function injectionCustomerSaftyCheckTankInsert(tagId) {
         url: gasmaxWebappPath + "customer_safty_check_tank_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -7950,13 +7950,13 @@ function saveCustomerSaftyCheckTankInsert() {
         ,
         dataType: "xml",
         async: async,
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerSaftyCheckTankInsert").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -8034,13 +8034,13 @@ function saveCustomerSaftyCheckTankEdit(insertYesNo) {
         ,
         dataType: "xml",
         async: async,
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerSaftyCheckTankEdit").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -8083,13 +8083,13 @@ function clickDeleteCustomerSaftyCheckTankEdit() {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageCustomerSaftyCheckTankEdit").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -8121,14 +8121,14 @@ function injectionSearchOptionManageCidList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -8235,11 +8235,11 @@ function clickSaveManageCidList(key) {
             + "&completeYesNo=" + completeYesNo
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -8278,13 +8278,13 @@ function injectionManageCidEdit(tagId, key) {
             + "&insertMode=" + insertMode
         ,
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -8302,13 +8302,13 @@ function navigateManageCidEdit(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divResultMessageManageCidEdit").html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -8532,11 +8532,11 @@ function clickSaveManageCidEdit(insertMode, closeBool) {
             + "&collectType=" + collectType
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -8675,11 +8675,11 @@ function clickDeleteManageCidEdit() {
             + "&cidDate=" + cidDate
         ,
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -8718,10 +8718,10 @@ function injectionManageCidEditItemSearch(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -8765,10 +8765,10 @@ function injectionManageCidEditRemarkSearch(tagId) {
         data: "customerCode=" + customerCode,
         type: "post",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             } else {
                 alert("error occured. Status:" + result.status
                     + " --Status Text:" + result.statusText
@@ -8796,14 +8796,14 @@ function injectionSearchOptionManageSaleList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -8821,14 +8821,14 @@ function injectionSearchOptionManageUnpaidList(tagId) {
         url: gasmaxWebappPath + "manage_unpaid_list.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -8846,14 +8846,14 @@ function injectionSearchOptionManageCollectList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -8872,14 +8872,14 @@ function injectionSearchOptionManageReadMeterList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {

@@ -37,13 +37,13 @@ function injectionCustomerSummary(tagId) {
         url: gasmaxWebappPath + "customer_summary.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {
@@ -60,14 +60,14 @@ function injectionCustomerDetail(tagId) {
         url: gasmaxWebappPath + "search_customer_current_ajx.jsp",
         type: "post",
         dataType: "xml",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 ;
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (xml) {
@@ -357,14 +357,14 @@ function showPageMain() {
         url: gasmaxWebappPath + "home.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 60000,
+        timeout: 120000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
                 $("#" + tagId).html(html).trigger("create");
             } else if (result.status == 0) {
-                alert("서버에서 응답이 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+                console.log("서버 응답 지연 (timeout 또는 연결 실패)");
             }
         },
         success: function (html) {

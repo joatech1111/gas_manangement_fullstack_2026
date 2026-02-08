@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <%@ page import="com.google.gson.Gson" %>
-<%@ page language="java" contentType="text/xml; charset=utf-8" pageEncoding="utf-8" %>
+<%@ page language="java" contentType="text/xml; charset=utf-8" pageEncoding="utf-8" trimDirectiveWhitespaces="true" %>
 <%@ page session="true" %>
 <%@ page import="com.joainfo.common.util.StringUtil" %>
 <%@ page import="com.joainfo.gasmax.bean.AppUser" %>
@@ -10,7 +9,6 @@
 <%@ page import="java.util.UUID" %>
 <%@ page import="com.joainfo.common.util.RedisUtil" %>
 <%@ page import="redis.clients.jedis.Jedis" %>
-
 <%
     response.setHeader("Cache-Control", "no-store");
     response.setHeader("Pragma", "no-cache");

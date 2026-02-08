@@ -58,13 +58,24 @@ public class JdbcUtil {
                 if (is != null) {
                     prop.load(is);
                     is.close();
-                    sqlConfigPath = (String) prop.get("prod");
-                    return sqlConfigPath;
+                    String path = (String) prop.get("prod");
+                    if (path != null && !path.isEmpty()) {
+                        java.io.File dir = new java.io.File(path);
+                        if (dir.exists() && dir.isDirectory()) {
+                            sqlConfigPath = path;
+                            System.out.println("[JdbcUtil] DB config path (from properties): " + sqlConfigPath);
+                            return sqlConfigPath;
+                        } else {
+                            System.out.println("[JdbcUtil] Properties path not found: " + path + " -> using default: " + DEFAULT_SQL_CONFIG_PATH);
+                        }
+                    }
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            return DEFAULT_SQL_CONFIG_PATH;
+            sqlConfigPath = DEFAULT_SQL_CONFIG_PATH;
+            System.out.println("[JdbcUtil] DB config path (default): " + sqlConfigPath);
+            return sqlConfigPath;
         } else {
             return sqlConfigPath;
         }
