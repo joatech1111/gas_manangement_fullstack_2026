@@ -1,4 +1,4 @@
-const GASMAX_WEBAPP = 'http://gas.joaoffice.com:14007/gasapp';
+const GASMAX_WEBAPP = '/gasapp';
 const HARDCODED_UUID = 'b28618772c95b3a5';
 
 function buildUrl(path) {
