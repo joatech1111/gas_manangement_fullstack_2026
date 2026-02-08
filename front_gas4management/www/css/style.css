@@ -344,122 +344,7 @@ body {
     }
 }
 
-/* 모던 로더 오버레이 */
-.custom-loader-overlay {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    padding: 20px 30px;
-    width: auto;
-    min-width: 160px;
-    max-width: 80%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    flex-direction: column;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* 로더 박스 */
-.custom-loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-/* 모던 스피너 애니메이션 */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid white;
-    border-right: 4px solid white;
-    border-radius: 50%;
-    animation: spinModern 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-}
-
-/* 로더 로고 */
-.loader-logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-    animation: logoFloat 2s ease-in-out infinite;
-}
-
-@keyframes logoFloat {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-/* 애니메이션 효과 */
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes spinModern {
-    0% {
-        transform: rotate(0deg);
-        border-top-color: white;
-        border-right-color: white;
-    }
-
-    50% {
-        border-top-color: rgba(255, 255, 255, 0.8);
-        border-right-color: rgba(255, 255, 255, 0.5);
-    }
-
-    100% {
-        transform: rotate(360deg);
-        border-top-color: white;
-        border-right-color: white;
-    }
-}
-
-/* 모던 로더 텍스트 스타일 */
-#loader-text {
-    max-width: 90%;
-    min-width: 150px;
-    word-wrap: break-word;
-    text-align: center;
-    overflow-wrap: break-word;
-    white-space: normal;
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    padding: 8px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.5px;
-    line-height: 1.5;
-}
-
-/* 점(.) 포함 시 줄바꿈 처리 */
-#loader-text::after {
-    content: attr(data-text);
-    display: block;
-    white-space: pre-line;
-}
+/* (기존 로더 스타일 제거 - 하단 현대적인 로더 스타일 사용) */
 
 .ui-dialog-contain {
     width: 92.5%;
@@ -482,19 +367,7 @@ body {
     padding-right: var(--safe-right);
 }
 
-/* 배경 숨기기 */
-.ui-loader.ui-overlay {
-    background: none !important;
-    opacity: 0 !important;
-    display: none !important;
-}
-
-/* 로딩 아이콘만 보이도록 조정 */
-.ui-loader {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
+/* (기존 ui-loader 숨기기 제거 - 하단 현대적인 로더 스타일에서 처리) */
 
 
 /* ✅ Modern Header */
@@ -673,4 +546,45 @@ body {
 
 .modern-menu-card:hover::after {
     left: 100%;
+}
+
+/* =============================================
+   상단 라인 로더
+   ============================================= */
+.line-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 99999;
+    display: none;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.line-loader-bar {
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #60a5fa, #2563eb);
+    border-radius: 0 2px 2px 0;
+    animation: lineSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes lineSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+}
+
+/* jQuery Mobile 기본 로더 숨기기 */
+.ui-loader.ui-overlay {
+    background: none !important;
+    opacity: 0 !important;
+    display: none !important;
+}
+
+.ui-loader {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }

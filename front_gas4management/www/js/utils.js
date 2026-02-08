@@ -490,17 +490,11 @@ async function openInAppBrowser() {
 }
 
 function showActivityIndicator(message) {
-    $.mobile.loading("show", {
-        textVisible: false, // 텍스트를 보이게 할지 여부
-        theme: "a", // 테마 (a: 기본, b: 어두운 테마)
-        textonly: false, // 텍스트만 표시할지 여부
-        html: "" // 커스텀 HTML (필요한 경우)
-    });
+    $("#custom-loader").css("display", "block");
 }
 
 function hideActivityIndicator() {
-    $.mobile.loading("hide");
-    // $("#custom-loader").fadeOut();
+    $("#custom-loader").css("display", "none");
 }
 
 // localStorage에 저장된 로그인 정보로 자동 로그인 시도

@@ -967,12 +967,9 @@
     </style>
 
 
-    <!-- 모던 로더 HTML -->
-    <div id="custom-loader" class="custom-loader-overlay">
-        <div class="custom-loader">
-            <div class="spinner"></div>
-            <p id="loader-text"></p>
-        </div>
+    <!-- 상단 라인 로더 -->
+    <div id="custom-loader" class="line-loader">
+        <div class="line-loader-bar"></div>
     </div>
 
     <!-- 🎨 모던 스플래시 화면 -->
@@ -1119,8 +1116,8 @@ todo: ================ 인트로 페이지 시작 ==================
                     </div>
 
                     <!-- 버튼 영역 -->
-                    <div class="login-buttons" style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <div data-role="controlgroup" data-type="horizontal" data-mini="true" style="display: flex; gap: 10px; width: 100%;">
+                    <div class="login-buttons" style="display: flex; justify-content: center; margin-bottom: 10px; padding: 0 20px;">
+                        <div data-role="controlgroup" data-type="horizontal" data-mini="true" style="display: flex; gap: 8px; width: 100%; max-width: 400px; justify-content: center;">
                             <a href="javascript:authCheck()" data-role="button" data-theme="b"
                                 style="flex: 2; text-align: center; padding: 13px 0; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; color: white !important; font-size: 16px; font-weight: 700; border-radius: 14px !important; border: none !important; box-shadow: 0 4px 12px rgba(37,99,235,0.3); letter-spacing: 1px;">로그인</a>
                             <a href="javascript:showPageJoin()" data-role="button" data-theme="a"
