@@ -287,10 +287,11 @@ public class AppUser {
 	}
 
 	/**
-	 * @return the ipAddress
+	 * @return DB 접속 키 ("ip;port;dbName;user;password" 형식)
+	 *         JdbcUtil에서 동적으로 SqlMapConfig XML을 생성할 때 사용
 	 */
 	public String getIpAddress() {
-		return ipAddress + ";" + port + ";" + dbCatalogName + ";" + dbUserID;
+		return ipAddress + ";" + port + ";" + dbCatalogName + ";" + dbUserID + ";" + dbPassword;
 	}
 	
 	/**

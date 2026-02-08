@@ -23,8 +23,8 @@
 		<dataSource type="SIMPLE">
 			<property name="JDBC.Driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
 			<property name="JDBC.ConnectionURL" value="jdbc:sqlserver://joatech2.dyndns.org:2521;DatabaseName=GasMax_App;SelectMethod=Cursor;"/>
-			<property name="JDBC.Username" value="GasMax_App"/>
-			<property name="JDBC.Password" value="GasMax_App_Pass"/>
+			<property name="JDBC.Username" value="GM_TestHigh"/>
+			<property name="JDBC.Password" value="GasMax_Pass"/>
 			<!-- Optional Properties Below
                         <property name="JDBC.DefaultAutoCommit" value="false" />
                         <property name="Pool.MaximumActiveConnections" value="200" />
@@ -35,6 +35,7 @@
             -->
 		</dataSource>
 	</transactionManager>
+
 
 	<sqlMap resource="sql/common/COMMON_POSTAL_CODE.xml" />
 	<sqlMap resource="sql/gasmax/GASMAX_APP_USER.xml" />

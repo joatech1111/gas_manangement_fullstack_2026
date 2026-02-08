@@ -131,19 +131,17 @@ public class JdbcUtil {
             return cached;
         }
 
-        // "ip;port;dbName;user" 파싱
+        // "ip;port;dbName;user;password" 파싱
         String[] parts = connectionKey.split(";");
         if (parts.length < 4) {
-            throw new JdbcIOException("Invalid connection key format. Expected 'ip;port;dbName;user', got: " + connectionKey);
+            throw new JdbcIOException("Invalid connection key format. Expected 'ip;port;dbName;user;password', got: " + connectionKey);
         }
 
         String ip = parts[0].trim();
         String port = parts[1].trim();
         String dbName = parts[2].trim();
         String user = parts[3].trim();
-        // 패스워드는 AppUser의 dbPassword에서 가져와야 하지만,
-        // 기존 XML 파일도 user_Pass 패턴이었으므로 동일 규칙 적용
-        String password = user + "_Pass";
+        String password = (parts.length >= 5) ? parts[4].trim() : (user + "_Pass");
 
         String xml = buildSqlMapConfigXml(ip, port, dbName, user, password);
         System.out.println("✅ [JdbcUtil] 동적 DB 설정 생성: " + ip + ":" + port + "/" + dbName + " (user=" + user + ")");
