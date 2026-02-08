@@ -201,8 +201,29 @@ function getMultiAppUser() {
 //사용자 인증 체크
 function authCheck() {
     $("#loginMessage").html(getResultMessage("접속 중입니다.", true)).trigger("create");
-    var loginId = $("#txtLoginId").attr("value");
-    var loginPw = $("#txtLoginPw").attr("value");
+    var loginId = $.trim($("#txtLoginId").val() || "");
+    var loginPw = $.trim($("#txtLoginPw").val() || "");
+
+    // 입력값이 없으면 서버 호출 전에 알림 표시
+    if (!loginId || !loginPw) {
+        var emptyMessage = "아이디 또는 비밀번호가 입력되지 않았습니다.";
+        if (window.Swal && Swal.mixin) {
+            Swal.mixin({
+                toast: true,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true
+            }).fire({
+                icon: 'warning',
+                title: emptyMessage
+            });
+        } else {
+            alert(emptyMessage);
+        }
+        $("#loginMessage").html("").trigger("create");
+        return;
+    }
     //var mustErase ;
     //$("#hdnUuid").attr("value", "356455042867040");
     var uuid = $("#hdnUuid").attr("value");
@@ -426,23 +447,28 @@ function authCheck() {
                 //     }  // will be triggered after the toast has been hidden
                 // });
 
-                var html = '<table style="width: 100%;">'
-                    + '  <tr style="background-color: #FFBEBE;">'
-                    + '    <td style="text-align: center; color: red; font-weight: bold;">' + errorMessage + '</td>'
-                    + '  </tr>'
-                    + '</table>';
+                var message = (errorMessage && errorMessage.trim() !== '')
+                    ? errorMessage
+                    : "해당 사용자의 정보가 없습니다.";
 
-                // ✅ 메시지가 있을 때만 빨간 박스 표시
-                if (errorMessage && errorMessage.trim() !== '') {
-                    $("#divLoginFailMessage").html(html).trigger("create");
+                // 로그인 실패 메시지는 알림(토스트/모달)로만 표시
+                if (window.Swal && Swal.mixin) {
+                    Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 1800,
+                        timerProgressBar: true
+                    }).fire({
+                        icon: 'warning',
+                        title: message
+                    });
+                } else {
+                    alert(message);
                 }
 
-                // ✅ 2초 후 사라지게 처리
-                setTimeout(function () {
-                    $("#divLoginFailMessage").fadeOut(300, function () {
-                        $(this).empty().show(); // 다시 보여질 수 있도록 초기화
-                    });
-                }, 1222);
+                // 기존 빨간 박스 영역은 사용하지 않음
+                $("#divLoginFailMessage").hide().empty();
             }
             $("#loginMessage").html("").trigger("create");
         }
