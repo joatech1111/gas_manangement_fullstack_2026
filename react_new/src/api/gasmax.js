@@ -1,8 +1,4 @@
-const GASMAX_SERVER = (import.meta.env.VITE_GASMAX_SERVER || '').replace(/\/$/, '');
-const GASMAX_WEBAPP =
-  (import.meta.env.VITE_GASMAX_WEBAPP || '').replace(/\/$/, '') ||
-  (GASMAX_SERVER ? `${GASMAX_SERVER}/gasapp` : '/gasapp');
-
+const GASMAX_WEBAPP = 'http://gas.joaoffice.com:14007/gasapp';
 const HARDCODED_UUID = 'b28618772c95b3a5';
 
 function buildUrl(path) {
