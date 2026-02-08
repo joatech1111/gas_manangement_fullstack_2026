@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
       allowedHosts: true,
       proxy: gasmaxServer
         ? {
-            '/kkkkk_m_war': {
+            '/gasapp': {
               target: gasmaxServer,
               changeOrigin: true,
               secure: false,
