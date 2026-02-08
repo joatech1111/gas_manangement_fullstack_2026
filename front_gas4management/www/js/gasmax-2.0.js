@@ -151,15 +151,15 @@ function getMultiAppUser() {
                 var initialAreaCode = rememberedAreaCode || firstAreaCode;
                 var initialHpSeq = "";
                 var initialSvrDbName = window.localStorage.getItem("remember_gasmax_svrDbName") || (initialAreaCode === firstAreaCode ? ($(xml).find("AppUser").first().find("svrDbName").text() || $(xml).find("AppUser").first().find("SVR_DBName").text() || "") : "");
-                
+
                 // initialAreaCode에 해당하는 hpSeq 찾기
-                $(xml).find("AppUser").each(function() {
+                $(xml).find("AppUser").each(function () {
                     if (($(this).find("areaCode").text() || "").trim() === initialAreaCode) {
                         initialHpSeq = ($(this).find("areaSeq").text() || "").trim();
                         return false;
                     }
                 });
-                
+
                 if (initialAreaCode) {
                     applyLoginAreaCodeSelection(initialHpSeq, initialAreaCode, initialSvrDbName);
                 }
@@ -217,7 +217,7 @@ function authCheck() {
     var hpSeq = "";
     var areaCode = ""; // 하위 호환성을 위해 유지
     var svrDbName = "";
-    
+
     // 두 가지 버튼 그룹 모두 확인 (#loginAreaCodeButtons와 #multiUserButtons)
     var activeBtn = $("#loginAreaCodeButtons .btnLoginAreaCode.ui-btn-active");
     if (activeBtn.length === 0) {
@@ -228,7 +228,7 @@ function authCheck() {
         hpSeq = activeBtn.attr("data-hpseq") || activeBtn.attr("data-areaseq") || "";
         areaCode = activeBtn.attr("data-areacode") || "";
         svrDbName = activeBtn.attr("data-svrdbname") || "";
-        
+
         // 값이 있으면 저장
         if (hpSeq) {
             try {
@@ -253,7 +253,7 @@ function authCheck() {
     if (!hpSeq || hpSeq == "" || hpSeq == "null") {
         hpSeq = "0";
     }
-    
+
     console.log("🔍 [authCheck] Final hpSeq to send:", hpSeq);
     console.log("🔍 [authCheck] === Get Login Info End ===");
 
@@ -317,7 +317,7 @@ function authCheck() {
                 window.sessionStorage.setItem("login_svrDbName", svrDbName);
                 console.log("💾 Saved svrDbName to storage:", svrDbName);
             }
-            
+
             // hpSeq 저장 (상단 표시용) - 로그인 시 전달한 hpSeq 유지
             var currentHpSeq = window.sessionStorage.getItem("login_hpSeq") || window.localStorage.getItem("remember_gasmax_hpSeq") || "";
             if (currentHpSeq && currentHpSeq !== "0" && currentHpSeq !== "null") {
@@ -432,7 +432,10 @@ function authCheck() {
                     + '  </tr>'
                     + '</table>';
 
-                $("#divLoginFailMessage").html(html).trigger("create");
+                // ✅ 메시지가 있을 때만 빨간 박스 표시
+                if (errorMessage && errorMessage.trim() !== '') {
+                    $("#divLoginFailMessage").html(html).trigger("create");
+                }
 
                 // ✅ 2초 후 사라지게 처리
                 setTimeout(function () {
