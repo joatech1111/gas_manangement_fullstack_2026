@@ -9,7 +9,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     server: {
       host: true,
-      port: 5173,
+      port: 14008,
+      allowedHosts: true,
       proxy: gasmaxServer
         ? {
             '/kkkkk_m_war': {
