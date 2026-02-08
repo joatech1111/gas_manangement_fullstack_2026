@@ -62,7 +62,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
     <link rel="shortcut icon" href="images/favicon.ico" />
-    <title>조아테크 가스경영관리</title>
+    <title>가스 경영 관리 2026</title>
     <!--[if IE]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 
@@ -1062,69 +1062,69 @@ todo: ================ 인트로 페이지 시작 ==================
 
     <section id="pageIntro" data-role="page">
         <header data-role="header" data-theme="b" class="ui-bar"
-            style="background-color: #1f2937; color: white; padding: 4px 10px !important; text-align: center; border: none; min-height: auto !important; height: auto !important;">
+            style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: white; padding: 12px 16px !important; text-align: center; border: none; min-height: auto !important; height: auto !important; box-shadow: 0 2px 12px rgba(0,0,0,0.25);">
             <h1
-                style="margin: 0 !important; padding: 0 !important; font-size: 14px !important; font-weight: bold; letter-spacing: 1px; line-height: 1.3 !important; height: auto !important;">
-                ⛽ 가스경영관리 2025
+                style="margin: 0 !important; padding: 0 !important; font-size: 17px !important; font-weight: 800; letter-spacing: 2px; line-height: 1.4 !important; height: auto !important; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+                &#9981; 가스 경영 관리 2026
             </h1>
         </header>
 
-        <div data-role="content" style="padding: 0px;">
+        <div data-role="content" style="padding: 0px; background: linear-gradient(180deg, #f0f4f8 0%, #e2e8f0 100%); min-height: 60vh;">
 
-            <div style="padding: 10px 5px;">
-                <div style="text-align: center; margin: 0px 0;">
-                    <img src="images/front_logo.png" alt="앱 로고" style="width: 100%; height: auto;" />
+            <div style="padding: 14px 10px 6px;">
+                <div style="text-align: center; margin: 0;">
+                    <img src="images/front_logo.png" alt="앱 로고" style="width: 92%; max-width: 360px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);" />
                 </div>
             </div>
 
-
             <div id="divLoginFailMessage"
-                style="color: red; font-weight: bold; text-align: center; margin-bottom: 10px;"></div>
+                style="color: #e53e3e; font-weight: bold; text-align: center; margin: 6px 20px 10px; padding: 8px 12px; background: #fff5f5; border-radius: 8px; border: 1px solid #fed7d7;"></div>
 
-
-            <div style="padding: 10px 20px;">
+            <div style="padding: 6px 20px 16px;">
                 <form>
                     <!-- 멀티 유저 선택 영역 (동적 생성) -->
                     <div id="divMultiUserSelect" style="margin-bottom: 12px;"></div>
 
                     <!-- 아이디 입력 -->
                     <div class="ui-field-contain"
-                        style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px; padding: 4px 10px; background: linear-gradient(135deg, #ffffffcc, #f8f9facc); border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255, 255, 255, 0.4);">
+                        style="display: flex; align-items: center; margin-bottom: 14px; gap: 12px; padding: 10px 14px; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
                         <label for="txtLoginId"
                             style="min-width: 80px; font-weight: 600; color: #2d3748; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 18px;">👤</span>&nbsp;&nbsp;&nbsp;아이디
+                            <span style="font-size: 20px; opacity: 0.7;">&#128100;</span>아이디
                         </label>
                         <input type="text" id="txtLoginId" placeholder="아이디를 입력하세요"
-                            style="flex: 1; padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: #ffffffee; color: #2d3748; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.03); line-height: 1.4; height: auto;"
-                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.15)'; disableFixed('footerIntro')"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 1px 4px rgba(0,0,0,0.03)'; enableFixed('footerIntro')" />
+                            style="flex: 1; padding: 6px 10px; border: none; font-size: 15px; background: transparent; color: #1a202c; outline: none; font-weight: 500; line-height: 1.4; height: auto;"
+                            onfocus="this.parentElement.style.borderColor='#3b82f6'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; disableFixed('footerIntro')"
+                            onblur="this.parentElement.style.borderColor='#e2e8f0'; this.parentElement.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; enableFixed('footerIntro')" />
                     </div>
 
                     <!-- 비밀번호 입력 -->
                     <div class="ui-field-contain"
-                        style="display: flex; align-items: center; margin-bottom: 12px; gap: 10px; padding: 4px 10px; background: linear-gradient(135deg, #ffffffcc, #f8f9facc); border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255, 255, 255, 0.4); margin-top: -8px;">
+                        style="display: flex; align-items: center; margin-bottom: 14px; gap: 12px; padding: 10px 14px; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
                         <label for="txtLoginPw"
                             style="min-width: 80px; font-weight: 600; color: #2d3748; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 18px;">🔒</span>비밀번호
+                            <span style="font-size: 20px; opacity: 0.7;">&#128274;</span>비밀번호
                         </label>
                         <input type="password" id="txtLoginPw" placeholder="비밀번호를 입력하세요" autocomplete="off"
-                            style="flex: 1; padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; background: #ffffffee; color: #2d3748; transition: all 0.2s ease; outline: none; box-shadow: 0 1px 4px rgba(0,0,0,0.03); line-height: 1.4; height: auto;"
-                            onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.15)'; disableFixed('footerIntro')"
-                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 1px 4px rgba(0,0,0,0.03)'; enableFixed('footerIntro')" />
+                            style="flex: 1; padding: 6px 10px; border: none; font-size: 15px; background: transparent; color: #1a202c; outline: none; font-weight: 500; line-height: 1.4; height: auto;"
+                            onfocus="this.parentElement.style.borderColor='#3b82f6'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; disableFixed('footerIntro')"
+                            onblur="this.parentElement.style.borderColor='#e2e8f0'; this.parentElement.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; enableFixed('footerIntro')" />
                     </div>
 
-                    <div class="ui-field-contain" style="margin-top: -10px;">
-                        <label>
+                    <div class="ui-field-contain" style="margin-top: -6px; margin-bottom: 14px; padding: 0 4px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4a5568;">
                             <input type="checkbox" id="ckbRememberLogin" />
                             로그인 정보 저장
                         </label>
                     </div>
 
-                    <!-- ✅ 버튼 영역 -->
-                    <div class="login-buttons">
-                        <div data-role="controlgroup" data-type="horizontal" data-mini="true">
-                            <a href="javascript:authCheck()" data-role="button" data-theme="b">로그인</a>
-                            <a href="javascript:showPageJoin()" data-role="button" data-theme="a">가입신청</a>
+                    <!-- 버튼 영역 -->
+                    <div class="login-buttons" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <div data-role="controlgroup" data-type="horizontal" data-mini="true" style="display: flex; gap: 10px; width: 100%;">
+                            <a href="javascript:authCheck()" data-role="button" data-theme="b"
+                                style="flex: 2; text-align: center; padding: 13px 0; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; color: white !important; font-size: 16px; font-weight: 700; border-radius: 14px !important; border: none !important; box-shadow: 0 4px 12px rgba(37,99,235,0.3); letter-spacing: 1px;">로그인</a>
+                            <a href="javascript:showPageJoin()" data-role="button" data-theme="a"
+                                style="flex: 1; text-align: center; padding: 13px 0; background: #ffffff !important; color: #374151 !important; font-size: 14px; font-weight: 600; border-radius: 14px !important; border: 1.5px solid #d1d5db !important; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">가입신청</a>
                         </div>
                     </div>
 
@@ -1133,35 +1133,23 @@ todo: ================ 인트로 페이지 시작 ==================
 
             </div>
         </div>
-        <div style="
-              text-align: center;
-              font-size: 16px;
-              font-style: italic;
-              font-weight: bold;
-              margin: 10px auto;
-              padding: 8px 12px;
-              width: fit-content;
-              border: 1px solid #ccc;
-              border-radius: 8px;
-              background: linear-gradient(to right, #f0f0f0, #e0e0e0);
-              box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-">
+        <div style="text-align: center; font-size: 13px; font-weight: 600; margin: 10px auto; padding: 6px 16px; width: fit-content; background: rgba(255,255,255,0.8); border-radius: 20px; color: #64748b; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
             <span id="spnAppVersion"></span>
         </div>
 
-        <footer id="footerIntro" data-role="footer" data-theme="b" data-position="fixed" style="padding: 10px 12px;">
-            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
-                <div style="font-size: 11px; font-weight: bold;" onclick="openInAppBrowser()">
-                    COPYRIGHT © 2025 조아테크
+        <footer id="footerIntro" data-role="footer" data-theme="b" data-position="fixed"
+            style="padding: 12px 16px; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%) !important; border: none !important;">
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 20px;">
+                <div style="font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7);" onclick="openInAppBrowser()">
+                    COPYRIGHT &copy; 2026 조아테크
                 </div>
-                <div style="width: 30px;"></div>
-                <div style="font-size: 13px;">
-                    고객지원센터: <a href="tel:1566-2399" id="lnkPhoneSupport">1566-2399</a>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.9);">
+                    고객지원 <a href="tel:1566-2399" id="lnkPhoneSupport" style="color: #93c5fd; font-weight: 700; text-decoration: none;">1566-2399</a>
                 </div>
             </div>
             <div id="statusMessage"
-                style="text-align: center; font-size: 13px; color: #555; margin: 8px auto 0; padding: 6px 12px; background-color: #f5f5f5; border-radius: 8px; width: fit-content; display: none;">
-                ✅ 서버 상태 확인 중...
+                style="text-align: center; font-size: 12px; color: rgba(255,255,255,0.6); margin: 6px auto 0; padding: 4px 12px; background: rgba(255,255,255,0.1); border-radius: 12px; width: fit-content; display: none;">
+                서버 상태 확인 중...
             </div>
         </footer>
     </section>
@@ -1185,7 +1173,7 @@ todo: ================ 회원가입 신청 페이지 시작 ==================
         <br /><br /><br /><br />
         <footer id="footerJoin" data-role="footer" data-theme="d" data-position="fixed">
             <h3 style="font-size: 16px; cursor: pointer;" onclick="openInAppBrowser()">
-                COPYRIGHT © 2025 조아테크
+                COPYRIGHT &copy; 2026 조아테크
             </h3>
             <h3>고객지원센터 <a href="tel:1566-2399" id="lnkPhoneSupport">1566-2399</a></h3>
         </footer>
@@ -1199,30 +1187,31 @@ todo: ================ 회원가입 신청 페이지 끝 ==================
 todo: ================ 홈 페이지 시작 ==================
  -->
     <section id="pageMain" data-role="page">
-        <header data-role="header" data-theme="b" data-position="inline">
+        <header data-role="header" data-theme="b" data-position="inline"
+            style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%) !important; border: none !important; box-shadow: 0 2px 12px rgba(0,0,0,0.2);">
             <a href="#" data-icon="arrow-l" data-mini="true" onclick="showPageIntro(true)">종료</a>
-            <h3>가스경영 <span id="headerSvrDbName"
-                    style="font-size: 11px; color: #3333FF !important; font-weight: bold; background: #ffff00; padding: 0 4px; border-radius: 4px; display: none;"></span>
+            <h3 style="color: #fff !important; font-weight: 800 !important; letter-spacing: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">가스 경영 관리 2026 <span id="headerSvrDbName"
+                    style="font-size: 10px; color: #93c5fd !important; font-weight: 600; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 6px; display: none;"></span>
                     <span id="headerHpSeq"
-                    style="font-size: 11px; color: #FF3333 !important; font-weight: bold; background: #ffff00; padding: 0 4px; border-radius: 4px; margin-left: 4px; display: none;"></span>
+                    style="font-size: 10px; color: #fca5a5 !important; font-weight: 600; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 6px; margin-left: 4px; display: none;"></span>
             </h3>
             <a href="#" data-icon="info" data-mini="true" onclick="showPageAppUserEdit()">설정</a>
         </header>
-        <div data-role="content">
+        <div data-role="content" style="padding: 12px !important; background: linear-gradient(180deg, #f0f4f8 0%, #e8edf2 100%) !important;">
             <ul data-role="listview" data-theme="d" data-inset="false" data-mini="true">
-                <li>
+                <li style="background: #fff; border-radius: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; padding: 10px;">
                     <table style="border: 0px solid blue ; border-collapse: collapse ; width: 100% ;">
                         <tr>
                             <td colspan="2">
                                 <input id="txtHomeCustomerKeyword" type="search" data-theme="c" value=""
-                                    data-mini="true" placeholder="상호 검색" onkeydown="keydownHomeSearch()"
+                                    data-mini="true" placeholder="거래처 검색" onkeydown="keydownHomeSearch()"
                                     onfocus="disableFixed('footerMain')" onblur="enableFixed('footerMain')" />
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2">
                                 <button id="btnHomeSearchCustomer" onclick="homeSearch()" data-mini="true"
-                                    data-theme="b" data-icon="search">상호 검색
+                                    data-theme="b" data-icon="search">거래처 검색
                                 </button>
                             </td>
                         </tr>
@@ -1233,51 +1222,40 @@ todo: ================ 홈 페이지 시작 ==================
             </ul>
         </div>
 
-        <table style="border: 0px solid #999999 ; border-collapse: collapse ; width: 100% ; !important;">
-            <div style="height: 10px;"></div>
-            <tr style="margin-top: 0px;">
-                <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageCidList()"><img
-                            src="images/v2/main_cid_btn.png" /></a></td>
-                <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageSaleList()"><img
-                            src="images/v2/main_custcenter_btn.png" /></a></td>
-                <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageUnpaidList()"><img
-                            src="images/v2/main_uncollected_btn.png" /></a></td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td style="color:#3333FF ; text-align: center ; "><a href="#" onclick="showPageManageCollectList()"><img
-                            src="images/v2/main_collection_btn.png" /></a></td>
-                <td style="color:#3333FF ; text-align: center ; "><a href="#"
-                        onclick="showPageManageReadMeterList()"><img src="images/v2/main_register_btn.png" /></a></td>
-                <td style="color:#3333FF ; text-align: center ; ">
-                    <!-- JoaTech Icon Hidden -->
-                    <!-- <a href="#" onclick="openJoaTechWebsite()"><img src="images/v2/main_joatech_btn.png" /></a> -->
-                </td>
-            </tr>
-
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-
-            </tr>
-
-        </table>
-        <footer id="footerMain" data-role="footer" data-theme="d" data-position="fixed">
-            <h3 style="font-size: 16px; cursor: pointer;" onclick="openInAppBrowser()">
-                COPYRIGHT © 2025 조아테크
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 16px 16px; background: linear-gradient(180deg, #e8edf2 0%, #f0f4f8 100%);">
+            <a href="#" onclick="showPageManageCidList()" style="text-decoration: none;">
+                <div style="background: #ffffff; border-radius: 16px; padding: 16px 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8ecf1;">
+                    <img src="images/v2/main_cid_btn.png" style="width: 90px; height: 90px; object-fit: contain;" />
+                </div>
+            </a>
+            <a href="#" onclick="showPageManageSaleList()" style="text-decoration: none;">
+                <div style="background: #ffffff; border-radius: 16px; padding: 16px 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8ecf1;">
+                    <img src="images/v2/main_custcenter_btn.png" style="width: 90px; height: 90px; object-fit: contain;" />
+                </div>
+            </a>
+            <a href="#" onclick="showPageManageUnpaidList()" style="text-decoration: none;">
+                <div style="background: #ffffff; border-radius: 16px; padding: 16px 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8ecf1;">
+                    <img src="images/v2/main_uncollected_btn.png" style="width: 90px; height: 90px; object-fit: contain;" />
+                </div>
+            </a>
+            <a href="#" onclick="showPageManageCollectList()" style="text-decoration: none;">
+                <div style="background: #ffffff; border-radius: 16px; padding: 16px 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8ecf1;">
+                    <img src="images/v2/main_collection_btn.png" style="width: 90px; height: 90px; object-fit: contain;" />
+                </div>
+            </a>
+            <a href="#" onclick="showPageManageReadMeterList()" style="text-decoration: none;">
+                <div style="background: #ffffff; border-radius: 16px; padding: 16px 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8ecf1;">
+                    <img src="images/v2/main_register_btn.png" style="width: 90px; height: 90px; object-fit: contain;" />
+                </div>
+            </a>
+            <div></div>
+        </div>
+        <footer id="footerMain" data-role="footer" data-theme="d" data-position="fixed"
+            style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%) !important; border: none !important;">
+            <h3 style="font-size: 12px; cursor: pointer; color: rgba(255,255,255,0.7) !important; font-weight: 600;" onclick="openInAppBrowser()">
+                COPYRIGHT &copy; 2026 조아테크
             </h3>
-            <h3>고객지원센터 <a href="tel:1566-2399" id="lnkPhoneSupport">1566-2399</a></h3>
+            <h3 style="color: rgba(255,255,255,0.9) !important; font-size: 12px;">고객지원 <a href="tel:1566-2399" id="lnkPhoneSupport" style="color: #93c5fd; font-weight: 700; text-decoration: none;">1566-2399</a></h3>
         </footer>
     </section>
 
@@ -1302,7 +1280,7 @@ todo: ================ 환경설정 페이지 시작 ==================
         </div>
         <footer id="footerAppUserEdit" data-role="footer" data-theme="d" data-position="fixed">
             <h3 style="font-size: 16px; cursor: pointer;" onclick="openInAppBrowser()">
-                COPYRIGHT © 2025 조아테크
+                COPYRIGHT &copy; 2026 조아테크
             </h3>
             <h3>고객지원센터 <a href="tel:1566-2399" id="lnkPhoneSupport">1566-2399</a></h3>
         </footer>
