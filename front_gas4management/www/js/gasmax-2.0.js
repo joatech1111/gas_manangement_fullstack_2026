@@ -98,8 +98,8 @@ function getMultiAppUser() {
                 var firstAreaCode = "";
 
                 // 버튼 목록(회사 선택) 생성
-                var html = '<div id="loginAreaCodeButtons" data-role="controlgroup" data-mini="true" style="margin: 0 0 12px 0;">';
-                html += '<div style="font-weight: 600; color: #2d3748; font-size: 13px; margin: 0 0 6px 0;">🏢 회사 선택</div>';
+                var html = '<div id="loginAreaCodeButtons" class="login-company-select" data-role="controlgroup" data-mini="true">';
+                html += '<div class="login-section-title">회사 선택</div>';
 
                 $(xml).find("AppUser").each(function () {
                     var areaCode = ($(this).find("areaCode").text() || "").trim(); //업체코드

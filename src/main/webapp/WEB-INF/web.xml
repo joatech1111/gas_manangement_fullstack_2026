@@ -33,6 +33,10 @@
         <session-timeout>120</session-timeout>
     </session-config>
 
+    <listener>
+        <listener-class>com.joainfo.common.util.ServerPortLoggingListener</listener-class>
+    </listener>
+
     <error-page>
         <error-code>401</error-code>
         <location>/webapp/401.jsp</location>

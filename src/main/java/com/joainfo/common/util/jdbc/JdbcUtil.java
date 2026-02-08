@@ -66,13 +66,32 @@ public class JdbcUtil {
                             System.out.println("[JdbcUtil] DB config path (from properties): " + sqlConfigPath);
                             return sqlConfigPath;
                         } else {
-                            System.out.println("[JdbcUtil] Properties path not found: " + path + " -> using default: " + DEFAULT_SQL_CONFIG_PATH);
+                            System.out.println("[JdbcUtil] Properties path not found: " + path + " -> using default: "
+                                    + DEFAULT_SQL_CONFIG_PATH);
                         }
                     }
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            // 2. Check current working directory (Project Root) - for Local Dev
+            java.io.File localDir = new java.io.File("gasmax_db_config");
+            if (localDir.exists() && localDir.isDirectory()) {
+                sqlConfigPath = localDir.getAbsolutePath();
+                System.out.println("[JdbcUtil] DB config path (found in project root): " + sqlConfigPath);
+                return sqlConfigPath;
+            }
+
+            // 3. Check explicit Mac local path (Hardcoded for this workspace)
+            java.io.File macLocalDir = new java.io.File(
+                    "/Users/gilzako/IdeaProjects/gas_management_2023_fullstack/gasmax_db_config");
+            if (macLocalDir.exists() && macLocalDir.isDirectory()) {
+                sqlConfigPath = macLocalDir.getAbsolutePath();
+                System.out.println("[JdbcUtil] DB config path (Mac Local): " + sqlConfigPath);
+                return sqlConfigPath;
+            }
+
+            // 3. Fallback to default path
             sqlConfigPath = DEFAULT_SQL_CONFIG_PATH;
             System.out.println("[JdbcUtil] DB config path (default): " + sqlConfigPath);
             return sqlConfigPath;
@@ -145,7 +164,8 @@ public class JdbcUtil {
         // "ip;port;dbName;user;password" 파싱
         String[] parts = connectionKey.split(";");
         if (parts.length < 4) {
-            throw new JdbcIOException("Invalid connection key format. Expected 'ip;port;dbName;user;password', got: " + connectionKey);
+            throw new JdbcIOException(
+                    "Invalid connection key format. Expected 'ip;port;dbName;user;password', got: " + connectionKey);
         }
 
         String ip = parts[0].trim();
@@ -236,8 +256,8 @@ public class JdbcUtil {
     // 파일 기반 방식 (default_gasmax_app 전용 - 로그인/인증용)
     // =========================================================================
 
-    private static final Pattern XML_ENCODING_PATTERN =
-            Pattern.compile("encoding\\s*=\\s*['\\\"]([^'\\\"]+)['\\\"]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern XML_ENCODING_PATTERN = Pattern.compile("encoding\\s*=\\s*['\\\"]([^'\\\"]+)['\\\"]",
+            Pattern.CASE_INSENSITIVE);
 
     /**
      * 파일 기반 SqlMapConfig 로딩 (BOM 안전 처리)
@@ -274,8 +294,10 @@ public class JdbcUtil {
 
     private static Charset detectXmlCharset(byte[] bytes) {
         if (bytes.length >= 2) {
-            if ((bytes[0] == (byte) 0xFE) && (bytes[1] == (byte) 0xFF)) return StandardCharsets.UTF_16BE;
-            if ((bytes[0] == (byte) 0xFF) && (bytes[1] == (byte) 0xFE)) return StandardCharsets.UTF_16LE;
+            if ((bytes[0] == (byte) 0xFE) && (bytes[1] == (byte) 0xFF))
+                return StandardCharsets.UTF_16BE;
+            if ((bytes[0] == (byte) 0xFF) && (bytes[1] == (byte) 0xFE))
+                return StandardCharsets.UTF_16LE;
         }
         if (bytes.length >= 3) {
             if ((bytes[0] == (byte) 0xEF) && (bytes[1] == (byte) 0xBB) && (bytes[2] == (byte) 0xBF)) {
@@ -289,7 +311,8 @@ public class JdbcUtil {
             String enc = m.group(1);
             try {
                 return Charset.forName(enc);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
         return StandardCharsets.UTF_8;
     }
@@ -305,7 +328,7 @@ public class JdbcUtil {
         }
         if (bytes.length >= 2
                 && ((bytes[0] == (byte) 0xFE && bytes[1] == (byte) 0xFF)
-                || (bytes[0] == (byte) 0xFF && bytes[1] == (byte) 0xFE))) {
+                        || (bytes[0] == (byte) 0xFF && bytes[1] == (byte) 0xFE))) {
             byte[] out = new byte[bytes.length - 2];
             System.arraycopy(bytes, 2, out, 0, out.length);
             return out;
@@ -317,8 +340,9 @@ public class JdbcUtil {
     // DB 쿼리 실행 메서드들 (기존과 동일)
     // =========================================================================
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public List<HashMap> selectQuery(String id, Map<String, String> condition) throws JdbcIOException, JdbcSelectException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public List<HashMap> selectQuery(String id, Map<String, String> condition)
+            throws JdbcIOException, JdbcSelectException {
         List<HashMap> result;
         try {
             sqlMapClient.startTransaction();
@@ -326,7 +350,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return result;
         } catch (SQLException e) {
-            throw new JdbcSelectException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Select Error. Select condition=[" + condition + ']');
+            throw new JdbcSelectException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] Select Error. Select condition=[" + condition + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -336,7 +361,7 @@ public class JdbcUtil {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<HashMap> selectQuery(String id, List<String> condition) throws JdbcIOException, JdbcSelectException {
         List<HashMap> result;
         try {
@@ -345,7 +370,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return result;
         } catch (SQLException e) {
-            throw new JdbcSelectException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Select Error. Select condition=[" + condition + ']');
+            throw new JdbcSelectException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] Select Error. Select condition=[" + condition + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -355,8 +381,9 @@ public class JdbcUtil {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public Map<String, String> selectOne(String id, Map<String, String> condition, String key) throws JdbcIOException, JdbcSelectException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public Map<String, String> selectOne(String id, Map<String, String> condition, String key)
+            throws JdbcIOException, JdbcSelectException {
         Map result;
         try {
             sqlMapClient.startTransaction();
@@ -364,7 +391,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return result;
         } catch (SQLException e) {
-            throw new JdbcSelectException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Select Error. Select condition=[" + condition + ']');
+            throw new JdbcSelectException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] Select Error. Select condition=[" + condition + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -374,7 +402,7 @@ public class JdbcUtil {
         }
     }
 
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({ "rawtypes" })
     public List<HashMap> selectQuery(String id) throws JdbcIOException, JdbcSelectException {
         return selectQuery(id, (Map<String, String>) null);
     }
@@ -386,7 +414,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return 1;
         } catch (SQLException e) {
-            throw new JdbcInsertException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Insert Error. Insert parameter=[" + parameter + ']');
+            throw new JdbcInsertException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] Insert Error. Insert parameter=[" + parameter + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -403,7 +432,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return 1;
         } catch (SQLException e) {
-            throw new JdbcUpdateException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Update Error. Update parameter=[" + parameter + ']');
+            throw new JdbcUpdateException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] Update Error. Update parameter=[" + parameter + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -420,7 +450,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return 1;
         } catch (SQLException e) {
-            throw new JdbcDeleteException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Delete Error. Delete parameter=[" + key + ']');
+            throw new JdbcDeleteException(
+                    e.getMessage() + "\n SQLMapConfig id=[" + id + "] Delete Error. Delete parameter=[" + key + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -437,7 +468,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return 1;
         } catch (SQLException e) {
-            throw new JdbcDeleteException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Delete Error. Delete parameter=[" + keys + ']');
+            throw new JdbcDeleteException(
+                    e.getMessage() + "\n SQLMapConfig id=[" + id + "] Delete Error. Delete parameter=[" + keys + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -454,7 +486,8 @@ public class JdbcUtil {
             sqlMapClient.commitTransaction();
             return 1;
         } catch (SQLException e) {
-            throw new JdbcDeleteException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] Delete Error. Delete parameter=[" + list + ']');
+            throw new JdbcDeleteException(
+                    e.getMessage() + "\n SQLMapConfig id=[" + id + "] Delete Error. Delete parameter=[" + list + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -464,14 +497,16 @@ public class JdbcUtil {
         }
     }
 
-    public int executeProcedure(String id, HashMap<String, Object> param) throws JdbcIOException, JdbcProcedureException {
+    public int executeProcedure(String id, HashMap<String, Object> param)
+            throws JdbcIOException, JdbcProcedureException {
         try {
             sqlMapClient.startTransaction();
             sqlMapClient.queryForObject(id, param);
             sqlMapClient.getCurrentConnection().commit();
             return 1;
         } catch (SQLException e) {
-            throw new JdbcProcedureException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] execute procedure Error. Execute procedure parameter=[" + param + ']');
+            throw new JdbcProcedureException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] execute procedure Error. Execute procedure parameter=[" + param + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -481,7 +516,8 @@ public class JdbcUtil {
         }
     }
 
-    public String executeProcedure(String id, HashMap<String, Object> param, String outputId) throws JdbcIOException, JdbcProcedureException {
+    public String executeProcedure(String id, HashMap<String, Object> param, String outputId)
+            throws JdbcIOException, JdbcProcedureException {
         try {
             sqlMapClient.startTransaction();
             sqlMapClient.queryForObject(id, param);
@@ -489,7 +525,8 @@ public class JdbcUtil {
             String outputResult = (String) param.get(outputId);
             return outputResult;
         } catch (SQLException e) {
-            throw new JdbcProcedureException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] execute procedure Error. Execute procedure parameter=[" + param + ']');
+            throw new JdbcProcedureException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] execute procedure Error. Execute procedure parameter=[" + param + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();
@@ -499,7 +536,8 @@ public class JdbcUtil {
         }
     }
 
-    public String executeProcedureByIntegerReturn(String id, HashMap<String, Object> param, String outputId) throws JdbcIOException, JdbcProcedureException {
+    public String executeProcedureByIntegerReturn(String id, HashMap<String, Object> param, String outputId)
+            throws JdbcIOException, JdbcProcedureException {
         try {
             sqlMapClient.startTransaction();
             sqlMapClient.queryForObject(id, param);
@@ -507,7 +545,8 @@ public class JdbcUtil {
             String outputResult = ((Integer) param.get(outputId)).toString();
             return outputResult;
         } catch (SQLException e) {
-            throw new JdbcProcedureException(e.getMessage() + "\n SQLMapConfig id=[" + id + "] execute procedure Error. Execute procedure parameter=[" + param + ']');
+            throw new JdbcProcedureException(e.getMessage() + "\n SQLMapConfig id=[" + id
+                    + "] execute procedure Error. Execute procedure parameter=[" + param + ']');
         } finally {
             try {
                 sqlMapClient.endTransaction();

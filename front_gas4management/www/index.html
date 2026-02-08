@@ -52,6 +52,45 @@
         }
     </script>
 
+    <script>
+        // 키보드가 올라올 때 입력창이 가려지는 문제 대응
+        (function () {
+            function ensureVisible(el) {
+                if (!el) return;
+                setTimeout(function () {
+                    try {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } catch (e) {
+                        el.scrollIntoView(true);
+                    }
+                }, 120);
+            }
+
+            document.addEventListener('focusin', function (e) {
+                var target = e.target;
+                if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+                    ensureVisible(target);
+                }
+            });
+
+            if (window.visualViewport) {
+                var lastHeight = window.visualViewport.height;
+                window.visualViewport.addEventListener('resize', function () {
+                    var vv = window.visualViewport;
+                    if (!vv) return;
+                    var delta = lastHeight - vv.height;
+                    lastHeight = vv.height;
+                    if (delta > 0) {
+                        // 키보드 올라온 것으로 판단
+                        document.body.style.paddingBottom = (delta + 16) + 'px';
+                    } else {
+                        document.body.style.paddingBottom = '';
+                    }
+                });
+            }
+        })();
+    </script>
+
     <script src="js/gasmax-server.js"></script>
     <script src="js/gasmax-2.0.js"></script>
     <script src="js/utils.js"></script>
@@ -743,7 +782,6 @@
                                 </svg>
                             </div>
                             <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin: 0 0 10px; letter-spacing: -0.5px;">정말 종료하시겠어요?</h2>
-                            <p style="font-size: 15px; color: #6b7280; margin: 0; line-height: 1.5;">앱을 종료하면 작업중인<br/>내용이 저장되지 않을 수 있습니다</p>
                         </div>
                         <style>
                             @keyframes pulseIcon {
@@ -1054,15 +1092,141 @@ todo: ================ 인트로 페이지 시작 ==================
             font-size: 14px !important;
             padding: 6px 10px !important;
         }
+
+        :root {
+            --login-bg: #f5f6f8;
+            --login-card: #ffffff;
+            --login-border: #e5e7eb;
+            --login-text: #111827;
+            --login-muted: #6b7280;
+            --login-accent: #03c75a;
+            --login-accent-2: #00b84f;
+        }
+
+        #pageIntro [data-role="content"] {
+            background: var(--login-bg);
+        }
+
+        #pageIntro .login-wrap {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 8px 14px 16px;
+        }
+
+        #pageIntro .login-card {
+            background: var(--login-card);
+            border: 1px solid var(--login-border);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: none;
+        }
+
+        #pageIntro .login-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--login-muted);
+            letter-spacing: 0.2px;
+            margin: 4px 2px 8px;
+        }
+
+        #pageIntro .login-company-select {
+            margin: 0 0 12px 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        #pageIntro .login-company-select .ui-btn {
+            border: 1px solid var(--login-border) !important;
+            border-radius: 8px !important;
+            background: #f9fafb !important;
+            color: var(--login-text) !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            padding: 10px 12px !important;
+            box-shadow: none !important;
+        }
+
+        #pageIntro .login-company-select .ui-btn.ui-btn-active {
+            background: #ecfdf3 !important;
+            color: #0f5132 !important;
+            border-color: var(--login-accent) !important;
+        }
+
+        #pageIntro .login-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #ffffff;
+            border: none;
+            box-shadow: none;
+        }
+
+        #pageIntro .login-field label {
+            min-width: 60px;
+            font-weight: 600;
+            color: var(--login-muted);
+            font-size: 12px;
+        }
+
+        #pageIntro .login-field input {
+            flex: 1;
+            padding: 8px 6px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--login-text);
+            outline: none;
+        }
+
+        #pageIntro .login-remember {
+            margin-top: -4px;
+            margin-bottom: 12px;
+            padding: 0 4px;
+            color: var(--login-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        #pageIntro .login-field-group {
+            background: #ffffff;
+            border: 1px solid var(--login-border);
+            border-radius: 8px;
+            box-shadow: none;
+            overflow: hidden;
+        }
+
+        #pageIntro .login-field-group .login-field + .login-field {
+            border-top: 1px solid var(--login-border);
+        }
+
+        #pageIntro #btnToggleLoginPw {
+            border-radius: 10px;
+            background: #f1f5f9;
+        }
+
+        #pageIntro .login-buttons a[data-theme="b"] {
+            background: var(--login-accent) !important;
+            box-shadow: none !important;
+            border-radius: 6px !important;
+        }
+
+        #pageIntro .login-buttons a[data-theme="a"] {
+            background: #ffffff !important;
+            border: 1px solid var(--login-border) !important;
+            box-shadow: none !important;
+            border-radius: 6px !important;
+        }
     </style>
 
 
     <section id="pageIntro" data-role="page">
         <header data-role="header" data-theme="b" class="ui-bar"
-            style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); color: white; padding: 12px 16px !important; text-align: center; border: none; min-height: auto !important; height: auto !important; box-shadow: 0 2px 12px rgba(0,0,0,0.25);">
+            style="background: #ffffff; color: #111827; padding: 12px 16px !important; text-align: center; border: none; min-height: auto !important; height: auto !important; box-shadow: none;">
             <h1
-                style="margin: 0 !important; padding: 0 !important; font-size: 17px !important; font-weight: 800; letter-spacing: 2px; line-height: 1.4 !important; height: auto !important; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
-                &#9981; 가스 경영 관리 2026
+                style="margin: 0 !important; padding: 0 !important; font-size: 16px !important; font-weight: 800; letter-spacing: 1px; line-height: 1.4 !important; height: auto !important; text-shadow: none;">
+                가스 경영 2025
             </h1>
         </header>
 
@@ -1070,49 +1234,41 @@ todo: ================ 인트로 페이지 시작 ==================
 
             <div style="padding: 14px 10px 6px;">
                 <div style="text-align: center; margin: 0;">
-                    <img src="img/222.png" alt="앱 로고" style="width: 92%; max-width: 360px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);" />
+                    <img src="img/222.png" alt="앱 로고" style="width: 92%; max-width: 180px; height: auto; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);" />
                 </div>
             </div>
 <!--            <div id="divLoginFailMessage"-->
 <!--                style="color: #e53e3e; font-weight: bold; text-align: center; margin: 6px 20px 10px; padding: 8px 12px; background: #fff5f5; border-radius: 8px; border: 1px solid #fed7d7;"></div>-->
 
-            <div style="padding: 6px 20px 16px;">
+            <div class="login-wrap">
+                <div class="login-card">
                 <form>
                     <!-- 멀티 유저 선택 영역 (동적 생성) -->
                     <div id="divMultiUserSelect" style="margin-bottom: 12px;"></div>
+                    <div class="login-field-group" style="margin-bottom: 12px;">
+                        <!-- 아이디 입력 -->
+                        <div class="ui-field-contain login-field">
+                            <label for="txtLoginId">아이디</label>
+                            <input type="text" id="txtLoginId" placeholder="아이디를 입력하세요"
+                                onfocus="this.closest('.login-field-group').style.borderColor='#3b82f6'; this.closest('.login-field-group').style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; disableFixed('footerIntro')"
+                                onblur="this.closest('.login-field-group').style.borderColor='#e2e8f0'; this.closest('.login-field-group').style.boxShadow='0 2px 10px rgba(15,23,42,0.06)'; enableFixed('footerIntro')" />
+                        </div>
 
-                    <!-- 아이디 입력 -->
-                    <div class="ui-field-contain"
-                        style="display: flex; align-items: center; margin-bottom: 14px; gap: 12px; padding: 10px 14px; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-                        <label for="txtLoginId"
-                            style="min-width: 80px; font-weight: 600; color: #2d3748; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 20px; opacity: 0.7;">&#128100;</span>아이디
-                        </label>
-                        <input type="text" id="txtLoginId" placeholder="아이디를 입력하세요"
-                            style="flex: 1; padding: 6px 10px; border: none; font-size: 15px; background: transparent; color: #1a202c; outline: none; font-weight: 500; line-height: 1.4; height: auto;"
-                            onfocus="this.parentElement.style.borderColor='#3b82f6'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; disableFixed('footerIntro')"
-                            onblur="this.parentElement.style.borderColor='#e2e8f0'; this.parentElement.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; enableFixed('footerIntro')" />
+                        <!-- 비밀번호 입력 -->
+                        <div class="ui-field-contain login-field">
+                            <label for="txtLoginPw">비밀번호</label>
+                            <input type="password" id="txtLoginPw" placeholder="비밀번호를 입력하세요" autocomplete="off"
+                                onfocus="this.closest('.login-field-group').style.borderColor='#3b82f6'; this.closest('.login-field-group').style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; disableFixed('footerIntro')"
+                                onblur="this.closest('.login-field-group').style.borderColor='#e2e8f0'; this.closest('.login-field-group').style.boxShadow='0 2px 10px rgba(15,23,42,0.06)'; enableFixed('footerIntro')" />
+                            <button type="button" id="btnToggleLoginPw" aria-label="비밀번호 보기" onclick="toggleLoginPassword()"
+                                style="margin-left: 6px; border: none; color: #64748b; font-size: 18px; padding: 6px 8px; cursor: pointer;">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- 비밀번호 입력 -->
-                    <div class="ui-field-contain"
-                        style="display: flex; align-items: center; margin-bottom: 14px; gap: 12px; padding: 10px 14px; background: #ffffff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-                        <label for="txtLoginPw"
-                            style="min-width: 80px; font-weight: 600; color: #2d3748; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 20px; opacity: 0.7;">&#128274;</span>비밀번호
-                        </label>
-                        <input type="password" id="txtLoginPw" placeholder="비밀번호를 입력하세요" autocomplete="off"
-                            style="flex: 1; padding: 6px 10px; border: none; font-size: 15px; background: transparent; color: #1a202c; outline: none; font-weight: 500; line-height: 1.4; height: auto;"
-                            onfocus="this.parentElement.style.borderColor='#3b82f6'; this.parentElement.style.boxShadow='0 0 0 3px rgba(59,130,246,0.12)'; disableFixed('footerIntro')"
-                            onblur="this.parentElement.style.borderColor='#e2e8f0'; this.parentElement.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; enableFixed('footerIntro')" />
-                        <button type="button" id="btnToggleLoginPw" aria-label="비밀번호 보기" onclick="toggleLoginPassword()"
-                            style="margin-left: 6px; border: none; background: transparent; color: #64748b; font-size: 18px; padding: 4px 6px; cursor: pointer;">
-                            <i class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-
-                    <div class="ui-field-contain" style="margin-top: -6px; margin-bottom: 14px; padding: 0 4px;">
-                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4a5568;">
+                    <div class="ui-field-contain login-remember">
+                        <label style="display: flex; align-items: center; gap: 8px;">
                             <input type="checkbox" id="ckbRememberLogin" />
                             로그인 정보 저장
                         </label>
@@ -1144,6 +1300,7 @@ todo: ================ 인트로 페이지 시작 ==================
 
                     <div id="loginMessage"></div>
                 </form>
+                </div>
 
             </div>
         </div>
