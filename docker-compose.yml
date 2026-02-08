@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: gas-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - gas-management-network
+
+  gas-management-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gas-management-server
+    image: gas-management:latest
+    ports:
+      - "9093:8080"  # 외부포트:컨테이너포트 (로컬 테스트용)
+    environment:
+      - TZ=Asia/Seoul
+      - JAVA_OPTS=-Xms512m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -Dhttps.protocols=TLSv1.2 -Djdk.tls.client.protocols=TLSv1.2
+      - REDIS_HOST=redis
+    volumes:
+      # 로그 디렉토리 마운트 (선택사항)
+      - ./logs:/usr/local/tomcat/logs
+      # DB 설정 파일 마운트 (필수)
+      - ./gasmax_db_config:/usr/local/tomcat/gasmax_db_config
+      # 설정 파일 마운트 (필요한 경우)
+      # - ./conf:/usr/local/tomcat/conf
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/kkkkk_m_war/gasapp/home.jsp"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - gas-management-network
+
+networks:
+  gas-management-network:
+    driver: bridge

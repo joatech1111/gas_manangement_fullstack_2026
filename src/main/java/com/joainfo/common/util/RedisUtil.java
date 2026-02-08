@@ -5,9 +5,16 @@ import redis.clients.jedis.Jedis;
 import com.joainfo.gasmax.bean.AppUser;
 
 public class RedisUtil {
-    private static final String REDIS_HOST = "localhost"; // Redis 서버 주소
+    private static final String REDIS_HOST; // Redis 서버 주소
     private static final int REDIS_PORT = 6379; // Redis 포트
     private static final Gson gson = new Gson(); // JSON 변환기
+
+    static {
+        // 환경변수 REDIS_HOST가 있으면 사용, 없으면 localhost (로컬 개발용)
+        String host = System.getenv("REDIS_HOST");
+        REDIS_HOST = (host != null && !host.isEmpty()) ? host : "localhost";
+        System.out.println("[RedisUtil] Redis host: " + REDIS_HOST + ":" + REDIS_PORT);
+    }
 
     /**
      * ✅ Redis에 sessionToken을 이용해 사용자 정보를 저장하는 메소드
@@ -93,7 +100,7 @@ public class RedisUtil {
 
     public static void removeFromRedis(String sessionToken, String key) {
         if (sessionToken == null || sessionToken.isEmpty() || key == null || key.isEmpty()) return;
-        try (Jedis jedis = new Jedis("localhost", 6379)) {
+        try (Jedis jedis = new Jedis(REDIS_HOST, REDIS_PORT)) {
             jedis.del("SESSION:" + sessionToken + ":" + key);
         }
     }
