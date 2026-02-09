@@ -40,23 +40,20 @@
     AppUser appUser = new AppUser();
 
 
-
-
-
     System.out.println("=== auth_check_s3_ajx_v2.jsp DEBUG START ===");
     System.out.println("userId: " + userId);
     System.out.println("password: " + (password != null ? "***" : "null"));
     System.out.println("uuid: " + uuid);
     System.out.println("areaCode: " + areaCode);
     System.out.println("hpSeq: " + hpSeq);
-    
+
     if ((userId == null) || ("".equals(userId)) || (password == null) || ("".equals(password))) {
         auth = false;
         errorCode = "N"; // 입력 오류
         errorMessage = "아이디 또는 비밀번호가 입력되지 않았습니다.";
         System.out.println("❌ ERROR: userId or password is empty");
     } else {
-        if(userId.equals("test") && password.equals("test")) {
+        if (userId.equals("test") && password.equals("test")) {
             System.out.println(">>> test/test 로그인 감지");
             System.out.println(">>> DEFAULT_APP_USER_CATATLOG_NAME: " + BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME);
             try {
@@ -73,9 +70,9 @@
                 errorMessage = "로그인 처리 중 오류가 발생했습니다: " + e.getMessage();
             }
 
-        }else{
+        } else {
             // hpSeq가 있으면 hpSeq로 필터링, 없으면 areaCode로 필터링, 둘 다 없으면 전체 조회
-            if (hpSeq != null && !hpSeq.isEmpty() && !"0".equals(hpSeq)) {
+            if (hpSeq != null && !hpSeq.isEmpty()) {
                 System.out.println(">>> hpSeq로 필터링: " + hpSeq);
                 appUser = BizAppUser.getInstance().getAppUser_id_pwd_uuid_hpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, userId.trim(), password, uuid, hpSeq);
                 System.out.println("hpSeq 필터링 결과 appUser: " + appUser);
@@ -127,7 +124,7 @@
     System.out.println(">>> Final errorCode: " + errorCode);
     System.out.println(">>> Final errorMessage: " + errorMessage);
     System.out.println("=== auth_check_s3_ajx_v2.jsp DEBUG END ===");
-    
+
     //auth = true;
     if (auth) {
         // ✅ Redis에 사용자 정보 저장
@@ -147,7 +144,7 @@
         //todo: setLatestLoginDate
         //todo: ####################
         String areaSeq2 = appUser.getAreaSeq();
-        int lastLoginResult= BizAppUser.getInstance().setLatestLoginDate(appUser.getMacNumber(), areaSeq2);
+        int lastLoginResult = BizAppUser.getInstance().setLatestLoginDate(appUser.getMacNumber(), areaSeq2);
         System.out.println(lastLoginResult);
 
 //		// ✅ 직원 코드 추가 저장
