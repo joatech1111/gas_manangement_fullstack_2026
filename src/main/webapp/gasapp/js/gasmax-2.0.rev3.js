@@ -1,4 +1,22 @@
 
+// ★ 모든 AJAX 호출에 uuid와 hpSeq를 자동으로 추가
+$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+	var uuid = $("#hdnUuid").attr("value") || "";
+	var hpSeq = $("#hdnHpSeq").attr("value") || "";
+	if (uuid || hpSeq) {
+		var separator = (options.data && options.data.length > 0) ? "&" : "";
+		var extra = "";
+		if (uuid && options.data && options.data.indexOf("uuid=") === -1) {
+			extra += separator + "uuid=" + encodeURIComponent(uuid);
+			separator = "&";
+		}
+		if (hpSeq && (!options.data || options.data.indexOf("hpSeq=") === -1)) {
+			extra += separator + "hpSeq=" + encodeURIComponent(hpSeq);
+		}
+		options.data = (options.data || "") + extra;
+	}
+});
+
 //처음 시작 로그인 페이지로 이동 appExit가 true 이면 앱을 종료한다.
 function showPageIntro(appExit) {
 
@@ -142,6 +160,7 @@ function authCheck() {
 			$("#hdnCurrentCustomerAreaCode").attr("value", areaCode); //접속한 사용자의 영업소 코드로 초기화
 			$("#hdnGasType").attr("value", gasType); //접속한 사용자의 GasType 초기화
 			$("#hdnSignImagePath").attr("value", signImagePath); //접속한 사용자의 서명저장서버경로 초기화
+			$("#hdnHpSeq").attr("value", areaSeq); //접속한 사용자의 hpSeq(업체 순번) 저장
 
 			if (result == "Y") { //로그인 성공!!
 				//local storage 에 저장하기
@@ -362,6 +381,7 @@ function clickSaveAppUserEdit() {
 		$("#divSaveMessageAppUserInsert").html(getResultMessage("모바일 기기에서만 가입신청이 가능합니다.", false)).trigger("create");
 		return;
 	}
+	var areaSeq = $("#hdnHpSeq").attr("value") || "0";
 	var areaCode = $("#selectAreaCodeAppUserEdit").attr("value");
 	var areaName = $("#hdnAreaNameAppUserEdit").attr("value");
 	var employeeCode = $("#selectEmployeeCodeAppUserEdit").attr("value");
@@ -384,6 +404,7 @@ function clickSaveAppUserEdit() {
 		url: gasmaxWebappPath + "app_user_update_save_ajx.jsp",
 		type: "post",
 		data: "macNumber=" + macNumber
+			+ "&areaSeq=" + areaSeq
 			+ "&areaCode=" + areaCode
 			+ "&areaName=" + areaName
 			+ "&employeeCode=" + employeeCode

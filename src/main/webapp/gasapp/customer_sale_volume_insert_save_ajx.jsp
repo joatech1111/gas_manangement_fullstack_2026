@@ -35,14 +35,14 @@
 		String remark = request.getParameter("remark");
 
 		String uuid = request.getParameter("uuid");
-
+		String hpSeq = request.getParameter("hpSeq");
 
 		System.out.println(uuid);
 		System.out.println(uuid);
 		System.out.println(uuid);
 		System.out.println(uuid);
 		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
-		appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 		if (appUser != null){
 			String serverIp = appUser.getIpAddress();
 			String catalogName = appUser.getDbCatalogName();

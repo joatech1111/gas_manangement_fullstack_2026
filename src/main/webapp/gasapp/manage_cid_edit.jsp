@@ -27,7 +27,7 @@
 		String address = "";
 
 //		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
-//		appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+//		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 
 		String sessionToken = request.getParameter("sessionToken");
 		AppUser appUser = RedisUtil.getUserFromSessionToken(sessionToken);

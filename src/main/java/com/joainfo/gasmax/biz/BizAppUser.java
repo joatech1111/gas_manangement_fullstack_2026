@@ -92,7 +92,48 @@ public class BizAppUser {
 
     public AppUser getAppUser(String catalogName, String mobileNumber, String uuid) {
         AppUserMap appUsers = getAppUsers(catalogName, mobileNumber);
+        if (appUsers == null) return null;
+        // getKeyValue()가 "_uuid_areaSeq" 형태이므로 uuid만으로는 못 찾음 → 폴백 처리
         AppUser appUser = appUsers.getAppUser(uuid.toLowerCase());
+        if (appUser == null && appUsers.getAppUsers() != null) {
+            // uuid를 포함하는 키를 찾거나, 1건이면 바로 반환
+            if (appUsers.getAppUsers().size() == 1) {
+                appUser = appUsers.getAppUsers().values().iterator().next();
+            } else {
+                for (java.util.Map.Entry<String, AppUser> entry : appUsers.getAppUsers().entrySet()) {
+                    if (entry.getKey().contains(uuid.toLowerCase())) {
+                        appUser = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        return appUser;
+    }
+
+    /**
+     * uuid + hpSeq 조합으로 특정 업체의 AppUser를 정확하게 반환
+     * @param catalogName DB 카탈로그명
+     * @param uuid 디바이스 UUID (HP_Number)
+     * @param hpSeq 업체 순번 (HP_SEQ)
+     * @return 해당 업체의 AppUser, 없으면 uuid 단독으로 폴백
+     */
+    public AppUser getAppUserByHpSeq(String catalogName, String uuid, String hpSeq) {
+        AppUserMap appUsers = selectAppUsersByHpSeq(catalogName, uuid, hpSeq);
+        if (appUsers == null) return null;
+
+        // uuid + hpSeq 조합키로 조회 (getKeyValue()가 "_uuid_hpSeq" 형태)
+        String compositeKey = "_" + (uuid == null ? "" : uuid.toLowerCase()) + "_" + (hpSeq == null ? "" : hpSeq);
+        AppUser appUser = appUsers.getAppUser(compositeKey);
+
+        // 조합키로 못 찾으면 결과가 1건일 때 첫번째 반환 (폴백)
+        if (appUser == null && "1".equals(appUsers.getTotalRowCount())) {
+            try {
+                appUser = appUsers.getAppUsers().values().iterator().next();
+            } catch (Exception ignore) {}
+        }
+
+        System.out.println("getAppUserByHpSeq - uuid: " + uuid + ", hpSeq: " + hpSeq + ", found: " + (appUser != null));
         return appUser;
     }
 
@@ -104,22 +145,38 @@ public class BizAppUser {
 
     public AppUser getAppUser_id_pwd_uuid(String catalogName, String id, String pwd, String uuid) {
         AppUserMap appUsers = selectAppUsers_idPwdUUid(catalogName, id, pwd, uuid);
-        AppUser appUser = appUsers.getAppUser(uuid.toLowerCase());
-
-        System.out.println(appUsers);
-        System.out.println(appUsers);
-        System.out.println(appUsers);
-        System.out.println(appUsers);
-        System.out.println(appUsers);
+        if (appUsers == null) return null;
+        // getKeyValue()가 "_uuid_areaSeq" 형태이므로 uuid만으로는 못 찾음 → 결과가 1건이면 바로 반환
+        AppUser appUser = null;
+        if (appUsers.getAppUsers() != null && appUsers.getAppUsers().size() == 1) {
+            appUser = appUsers.getAppUsers().values().iterator().next();
+        } else {
+            // 여러 건이면 uuid로 시작하는 키를 찾아봄
+            if (appUsers.getAppUsers() != null) {
+                for (java.util.Map.Entry<String, AppUser> entry : appUsers.getAppUsers().entrySet()) {
+                    if (entry.getKey().contains(uuid.toLowerCase())) {
+                        appUser = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println("getAppUser_id_pwd_uuid - uuid: " + uuid + ", found: " + (appUser != null));
         return appUser;
     }
 
     public AppUser getAppUser_id_pwd_uuid_areaCode(String catalogName, String id, String pwd, String uuid, String areaCode) {
         AppUserMap appUsers = selectAppUsers_idPwdUUid_areaCode(catalogName, id, pwd, uuid, areaCode);
-        AppUser appUser = appUsers.getAppUser(uuid.toLowerCase() + "_" + areaCode);
-
-        System.out.println("getAppUser_id_pwd_uuid_areaCode called with areaCode: " + areaCode);
-        System.out.println(appUsers);
+        if (appUsers == null) return null;
+        // 결과가 1건이면 바로 반환 (키 형식 변경으로 인한 안전 처리)
+        AppUser appUser = null;
+        if (appUsers.getAppUsers() != null && appUsers.getAppUsers().size() == 1) {
+            appUser = appUsers.getAppUsers().values().iterator().next();
+        } else {
+            // 기존 키 형태로 시도
+            appUser = appUsers.getAppUser(uuid.toLowerCase() + "_" + areaCode);
+        }
+        System.out.println("getAppUser_id_pwd_uuid_areaCode - areaCode: " + areaCode + ", found: " + (appUser != null));
         return appUser;
     }
 
@@ -180,6 +237,10 @@ public class BizAppUser {
      * @param macNumber
      * @return
      */
+    /**
+     * @deprecated areaSeq 없이 호출하면 UPDATE가 실행되지 않음 (HP_SEQ 필수 조건).
+     *             setAppUser(macNumber, areaSeq, areaCode, ...) 버전을 사용하세요.
+     */
     public int setAppUser(
             String macNumber
             , String areaCode
@@ -192,9 +253,11 @@ public class BizAppUser {
             , String password
             , String menuPermission
             , String gasType) {
+        System.out.println("[WARNING] setAppUser called WITHOUT areaSeq! macNumber=" + macNumber + " - UPDATE will not match any row.");
         HashMap<String, String> condition = new HashMap<String, String>();
         condition.put("macNumber", macNumber);
         condition.put("uuid", macNumber);
+        condition.put("areaSeq", ""); // HP_SEQ 필수이므로 빈값이면 0건 업데이트됨
         condition.put("areaCode", areaCode);
         condition.put("areaName", areaName);
         condition.put("employeeCode", employeeCode);
@@ -350,6 +413,33 @@ public class BizAppUser {
         return null;
     }
 
+    /**
+     * uuid + hpSeq로 특정 업체의 AppUser를 조회
+     * SQL에 areaSeq 조건이 추가되어 정확히 해당 업체만 반환
+     */
+    public AppUserMap selectAppUsersByHpSeq(String catalogName, String uuid, String hpSeq) {
+        try {
+            AppUserMap appUsers = new AppUserMap();
+            HashMap<String, String> condition = new HashMap<String, String>();
+            condition.put("catalogName", catalogName);
+            condition.put("uuid", uuid);
+            if (hpSeq != null && !hpSeq.isEmpty() && !"0".equals(hpSeq)) {
+                condition.put("areaSeq", hpSeq);
+            }
+            @SuppressWarnings("rawtypes")
+            List<HashMap> list = JdbcUtil.getInstance(JdbcUtil.DEFAULT_SQL_CONFIG).selectQuery("GASMAX.AppUser.Select", condition);
+            for (HashMap<String, String> map : list) {
+                AppUser appUser = convertAppUser(map);
+                appUsers.setAppUser(appUser.getKeyValue(), appUser);
+            }
+            return appUsers;
+        } catch (Exception e) {
+            System.out.println("Error in selectAppUsersByHpSeq: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public AppUserMap selectAppUsers_idPwd(String catalogName, String userId, String password) {
         try {
             AppUserMap appUsers = new AppUserMap();
@@ -429,12 +519,41 @@ public class BizAppUser {
             condition.put("password", password);
             condition.put("uuid", uuid);
             condition.put("hpSeq", hpSeq);
+
+            // ★ 실행 SQL 콘솔 출력
+            StringBuilder debugSql = new StringBuilder();
+            debugSql.append("\n========================================\n");
+            debugSql.append("[selectAppUsers_idPwdUUid_hpSeq] 실행 쿼리:\n");
+            debugSql.append("SELECT ... FROM ").append(catalogName).append(".dbo.AppUser\n");
+            debugSql.append("WHERE 1=1\n");
+            if (userId != null && !userId.isEmpty()) debugSql.append("  AND Login_User = '").append(userId).append("'\n");
+            if (password != null && !password.isEmpty()) debugSql.append("  AND Login_Pass = '").append(password).append("'\n");
+            if (uuid != null && !uuid.isEmpty()) debugSql.append("  AND HP_Number = '").append(uuid).append("'\n");
+            if (hpSeq != null && !hpSeq.isEmpty()) debugSql.append("  AND HP_SEQ = '").append(hpSeq).append("'\n");
+            debugSql.append("조건 파라미터: {catalogName=").append(catalogName)
+                    .append(", userId=").append(userId)
+                    .append(", password=").append(password)
+                    .append(", uuid=").append(uuid)
+                    .append(", hpSeq=").append(hpSeq).append("}\n");
+            debugSql.append("========================================");
+            System.out.println(debugSql.toString());
+
             @SuppressWarnings("rawtypes")
             List<HashMap> list = JdbcUtil.getInstance(JdbcUtil.DEFAULT_SQL_CONFIG).selectQuery("GASMAX.AppUser.Select_userIdPwdUUid_hpSeq", condition);
+
+            System.out.println("[selectAppUsers_idPwdUUid_hpSeq] 조회 결과: " + (list == null ? 0 : list.size()) + "건");
             for (HashMap<String, String> map : list) {
                 AppUser appUser = convertAppUser(map);
-                appUsers.setAppUser(appUser.getKeyValue() + "_" + hpSeq, appUser);
+                String key = appUser.getKeyValue() + "_" + hpSeq;
+                appUsers.setAppUser(key, appUser);
+                System.out.println("[selectAppUsers_idPwdUUid_hpSeq] 결과 행 - key: " + key
+                        + ", areaSeq(HP_SEQ): " + appUser.getAreaSeq()
+                        + ", areaCode: " + appUser.getAreaCode()
+                        + ", areaName: " + appUser.getAreaName()
+                        + ", dbCatalogName: " + appUser.getDbCatalogName()
+                        + ", serverIp: " + appUser.getOnlyIpAddress());
             }
+
             return appUsers;
         } catch (Exception e) {
             System.out.println("Error in selectAppUsers_idPwdUUid_hpSeq: " + e.getMessage());
@@ -445,10 +564,21 @@ public class BizAppUser {
 
     public AppUser getAppUser_id_pwd_uuid_hpSeq(String catalogName, String id, String pwd, String uuid, String hpSeq) {
         AppUserMap appUsers = selectAppUsers_idPwdUUid_hpSeq(catalogName, id, pwd, uuid, hpSeq);
-        AppUser appUser = appUsers.getAppUser(uuid.toLowerCase() + "_" + hpSeq);
+        if (appUsers == null) return null;
 
-        System.out.println("getAppUser_id_pwd_uuid_hpSeq called with hpSeq: " + hpSeq);
-        System.out.println(appUsers);
+        // getKeyValue()가 "_uuid_hpSeq" 형태이므로, 저장 키도 같은 형태 + "_" + hpSeq → 중복 방지
+        // 저장 키: appUser.getKeyValue() + "_" + hpSeq = "_uuid_areaSeq_hpSeq"
+        // 조회 키도 동일하게 맞춤
+        String lookupKey = "_" + (uuid == null ? "" : uuid.toLowerCase()) + "_" + (hpSeq == null ? "" : hpSeq) + "_" + hpSeq;
+        AppUser appUser = appUsers.getAppUser(lookupKey);
+
+        // 못 찾으면 결과가 1건일 때 첫번째 반환 (폴백)
+        if (appUser == null && appUsers.getAppUsers() != null && appUsers.getAppUsers().size() == 1) {
+            appUser = appUsers.getAppUsers().values().iterator().next();
+        }
+
+        System.out.println("getAppUser_id_pwd_uuid_hpSeq - lookupKey: " + lookupKey + ", found: " + (appUser != null));
+        System.out.println("getAppUser_id_pwd_uuid_hpSeq - map keys: " + (appUsers.getAppUsers() != null ? appUsers.getAppUsers().keySet() : "null"));
         return appUser;
     }
 

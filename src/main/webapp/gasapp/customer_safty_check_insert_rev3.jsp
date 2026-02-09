@@ -38,7 +38,7 @@
 		System.out.println(_uuid);
 		System.out.println(_uuid);
 
-		AppUser appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+		AppUser appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 		if (appUser != null){
 			String serverIp = appUser.getIpAddress();
 			String catalogName = appUser.getDbCatalogName();

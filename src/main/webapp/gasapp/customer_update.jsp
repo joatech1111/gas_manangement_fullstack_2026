@@ -23,7 +23,7 @@
 		ConsumeTypeCodeMap consumeTypeCodes = (ConsumeTypeCodeMap)session.getAttribute("CONSUME_TYPE");
 		// 세션에 아직 소비형태 유형 목록이 등록되지 않았다면 세션에 등록하기
 		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
-		appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 		String serverIp = appUser.getIpAddress();
 		String catalogName = appUser.getDbCatalogName();
 

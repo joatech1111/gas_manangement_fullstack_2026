@@ -13,9 +13,9 @@
 	request.setCharacterEncoding("UTF-8");
 %><%
 	try{
-		//appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
 		String macNumber = request.getParameter("uuid");
-		AppUser appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME,macNumber);
+		String hpSeq = request.getParameter("hpSeq");
+		AppUser appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, macNumber, hpSeq);
 
 		String gasType ="HIGH";
 		if (appUser != null) {

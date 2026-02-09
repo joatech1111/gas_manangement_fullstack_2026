@@ -16,9 +16,10 @@
 try{
 	String macNumber = request.getParameter("macNumber");
 	AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
-	appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+	appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 	if (appUser != null){
 		String areaSeq = request.getParameter("areaSeq");
+		if (areaSeq == null || areaSeq.isEmpty()) areaSeq = request.getParameter("hpSeq");
 		String areaCode = request.getParameter("areaCode");
 		String areaName = request.getParameter("areaName");
 		String employeeCode = request.getParameter("employeeCode");
@@ -29,7 +30,7 @@ try{
 		String password = request.getParameter("password");
 		String menuPermission = request.getParameter("menuPermission");
 		String gasType = request.getParameter("gasType");
-		int result = BizAppUser.getInstance().setAppUser(macNumber, areaCode, areaName, employeeCode, employeeName, phoneAreaNumber, address, userId, password, menuPermission, gasType);
+		int result = BizAppUser.getInstance().setAppUser(macNumber, areaSeq, areaCode, areaName, employeeCode, employeeName, phoneAreaNumber, address, userId, password, menuPermission, gasType);
 		appUser.setAreaCode(areaCode);
 		appUser.setAreaName(areaName);
 		appUser.setEmployeeCode(employeeCode);

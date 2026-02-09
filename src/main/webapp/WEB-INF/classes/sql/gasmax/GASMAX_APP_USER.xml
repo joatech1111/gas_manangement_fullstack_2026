@@ -338,6 +338,6 @@
         , APP_PG_TYPE = '$gasType$'
         WHERE HP_Number = '$macNumber$'
         AND HP_State = 'Y'
-        <isNotEmpty prepend="AND " property="areaSeq">HP_SEQ = '$areaSeq$'</isNotEmpty>
+        AND HP_SEQ = '$areaSeq$'
     </update>
 </sqlMap>

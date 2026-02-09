@@ -1,3 +1,21 @@
+// ★ 모든 AJAX 호출에 uuid와 hpSeq를 자동으로 추가
+$.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+	var uuid = $("#hdnUuid").val() || $("#hdnUuid").attr("value") || "";
+	var hpSeq = window.sessionStorage.getItem("login_hpSeq") || "";
+	if (uuid || hpSeq) {
+		var separator = (options.data && options.data.length > 0) ? "&" : "";
+		var extra = "";
+		if (uuid && options.data && options.data.indexOf("uuid=") === -1) {
+			extra += separator + "uuid=" + encodeURIComponent(uuid);
+			separator = "&";
+		}
+		if (hpSeq && (!options.data || options.data.indexOf("hpSeq=") === -1)) {
+			extra += separator + "hpSeq=" + encodeURIComponent(hpSeq);
+		}
+		options.data = (options.data || "") + extra;
+	}
+});
+
 //처음 시작 로그인 페이지로 이동 appExit가 true 이면 앱을 종료한다.
 function showPageIntro(appExit) {
     try {

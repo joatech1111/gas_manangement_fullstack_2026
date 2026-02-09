@@ -25,7 +25,7 @@
 		if (keyword == null) keyword = "";
 		keyword = keyword.trim();
 		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
-		appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 		if (appUser != null) {
 			String serverIp = appUser.getIpAddress();
 			String catalogName = appUser.getDbCatalogName();

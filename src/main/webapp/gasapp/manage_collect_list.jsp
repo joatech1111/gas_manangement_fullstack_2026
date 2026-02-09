@@ -28,7 +28,7 @@
 		EmployeeCodeMap employeeCodes = RedisUtil.getFromRedis(sessionToken, "EMPLOYEE_CODE", EmployeeCodeMap.class );
 		// 아직 세션에 사원목록이 등록되지 않았다면 세션에 등록하기
 		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
-		appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 		if (appUser != null){
 			String keyword = "";
 			String serverIp = appUser.getIpAddress();

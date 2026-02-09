@@ -157,22 +157,31 @@ public class AppUser {
 	private String gasType;
 
 	/**
-	 * key map 반환
+	 * key map 반환 (uuid + hpSeq 조합)
 	 * @return
 	 */
 	public LinkedHashMap<String, String> getKeyMap(){
 		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
 		keys.put("HP_Number", getMacNumber());
-		
+		keys.put("HP_SEQ", getAreaSeq());
+
 		return keys; 
 	}
 	
 	/**
-	 * key 값 반환
+	 * key 값 반환 (uuid + hpSeq 조합: "_macNumber_areaSeq")
 	 * @return
 	 */
 	public String getKeyValue(){
 		return StringUtil.getKeyValue(this.getKeyMap()); 
+	}
+
+	/**
+	 * uuid 단독 키 반환 (하위 호환용)
+	 * @return macNumber(uuid) 소문자
+	 */
+	public String getUuidKeyValue(){
+		return getMacNumber() == null ? "" : getMacNumber().toLowerCase();
 	}
 	
 	/**

@@ -93,12 +93,13 @@
         if (keyword == null) keyword = "";
 
         String uuid = request.getParameter("uuid");
+		String hpSeq = request.getParameter("hpSeq");
         if (uuid == null) uuid = "";
 
         AppUser appUser = null;
         if (!uuid.isEmpty()) {
             try {
-                appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, uuid, uuid);
+                appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, uuid, request.getParameter("hpSeq"));
             } catch (Exception ex) {
                 System.out.println("❌ Error getting appUser: " + ex.getMessage());
                 ex.printStackTrace();
@@ -107,7 +108,7 @@
 
         if (HARDCODED_UUID.equals(uuid)) {
             try {
-                appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, uuid, uuid);
+                appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, uuid, request.getParameter("hpSeq"));
             } catch (Exception ex) {
                 System.out.println("❌ Error getting appUser (hardcoded uuid): " + ex.getMessage());
                 ex.printStackTrace();

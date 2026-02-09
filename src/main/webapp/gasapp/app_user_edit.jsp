@@ -19,10 +19,11 @@
         AppUser appUser = (AppUser) session.getAttribute("USER_INFO");
         String darkMode = request.getParameter("darkMode");
         String uuid = request.getParameter("uuid");
+		String hpSeq = request.getParameter("hpSeq");
         String sessionToken= request.getParameter("sessionToken");
         System.out.println(uuid);
         System.out.println(darkMode);
-        //appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+        //appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
         try{
             appUser = RedisUtil.getUserFromSessionToken(sessionToken);
         }catch(Exception e){

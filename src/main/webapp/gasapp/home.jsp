@@ -23,11 +23,12 @@
     //AppUser appUser = RedisUtil.getUserFromSessionToken(sessionToken);
 
     String uuid = StringUtil.nullToBlank(request.getParameter("uuid"));
+    String hpSeq = request.getParameter("hpSeq");
     AppUser appUser = null;
     
     try {
         if (uuid != null && !uuid.isEmpty()) {
-            appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, uuid.toLowerCase());
+            appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, uuid.toLowerCase(), hpSeq);
         }
     } catch (Exception e) {
         System.out.println("❌ Error getting appUser: " + e.getMessage());

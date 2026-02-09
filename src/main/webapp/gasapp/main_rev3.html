@@ -394,7 +394,12 @@
 				//			    		showPageCustomerSearch(false);
 				//			    	}
 			} else {
-				showPageMain();
+				// 이전 화면으로 이동 (history back)
+				if (navigator.app && navigator.app.backHistory) {
+					navigator.app.backHistory();
+				} else {
+					window.history.back();
+				}
 			}
 		}
 
@@ -552,6 +557,7 @@
  -->
 
 	<input type="hidden" id="hdnUuid" value="" />
+	<input type="hidden" id="hdnHpSeq" value="" />
 	<input type="hidden" id="hdnMobileNumber" value="" />
 	<input type="hidden" id="hdnDeviceWidth" value="" />
 	<input type="hidden" id="hdnDeviceHeight" value="" />

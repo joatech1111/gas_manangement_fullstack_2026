@@ -17,7 +17,7 @@ try{
 	String macNumber = request.getParameter("macNumber");
 	if (macNumber != null) macNumber = StringUtil.decodeBase64(macNumber);
 	//AppUser appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, macNumber);
-	AppUser appUser = BizAppUser.getInstance().getAppUser(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("uuid"));
+	AppUser appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 	if (appUser != null){
 		String grantState = appUser.getGrantState();
 		if ("Y".equals(grantState)) {
