@@ -5,6 +5,7 @@
         "start": "browser-sync start --server --files 'www/**/*' --host 0.0.0.0 --port 3000"
     },
     "dependencies": {
+        "@capacitor/action-sheet": "6.0.3",
         "@capacitor/android": "^6.2.0",
         "@capacitor/app": "6.0.2",
         "@capacitor/assets": "^3.0.5",
@@ -12,12 +13,11 @@
         "@capacitor/core": "6.2.0",
         "@capacitor/dialog": "6.0.2",
         "@capacitor/geolocation": "6.1.0",
+        "@capacitor/inappbrowser": "1.0.3",
         "@capacitor/ios": "6.2.0",
-        "@capacitor/action-sheet": "6.0.3",
+        "@capacitor/splash-screen": "6.0.3",
         "@capacitor/status-bar": "6.0.2",
         "@capacitor/toast": "6.0.3",
-        "@capacitor/splash-screen": "6.0.3",
-        "@capacitor/inappbrowser": "1.0.3",
         "@capawesome-team/capacitor-datetime-picker": "6.0.0",
         "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
         "capacitor-browserview": "https://github.com/hampoelz/capacitor-browserview/releases/download/v1.0.0-beta.3/capacitor-browserview.tgz",
@@ -44,6 +44,10 @@
     "devDependencies": {
         "@types/cordova-plugin-app-version": "^0.1.38",
         "@types/cordova-plugin-battery-status": "^1.2.6",
+        "dotenv": "^17.2.4",
+        "firebase-admin": "^13.6.1",
+        "mongodb": "^6.21.0",
+        "qrcode": "^1.5.4",
         "typescript": "^5.7.3",
         "vite": "^6.0.11"
     }

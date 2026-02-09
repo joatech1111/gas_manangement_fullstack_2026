@@ -43,3 +43,4 @@ logs.log
 ### Node.js ###
 node_modules/
 /front_app/gas3/node_modules/
+out/
