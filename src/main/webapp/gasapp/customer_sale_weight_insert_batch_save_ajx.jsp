@@ -52,9 +52,15 @@
 			String userId = appUser.getMobileNumber();
 			String gasType = appUser.getGasType();
 
-			CustomerSearch customerSearch = (CustomerSearch)session.getAttribute("CURRENT_CUSTOMER");
 			String sessionToken = request.getParameter("sessionToken");
-			customerSearch = RedisUtil.getFromRedis(sessionToken, "CURRENT_CUSTOMER", CustomerSearch.class );
+			CustomerSearch customerSearch = RedisUtil.getFromRedis(sessionToken, "CURRENT_CUSTOMER", CustomerSearch.class);
+			if (customerSearch == null) {
+				customerSearch = (CustomerSearch)session.getAttribute("CURRENT_CUSTOMER");
+			}
+			if (customerSearch == null) {
+				out.println("<result><code>E</code><message>거래처 정보를 찾을 수 없습니다. 다시 검색해 주세요.</message></result>");
+				return;
+			}
 			String customerCode = customerSearch.getCustomerCode();
 			String customerName = customerSearch.getCustomerName();
 			String userName = customerSearch.getUserName();
@@ -82,7 +88,9 @@
 					sessionToken = request.getParameter("sessionToken");
 					RedisUtil.saveToRedis(sessionToken, "CURRENT_CUSTOMER", customerSearch);
 					CustomerSearchMap sessionCustomerSearches = (CustomerSearchMap)session.getAttribute("CUSTOMER_SEARCH");
-					sessionCustomerSearches.setCustomerSearch(customerSearch);
+					if (sessionCustomerSearches != null) {
+						sessionCustomerSearches.setCustomerSearch(customerSearch);
+					}
 				}
 			}
 			out.println("<result><code>S</code><message>" + result + "</message></result>");
