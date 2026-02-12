@@ -491,10 +491,12 @@ async function openInAppBrowser() {
 
 function showActivityIndicator(message) {
     $("#custom-loader").css("display", "block");
+    $("#center-circle-loader").css("display", "flex");
 }
 
 function hideActivityIndicator() {
     $("#custom-loader").css("display", "none");
+    $("#center-circle-loader").css("display", "none");
 }
 
 // localStorage에 저장된 로그인 정보로 자동 로그인 시도

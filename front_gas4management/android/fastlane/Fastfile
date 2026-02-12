@@ -1,52 +1,249 @@
-lane :beta do
-  gradle(
-    task: "assembleRelease"
-  )
+default_platform(:android)
 
-  # APK 파일 경로 지정
-  apk_path = "/Users/gilzako/WebstormProjects/gas4management/android/app/build/outputs/apk/release/app-release.apk"
-  #apk_path = "/Users/gilza/joatech/gas4/android/app/build/outputs/apk/release/app-release.apk"
-
-
-
-
-  # Firebase App Distribution 업로드
-  firebase_app_distribution(
-    app: "1:80656391423:android:ebac598125c05cb6d300ca",
-    groups: "aaaaa",
-    release_notes: "
-              상세 중복 로딩 제거/개선.!
-    ",
-    apk_path: apk_path  # 명확하게 경로 지정
-  )
+# 헬퍼: __dir__ = android/fastlane (Fastfile 위치)
+def gas_aab_path
+  File.expand_path('../app/build/outputs/bundle/release/app-release.aab', __dir__)
 end
 
-lane :play do
-  gradle(
-    task: "bundleRelease"
-  )
-
-  # AAB 파일 경로 지정
-  aab_path = "/Users/gilzako/WebstormProjects/gas4management/android/app/build/outputs/bundle/release/app-release.aab"
-  #aab_path = "/Users/gilza/joatech/gas4/android/app/build/outputs/bundle/release/app-release.aab"
-
-  # Google Play Store 프로덕션 배포
-  upload_to_play_store(
-    track: "production",  # 프로덕션 릴리즈
-    aab: aab_path,  # AAB 파일 업로드
-    json_key: "fastlane/play2.json",  # Google API 인증 JSON 파일 경로
-    package_name: "com.joainfo.gasmaxeye2025",  # 앱 패키지명
-    skip_upload_apk: true ,
-    skip_upload_metadata: false, # 필요 시 true로 변경
-    validate_only: false, # 실제 업로드 실행 (테스트 모드 아님)
-    skip_upload_changelogs: false
-  )
-
-  # 릴리즈 노트를 changelog 파일에 작성 (폴더가 없으면 생성)
-  changelog_path = "fastlane/metadata/android/en-US/changelogs/default.txt"
-  FileUtils.mkdir_p(File.dirname(changelog_path)) unless File.directory?(File.dirname(changelog_path))
-  File.write(changelog_path, "발긴기 번호가 없는 경우 애러메세지 처리! ")
+def gas_json_key
+  ENV['GOOGLE_APPLICATION_CREDENTIALS'] || File.expand_path('play2.json', __dir__)
 end
 
+def gas_release_paths
+  [
+    File.expand_path('../../scripts/release.txt', __dir__),
+    File.expand_path('../../release.txt', __dir__),
+    File.expand_path('../release.txt', __dir__),
+    File.join(File.dirname(__dir__), 'release.txt'),
+  ]
+end
 
-#npx cap sync && (cd android && fastlane beta) && cd -
+def gas_read_whats_new
+  whats_new = nil
+  gas_release_paths.each do |path|
+    next unless File.exist?(path)
+    begin
+      whats_new = File.read(path, encoding: 'UTF-8').strip
+      UI.success("✅ 변경 내용 파일 찾음: #{path}")
+      break
+    rescue => e
+      UI.message("⚠️  파일 읽기 실패: #{e.message}")
+    end
+  end
+  if whats_new.nil? || whats_new.empty?
+    whats_new = "Release - #{Time.now.strftime('%Y-%m-%d %H:%M')}"
+    UI.important("⚠️  release.txt를 찾을 수 없어 기본 메시지를 사용합니다.")
+  elsif whats_new.length > 500
+    whats_new = whats_new[0..496] + "..."
+    UI.important("⚠️  변경 내용이 너무 길어 500자로 제한했습니다.")
+  end
+  whats_new
+end
+
+platform :android do
+  desc "Build AAB and upload to Google Play Open Testing"
+  lane :open_beta do |options|
+    package = options[:package_name] || 'com.joainfo.gas_management'
+    aab_path = options[:aab_path] || gas_aab_path
+    json_key = options[:json_key_file] || gas_json_key
+    track_name = options[:track] || 'beta'
+
+    UI.user_error!("Google Play service account json key is required. Set GOOGLE_APPLICATION_CREDENTIALS or pass :json_key_file") if json_key.nil? || json_key.to_s.empty?
+
+    UI.important("🚀 오픈 베타 배포 시작")
+    UI.message("📦 패키지명: #{package}")
+    UI.message("🎯 트랙: #{track_name}")
+
+    UI.message("📱 Gradle AAB 빌드 중...")
+    gradle(task: 'bundleRelease')
+
+    unless File.exist?(aab_path)
+      UI.user_error!("❌ AAB 파일이 존재하지 않습니다: #{aab_path}")
+    end
+    UI.success("✅ AAB 빌드 완료: #{aab_path}")
+
+    whats_new = gas_read_whats_new
+    UI.message("📋 변경 내용:")
+    UI.message(whats_new.split("\n").first(5).join("\n"))
+
+    UI.message("📤 Google Play에 업로드 중...")
+    supply(
+      json_key: json_key,
+      package_name: package,
+      aab: aab_path,
+      track: track_name,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+      release_status: 'completed',
+      changes_not_sent_for_review: true
+    )
+    UI.success("✅ 오픈 베타 배포 완료!")
+  end
+
+  desc "Build AAB and upload to Google Play Production"
+  lane :production do |options|
+    package = options[:package_name] || 'com.joainfo.gas_management'
+    aab_path = options[:aab_path] || gas_aab_path
+    json_key = options[:json_key_file] || gas_json_key
+    track_name = 'production'
+
+    UI.user_error!("Google Play service account json key is required. Set GOOGLE_APPLICATION_CREDENTIALS or pass :json_key_file") if json_key.nil? || json_key.to_s.empty?
+
+    UI.important("🚀 프로덕션 배포 시작")
+    UI.message("📦 패키지명: #{package}")
+    UI.message("🎯 트랙: #{track_name}")
+
+    UI.message("📱 Gradle AAB 빌드 중...")
+    gradle(task: 'bundleRelease')
+
+    unless File.exist?(aab_path)
+      UI.user_error!("❌ AAB 파일이 존재하지 않습니다: #{aab_path}")
+    end
+    UI.success("✅ AAB 빌드 완료: #{aab_path}")
+
+    whats_new = gas_read_whats_new
+    UI.message("📋 변경 내용:")
+    UI.message(whats_new.split("\n").first(5).join("\n"))
+
+    UI.message("📤 Google Play 프로덕션 트랙에 업로드 중...")
+    supply(
+      json_key: json_key,
+      package_name: package,
+      aab: aab_path,
+      track: track_name,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: false,
+      release_status: 'completed',
+      changes_not_sent_for_review: false
+    )
+    UI.success("✅ 프로덕션 배포 완료!")
+  end
+
+  desc "Build AAB and upload to Google Play Production as DRAFT (no rollout)"
+  lane :prod_pre_release do |options|
+    package = options[:package_name] || 'com.joainfo.gas_management'
+    aab_path = options[:aab_path] || gas_aab_path
+    json_key = options[:json_key_file] || gas_json_key
+    track_name = 'production'
+
+    UI.user_error!("Google Play service account json key is required. Set GOOGLE_APPLICATION_CREDENTIALS or pass :json_key_file") if json_key.nil? || json_key.to_s.empty?
+
+    UI.important("🚀 프로덕션 DRAFT 배포 시작")
+    UI.message("📦 패키지명: #{package}")
+    UI.message("🎯 트랙: #{track_name}")
+
+    UI.message("📱 Gradle AAB 빌드 중...")
+    gradle(task: 'bundleRelease')
+
+    unless File.exist?(aab_path)
+      UI.user_error!("❌ AAB 파일이 존재하지 않습니다: #{aab_path}")
+    end
+    UI.success("✅ AAB 빌드 완료: #{aab_path}")
+
+    UI.message("📤 Google Play 프로덕션 트랙(DRAFT) 업로드 중...")
+    supply(
+      json_key: json_key,
+      package_name: package,
+      aab: aab_path,
+      track: track_name,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+      release_status: 'draft',
+      changes_not_sent_for_review: true
+    )
+    UI.success("✅ 프로덕션 DRAFT 업로드 완료! (아직 사용자에게는 미노출)")
+  end
+
+  desc "Build AAB and upload to Google Play Internal Testing"
+  lane :internal_testing do |options|
+    options[:track] = 'internal'
+    open_beta(options)
+  end
+
+  desc "Build AAB and upload to Google Play Closed Testing"
+  lane :closed_testing do |options|
+    options[:track] = 'alpha'
+    open_beta(options)
+  end
+
+  desc "Upload existing AAB to Production (Skip Build)"
+  lane :production_deploy_only do |options|
+    package = options[:package_name] || 'com.joainfo.gas_management'
+    aab_path = options[:aab_path] || gas_aab_path
+    json_key = options[:json_key_file] || gas_json_key
+    track_name = 'production'
+
+    UI.user_error!("Google Play service account json key is required. Set GOOGLE_APPLICATION_CREDENTIALS or pass :json_key_file") if json_key.nil? || json_key.to_s.empty?
+
+    UI.important("🚀 프로덕션 배포 (빌드 건너뜀) 시작")
+
+    whats_new = gas_read_whats_new
+    UI.message("📋 변경 내용: #{whats_new.split("\n").first(3).join(' ')}")
+
+    unless File.exist?(aab_path)
+      UI.user_error!("❌ AAB 파일이 존재하지 않습니다: #{aab_path}")
+    end
+
+    supply(
+      json_key: json_key,
+      package_name: package,
+      aab: aab_path,
+      track: track_name,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: false,
+      release_status: 'completed',
+      changes_not_sent_for_review: false
+    )
+    UI.success("✅ 프로덕션 배포 완료")
+  end
+
+  desc "Show current version and changelog"
+  lane :version_info do
+    build_gradle_path = File.expand_path('../app/build.gradle', __dir__)
+    if File.exist?(build_gradle_path)
+      content = File.read(build_gradle_path)
+      version_code = content.match(/versionCode\s+(\d+)/)&.[](1)
+      version_name = content.match(/versionName\s+"([^"]+)"/)&.[](1)
+      UI.message("📱 현재 버전 정보:")
+      UI.message("   Version Code: #{version_code}")
+      UI.message("   Version Name: #{version_name}")
+    end
+
+    gas_release_paths.each do |path|
+      next unless File.exist?(path)
+      UI.message("\n📝 변경 내용 (#{path}):")
+      UI.message(File.read(path, encoding: 'UTF-8'))
+      break
+    end
+  end
+
+  # Firebase App Distribution (기존 beta lane)
+  lane :beta do
+    gradle(task: 'assembleRelease')
+    apk_path = File.expand_path('../app/build/outputs/apk/release/app-release.apk', __dir__)
+
+    unless File.exist?(apk_path)
+      UI.user_error!("❌ APK 파일이 존재하지 않습니다: #{apk_path}")
+    end
+
+    firebase_app_distribution(
+      app: "1:80656391423:android:ebac598125c05cb6d300ca",
+      groups: "aaaaa",
+      release_notes: "상세 중복 로딩 제거/개선.",
+      apk_path: apk_path
+    )
+    UI.success("✅ Firebase App Distribution 업로드 완료")
+  end
+end
