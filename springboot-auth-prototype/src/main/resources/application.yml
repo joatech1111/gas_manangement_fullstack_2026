@@ -1,0 +1,35 @@
+server:
+  port: 8081   # 기존 Spring MVC (8080)와 포트 분리
+
+spring:
+  application:
+    name: gasmax-auth-prototype
+
+  # MS SQL Server 2000 설정 (jTDS 드라이버 사용 - 기존 프로젝트와 동일)
+  datasource:
+    url: jdbc:jtds:sqlserver://joatech2.dyndns.org:2521/GasMax_App
+    username: GM_TestHigh
+    password: GasMax_Pass
+    driver-class-name: net.sourceforge.jtds.jdbc.Driver
+    hikari:
+      connection-timeout: 8000
+      maximum-pool-size: 5
+      connection-test-query: SELECT 1   # jTDS + Java17 호환: isValid() 대신 쿼리로 검증
+
+  # Redis 설정 (기존 RedisUtil REDIS_HOST 환경변수 방식 유지)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+
+# MyBatis 설정 (기존 iBATIS XML 매퍼 구조 유지)
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: false   # 컬럼명 직접 매핑 (ResultMap 사용)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # SQL 로그 출력
+
+logging:
+  level:
+    com.gasmax: DEBUG
+    org.mybatis: DEBUG

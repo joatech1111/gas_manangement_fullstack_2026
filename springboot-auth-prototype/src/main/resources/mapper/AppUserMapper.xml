@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gasmax.auth.mapper.AppUserMapper">
+
+    <!-- 기존 iBATIS ResultClass → MyBatis ResultMap으로 변환 -->
+    <resultMap id="AppUserResultMap" type="com.gasmax.auth.model.AppUser">
+        <result column="HP_Number"      property="macNumber"/>
+        <result column="HP_SEQ"         property="areaSeq"/>
+        <result column="HP_State"       property="grantState"/>
+        <result column="HP_Model"       property="phoneModel"/>
+        <result column="Login_User"     property="userId"/>
+        <result column="Login_Pass"     property="password"/>
+        <result column="BA_SW_Name"     property="employeeName"/>
+        <result column="BA_SW_CODE"     property="employeeCode"/>
+        <result column="Login_Area"     property="areaCode"/>
+        <result column="Login_Co"       property="areaName"/>
+        <result column="AREA_DDD"       property="phoneAreaNumber"/>
+        <result column="SVR_IP"         property="ipAddress"/>
+        <result column="SVR_DBName"     property="dbCatalogName"/>
+        <result column="SVR_User"       property="dbUserId"/>
+        <result column="SVR_Pass"       property="dbPassword"/>
+        <result column="SVR_Port"       property="port"/>
+        <result column="APP_Cert"       property="menuPermission"/>
+        <result column="APP_PG_TYPE"    property="gasType"/>
+        <result column="Login_LastDate" property="lastLoginDate"/>
+        <result column="Login_StartDate" property="joinDate"/>
+        <result column="Login_EndDate"  property="expiryDate"/>
+        <result column="Sign_Folder"    property="signImagePath"/>
+    </resultMap>
+
+    <!-- 공통 SELECT 컬럼 -->
+    <sql id="selectColumns">
+        HP_Number, HP_SEQ, HP_State, HP_Model,
+        Login_User, Login_Pass,
+        BA_SW_Name, BA_SW_CODE,
+        Login_Area, Login_Co, AREA_DDD,
+        SVR_IP, SVR_DBName, SVR_User, SVR_Pass, SVR_Port,
+        APP_Cert, APP_PG_TYPE,
+        Login_LastDate, Login_StartDate, Login_EndDate,
+        Sign_Folder
+    </sql>
+
+    <!--
+        로그인: ID + PW
+        기존: GASMAX.AppUser.Select_userIdPwd
+    -->
+    <select id="findByUserIdAndPassword" resultMap="AppUserResultMap">
+        SELECT <include refid="selectColumns"/>
+        FROM GasMax_App.dbo.AppUser
+        WHERE Login_User = #{userId}
+          AND Login_Pass = #{password}
+          AND HP_State = 'Y'
+    </select>
+
+    <!--
+        로그인: UUID + ID + PW (기기 바인딩)
+        기존: GASMAX.AppUser.Select_userIdPwdUUid
+    -->
+    <select id="findByUserIdPasswordAndUuid" resultMap="AppUserResultMap">
+        SELECT <include refid="selectColumns"/>
+        FROM GasMax_App.dbo.AppUser
+        WHERE Login_User = #{userId}
+          AND Login_Pass = #{password}
+          AND HP_Number  = #{uuid}
+          AND HP_State   = 'Y'
+    </select>
+
+    <!--
+        UUID 중복 확인
+    -->
+    <select id="countByUuid" resultType="int">
+        SELECT COUNT(*)
+        FROM GasMax_App.dbo.AppUser
+        WHERE HP_Number = #{uuid}
+    </select>
+
+    <!--
+        가입신청 INSERT
+        HP_State = 'N' (관리자 승인 대기)
+        기존: GASMAX.AppUser.Insert2
+    -->
+    <insert id="insertAppUser" parameterType="com.gasmax.auth.model.AppUser">
+        INSERT INTO GasMax_App.dbo.AppUser (
+            HP_Number,
+            HP_Model,
+            BA_SW_Name,
+            Login_User,
+            Login_Pass,
+            AREA_DDD,
+            Login_Area,
+            Login_Co,
+            HP_State
+        ) VALUES (
+            #{macNumber},
+            #{phoneModel},
+            #{employeeName},
+            #{userId},
+            #{password},
+            #{phoneAreaNumber},
+            #{areaCode},
+            #{areaName},
+            'N'
+        )
+    </insert>
+
+    <!--
+        영업소 코드 목록 조회
+        기존: GASMAX.AppUser.Select.AreaCode (JNOTRY 테이블)
+    -->
+    <select id="findAreaCodes" resultType="java.util.LinkedHashMap">
+        SELECT AREA_CODE AS areaCode
+             , AREA_NAME AS areaName
+        FROM ${catalogName}.dbo.JNOTRY
+        ORDER BY AREA_CODE
+    </select>
+
+    <!--
+        지역번호 목록 조회 (회사별 catalog 사용)
+        기존: GASMAX.AppUser.Select.PhoneAreaNumber (BA_Code 테이블, Gubun='DDD')
+    -->
+    <select id="findPhoneAreaNumbers" resultType="java.util.LinkedHashMap">
+        SELECT Code     AS phoneAreaNumber
+             , CodeName AS phoneAreaName
+        FROM ${catalogName}.dbo.BA_Code
+        WHERE Gubun = 'DDD'
+        ORDER BY Code
+    </select>
+
+    <!--
+        마지막 로그인 일시 업데이트
+        기존: GASMAX.AppUser.UpdateLatestLoginDate
+    -->
+    <update id="updateLastLoginDate">
+        UPDATE GasMax_App.dbo.AppUser
+        SET Login_LastDate = CONVERT(varchar(16), GETDATE(), 121)
+        WHERE HP_Number = #{macNumber}
+          AND HP_State  = 'Y'
+        <if test="areaSeq != null and areaSeq != ''">
+            AND HP_SEQ = #{areaSeq}
+        </if>
+    </update>
+
+</mapper>

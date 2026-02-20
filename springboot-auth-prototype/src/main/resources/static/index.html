@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가스 경영 2026 api 테스트</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 24px; }
+        h1 { color: #1a1a2e; margin-bottom: 24px; font-size: 22px; }
+        .container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            width: 420px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .card h2 { font-size: 16px; color: #333; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #4CAF50; }
+        label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; margin-top: 12px; }
+        input {
+            width: 100%; padding: 9px 12px; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 14px; outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: #4CAF50; }
+        button {
+            margin-top: 18px; width: 100%; padding: 11px;
+            background: #4CAF50; color: white; border: none;
+            border-radius: 6px; font-size: 15px; cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #388E3C; }
+        .result {
+            margin-top: 16px; padding: 12px; border-radius: 6px;
+            background: #f8f8f8; border: 1px solid #e0e0e0;
+            font-size: 13px; white-space: pre-wrap; word-break: break-all;
+            max-height: 200px; overflow-y: auto; display: none;
+        }
+        .result.success { border-color: #4CAF50; background: #f1f8f1; }
+        .result.error   { border-color: #e53935; background: #fff5f5; }
+        .badge {
+            display: inline-block; font-size: 11px; padding: 2px 8px;
+            border-radius: 10px; color: white; background: #4CAF50;
+            margin-bottom: 4px; vertical-align: middle;
+        }
+        .badge.post { background: #1976D2; }
+        .desc {
+            font-size: 12px; color: #666; background: #f5f5f5;
+            border-left: 3px solid #4CAF50; padding: 7px 10px;
+            border-radius: 0 4px 4px 0; margin-bottom: 4px; line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 가스 경영 2026 api 테스트</h1>
+    <div class="container">
+
+        <!-- 로그인 -->
+        <div class="card">
+            <h2><span class="badge post">POST</span> /api/auth/login</h2>
+            <p class="desc">아이디·비밀번호로 로그인. 성공 시 <b>sessionToken</b> 발급 (Redis 1시간 유지).<br>UUID를 함께 보내면 기기 고정 로그인. 다중 회사 계정 지원.</p>
+
+            <label>아이디 (userId)</label>
+            <input id="login-userId" type="text" placeholder="user01" />
+
+            <label>비밀번호 (password)</label>
+            <input id="login-password" type="password" placeholder="pass1234" />
+
+            <label>기기 UUID (선택)</label>
+            <input id="login-uuid" type="text" placeholder="DEVICE-UUID-OPTIONAL" value="8c4ae8432adc86bb" />
+
+            <button onclick="doLogin()">로그인</button>
+            <div id="login-result" class="result"></div>
+        </div>
+
+        <!-- 영업소 코드 목록 -->
+        <div class="card">
+            <h2><span class="badge" style="background:#6D4C41">GET</span> /api/auth/area-codes</h2>
+            <p class="desc">로그인한 회사 DB(SVR_DBName)의 <b>영업소(사업소) 코드 전체 목록</b> 조회.<br>가입신청 화면에서 사업소 선택 드롭다운에 사용. <code>JNOTRY</code> 테이블.</p>
+            <label>세션 토큰 (X-Session-Token)</label>
+            <input id="area-token" type="text" placeholder="로그인 후 발급된 sessionToken" />
+            <button onclick="doGetWithToken('/api/auth/area-codes', 'area-token', 'area-result')">조회</button>
+            <div id="area-result" class="result"></div>
+        </div>
+
+        <!-- 지역번호 목록 -->
+        <div class="card">
+            <h2><span class="badge" style="background:#6D4C41">GET</span> /api/auth/phone-area-numbers</h2>
+            <p class="desc">지역번호(DDD) 전체 목록 조회. 가입신청 시 지역번호 선택에 사용.<br><code>BA_Code</code> 테이블에서 <code>Gubun = 'DDD'</code> 조건으로 조회.</p>
+            <label>세션 토큰 (X-Session-Token)</label>
+            <input id="ddd-token" type="text" placeholder="로그인 후 발급된 sessionToken" />
+            <button onclick="doGetWithToken('/api/auth/phone-area-numbers', 'ddd-token', 'ddd-result')">조회</button>
+            <div id="ddd-result" class="result"></div>
+        </div>
+
+        <!-- 거래처 검색 -->
+        <div class="card">
+            <h2><span class="badge" style="background:#6D4C41">GET</span> /api/customers</h2>
+            <p class="desc">키워드(이름·주소·전화번호)로 <b>거래처 목록 검색</b>. 세션의 영업소·사원·권한 코드가 자동 적용됨.<br>거래처 유형(중량/체적검침/체적공급/전체) 필터 가능. <code>fn_CUST_FIND</code> 함수 사용.</p>
+            <label>세션 토큰 (X-Session-Token)</label>
+            <input id="cs-token" type="text" placeholder="로그인 후 발급된 sessionToken" />
+            <label>검색어 (keyword)</label>
+            <input id="cs-keyword" type="text" placeholder="이름 / 주소 / 전화번호" />
+            <label>거래처 유형 (type): A=전체, 0=중량, 1=체적검침, 2=체적공급</label>
+            <input id="cs-type" type="text" placeholder="A" value="A" />
+            <label>거래처 코드 (단건 조회 시, 선택)</label>
+            <input id="cs-code" type="text" placeholder="000-01234" />
+            <button onclick="doCustomerSearch()">검색</button>
+            <div id="cs-result" class="result"></div>
+        </div>
+
+        <!-- 거래처 품목 조회 -->
+        <div class="card">
+            <h2><span class="badge" style="background:#6D4C41">GET</span> /api/customers/{code}/items</h2>
+            <p class="desc">특정 거래처에 등록된 <b>품목 목록과 단가</b> 조회. 재고·미수금 포함.<br>세션 gasType에 따라 자동 분기: <b>HIGH</b> → <code>fn_CUST_JP_Danga</code> / <b>LPG</b> → <code>fn_CUST_JP_Danga_LPG</code></p>
+            <label>세션 토큰 (X-Session-Token)</label>
+            <input id="ci-token" type="text" placeholder="로그인 후 발급된 sessionToken" />
+            <label>거래처 코드 (customerCode)</label>
+            <input id="ci-code" type="text" placeholder="000-01234" />
+            <label>판매 유형 (saleType): 0=가스(기본), 1=용기 — LPG 전용</label>
+            <input id="ci-saleType" type="text" placeholder="0" value="0" />
+            <label>품목 코드 (itemCode, 단건 조회 시 선택)</label>
+            <input id="ci-itemCode" type="text" placeholder="선택사항" />
+            <button onclick="doCustomerItems()">조회</button>
+            <div id="ci-result" class="result"></div>
+        </div>
+
+        <!-- 가입신청 -->
+        <div class="card">
+            <h2><span class="badge post">POST</span> /api/auth/register</h2>
+            <p class="desc">신규 직원 앱 <b>가입신청</b>. 등록 후 상태는 <code>N</code>(대기). 관리자가 승인(<code>Y</code>)해야 로그인 가능.<br>동일 UUID 중복 신청 불가.</p>
+
+            <label>기기 UUID</label>
+            <input id="reg-uuid" type="text" placeholder="DEVICE-UUID-12345" />
+
+            <label>이름 (employeeName) — 최대 10자</label>
+            <input id="reg-name" type="text" placeholder="홍길동" maxlength="10" />
+
+            <label>아이디 (userId) — 최대 15자</label>
+            <input id="reg-userId" type="text" placeholder="user01" maxlength="15" />
+
+            <label>비밀번호 (password) — 최대 15자</label>
+            <input id="reg-password" type="password" placeholder="pass1234" maxlength="15" />
+
+            <label>사업소 코드 (areaCode) — 최대 2자 (예: 01, 02)</label>
+            <input id="reg-areaCode" type="text" placeholder="01" maxlength="2" />
+
+            <label>사업소명 (areaName) — 최대 30자</label>
+            <input id="reg-areaName" type="text" placeholder="서울사업소" maxlength="30" />
+
+            <button onclick="doRegister()">가입신청</button>
+            <div id="reg-result" class="result"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const BASE = '';
+
+        function showResult(elId, data, ok) {
+            const el = document.getElementById(elId);
+            el.style.display = 'block';
+            el.className = 'result ' + (ok ? 'success' : 'error');
+            el.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function doGetWithToken(path, tokenInputId, elId) {
+            const token = document.getElementById(tokenInputId).value;
+            try {
+                const res = await fetch(BASE + path, {
+                    headers: { 'X-Session-Token': token }
+                });
+                const data = await res.json();
+                showResult(elId, data, res.ok);
+            } catch (e) {
+                showResult(elId, { error: e.message }, false);
+            }
+        }
+
+        async function doCustomerItems() {
+            const token    = document.getElementById('ci-token').value;
+            const code     = document.getElementById('ci-code').value;
+            const saleType = document.getElementById('ci-saleType').value || '0';
+            const itemCode = document.getElementById('ci-itemCode').value;
+            const params   = new URLSearchParams({ saleType, itemCode });
+            try {
+                const res  = await fetch(`${BASE}/api/customers/${encodeURIComponent(code)}/items?${params}`, {
+                    headers: { 'X-Session-Token': token }
+                });
+                const data = await res.json();
+                showResult('ci-result', data, res.ok);
+            } catch (e) {
+                showResult('ci-result', { error: e.message }, false);
+            }
+        }
+
+        async function doCustomerSearch() {
+            const token    = document.getElementById('cs-token').value;
+            const keyword  = document.getElementById('cs-keyword').value;
+            const type     = document.getElementById('cs-type').value || 'A';
+            const code     = document.getElementById('cs-code').value;
+            const params   = new URLSearchParams({ keyword, type, customerCode: code });
+            try {
+                const res  = await fetch(BASE + '/api/customers?' + params, {
+                    headers: { 'X-Session-Token': token }
+                });
+                const data = await res.json();
+                showResult('cs-result', data, res.ok);
+            } catch (e) {
+                showResult('cs-result', { error: e.message }, false);
+            }
+        }
+
+        async function doLogin() {
+            const body = {
+                userId:   document.getElementById('login-userId').value,
+                password: document.getElementById('login-password').value,
+            };
+            const uuid = document.getElementById('login-uuid').value;
+            if (uuid) body.uuid = uuid;
+
+            try {
+                const res = await fetch(BASE + '/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                showResult('login-result', data, data.success);
+            } catch (e) {
+                showResult('login-result', { error: e.message }, false);
+            }
+        }
+
+        async function doRegister() {
+            const body = {
+                uuid:         document.getElementById('reg-uuid').value,
+                employeeName: document.getElementById('reg-name').value,
+                userId:       document.getElementById('reg-userId').value,
+                password:     document.getElementById('reg-password').value,
+                areaCode:     document.getElementById('reg-areaCode').value,
+                areaName:     document.getElementById('reg-areaName').value,
+            };
+
+            try {
+                const res = await fetch(BASE + '/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                showResult('reg-result', data, data.success);
+            } catch (e) {
+                showResult('reg-result', { error: e.message }, false);
+            }
+        }
+    </script>
+</body>
+</html>

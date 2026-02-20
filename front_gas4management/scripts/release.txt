@@ -1,2 +1,1 @@
-hpseq, araeNo 제거 버전
-가스 경영 hpseq, araeNo 제거 버전
+거래 상세 조회, 삭제 안되는 버그 수정
