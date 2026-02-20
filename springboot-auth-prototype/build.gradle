@@ -55,3 +55,13 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// 실행 가능한 Fat JAR 생성: ./gradlew bootJar
+bootJar {
+    archiveFileName = 'gasmax-auth.jar'
+}
+
+// 일반 plain jar는 비활성화 (bootJar만 사용)
+jar {
+    enabled = false
+}
