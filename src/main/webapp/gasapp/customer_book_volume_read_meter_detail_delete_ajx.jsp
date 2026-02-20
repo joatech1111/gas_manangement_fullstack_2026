@@ -35,6 +35,10 @@
 
             String sessionToken = request.getParameter("sessionToken"); // 클라이언트에서 전달된 토큰
             CustomerVolumeReadMeterMap customerVolumeReadMeters = RedisUtil.getFromRedis(sessionToken, "CUSTOMER_BOOK_VOLUME", CustomerVolumeReadMeterMap.class);
+            if (customerVolumeReadMeters == null) {
+                out.println("<result><code>E</code><message>세션이 만료되었습니다. 다시 조회해주세요.</message></result>");
+                return;
+            }
 
             CustomerVolumeReadMeter customerVolumeReadMeter = customerVolumeReadMeters.getCustomerVolumeReadMeter(key);
             String customerCode = customerVolumeReadMeter.getCustomerCode();
@@ -53,10 +57,11 @@
                 customerSearch = customerSearches.getCustomerSearch(customerSearches.getKey(areaCode, customerCode));
                 if (customerSearch != null) {
                     //session.setAttribute("CURRENT_CUSTOMER", customerSearch);
-                    String sessionToken = request.getParameter("sessionToken");
                     RedisUtil.saveToRedis(sessionToken, "CURRENT_CUSTOMER", customerSearch);
                     CustomerSearchMap sessionCustomerSearches = (CustomerSearchMap) session.getAttribute("CUSTOMER_SEARCH");
-                    sessionCustomerSearches.setCustomerSearch(customerSearch);
+                    if (sessionCustomerSearches != null) {
+                        sessionCustomerSearches.setCustomerSearch(customerSearch);
+                    }
                 }
             }
             String code = message.startsWith("E") ? "E" : "S";
