@@ -23,6 +23,7 @@
 %><%
 	try{
 		String key = request.getParameter("key");
+		String sessionToken = request.getParameter("sessionToken");
 
 		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
 		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
@@ -33,8 +34,16 @@
 			String userId = appUser.getMobileNumber();
 			String transactionDate = StringUtil.nowDateTimeStr();
 			String gasType = appUser.getGasType();
-			CustomerWeightCollectMap customerWeightCollects = (CustomerWeightCollectMap)session.getAttribute("CUSTOMER_BOOK_WEIGHT");
+			CustomerWeightCollectMap customerWeightCollects = RedisUtil.getFromRedis(sessionToken, "CUSTOMER_BOOK_WEIGHT", CustomerWeightCollectMap.class);
+			if (customerWeightCollects == null) {
+				out.println("<result><code>E</code><message>세션이 만료되었습니다. 다시 조회해 주세요.</message></result>");
+				return;
+			}
 			CustomerWeightCollect customerWeightCollect = customerWeightCollects.getCustomerWeightCollect(key);
+			if (customerWeightCollect == null) {
+				out.println("<result><code>E</code><message>삭제할 항목을 찾을 수 없습니다.</message></result>");
+				return;
+			}
 			String customerCode = customerWeightCollect.getCustomerCode();
 			String typeCode = customerWeightCollect.getTypeCode(); //0.가스, 1.용기, 2.기구, 4.A/S, 5.수금
 			String collectType = "J"; //J:일반 C:체적
@@ -50,8 +59,9 @@
 					message = BizCustomerWeightSale.getInstance().deleteCustomerWeightSaleLPG(serverIp, catalogName, areaCode, customerCode, typeCode, collectDate, sequenceNumber, transactionDate, userId);
 				}
 			}
-			// 거래처 거래내역 세션을 삭제
+			// 거래처 거래내역 항목 삭제 후 Redis 업데이트
 			customerWeightCollects.removeCustomerWeightCollect(key);
+			RedisUtil.saveToRedis(sessionToken, "CUSTOMER_BOOK_WEIGHT", customerWeightCollects);
 			// 거래처 정보 다시 가져오기
 			String keyword = "";
 			String customerSearchType = "A";
@@ -62,11 +72,11 @@
 			if (customerSearches!=null){
 				customerSearch = customerSearches.getCustomerSearch(customerSearches.getKey(areaCode, customerCode));
 				if (customerSearch!=null){
-					//session.setAttribute("CURRENT_CUSTOMER", customerSearch);
-					String sessionToken = request.getParameter("sessionToken");
 					RedisUtil.saveToRedis(sessionToken, "CURRENT_CUSTOMER", customerSearch);
 					CustomerSearchMap sessionCustomerSearches = (CustomerSearchMap)session.getAttribute("CUSTOMER_SEARCH");
-					sessionCustomerSearches.setCustomerSearch(customerSearch);
+					if (sessionCustomerSearches != null) {
+						sessionCustomerSearches.setCustomerSearch(customerSearch);
+					}
 				}
 			}
 			String code = message.startsWith("E")?"E":"S";

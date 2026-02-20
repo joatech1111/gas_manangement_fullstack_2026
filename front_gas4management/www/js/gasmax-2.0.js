@@ -64,7 +64,7 @@ function getMultiAppUser() {
             + "&appVersion=" + appVersion
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result, errorText, errorThrown) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -318,7 +318,7 @@ function authCheck() {
             + "&svrDbName=" + svrDbName
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
 
             alert(JSON.stringify(result));
@@ -539,7 +539,7 @@ function initializeAppConfig() {
         url: gasmaxWebappPath + "reset_session_customer_ajx.jsp",
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -569,8 +569,7 @@ function showPageAppUserEdit() {
             "get",
         dataType:
             "html",
-        timeout:
-            60000,
+        timeout: 30000,
         error:
 
             function (result) {
@@ -601,7 +600,7 @@ function changeAreaCodeAppUserEdit() {
         data: "areaCode=" + areaCode
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -688,7 +687,7 @@ function clickSaveAppUserEdit() {
             + "&areaSeq=" + areaSeq
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -1042,7 +1041,7 @@ function searchCustomerBookWeightCollect() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -1116,6 +1115,9 @@ function searchCustomerBookWeightCollect() {
                 //Anchor의 하위에 있는 노드에서 이벤트가 발생하므로 상위의 Anchor 태그를 찾아 Anchor의 id에 등록된 key를 이용하여 상세내역으로 이동
                 showPageCustomerBookWeightCollectDetail(getParentSpecifiedTagId($(event.target), "a", "id"));
             });
+            $("#divResultMessageCustomerBookWeight").attr("data-count", rowCount).html(
+                '<div style="text-align:center; padding:6px; color:#555; font-size:13px;">총 ' + rowCount + '건</div>'
+            ).trigger("create");
             $('#hdnNextPageNumberCustomerBookWeight').attr("value", '2'); //다음 페이지는 무조건 2가 되도록 세팅
             if (rowCount == 20) { //20건이 출력되었다면 다음 페이지 표시 버튼 보이기
                 $("#btnMorePageCustomerBookWeight").html('<table style="width: 100% ; "><tr><td><a href="#" data-role="button" data-mini="true" onclick="clickMorePageCustomerBookWeightCollect()">검색결과 20건 더보기</a></td></tr></table>').trigger("create");
@@ -1133,7 +1135,7 @@ function clickMorePageCustomerBookWeightCollect() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookWeight").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -1201,6 +1203,10 @@ function clickMorePageCustomerBookWeightCollect() {
             });
             var nextPageNumber = parseInt($('#hdnNextPageNumberCustomerBookWeight').attr("value"), 10) + 1;
             $('#hdnNextPageNumberCustomerBookWeight').attr("value", nextPageNumber); //다음 페이지 세팅 처리
+            var totalCount = parseInt($("#divResultMessageCustomerBookWeight").attr("data-count") || "0") + rowCount;
+            $("#divResultMessageCustomerBookWeight").attr("data-count", totalCount).html(
+                '<div style="text-align:center; padding:6px; color:#555; font-size:13px;">총 ' + totalCount + '건</div>'
+            ).trigger("create");
             if (rowCount == 20) { //20건이 출력되었다면 다음 페이지 표시 버튼 보이기
                 $("#btnMorePageCustomerBookWeight").html('<table style="width: 100% ; "><tr><td><a href="#" data-role="button" data-mini="true" onclick="clickMorePageCustomerBookWeightCollect()">검색결과 20건 더보기</a></td></tr></table>').trigger("create");
             } else {
@@ -1228,7 +1234,7 @@ function injectionCustomerBookWeightCollectDetail(tagId, key) {
         type: "post",
         data: "key=" + key,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -1349,7 +1355,7 @@ function deleteCustomerBookWeightCollectDetail(key, typeCode, collectDate) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -1388,7 +1394,7 @@ function navigateCustomerBookWeightCollectDetail(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -1446,7 +1452,7 @@ function searchCustomerBookWeightSale() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -1498,6 +1504,9 @@ function searchCustomerBookWeightSale() {
                 + '<tr><td style="text-align: right ; font-size: 16px ; "><span> 공급액: ' + insertComma(totalSupplyAmount) + ' 세액: ' + insertComma(totalTaxAmount) + ' 합계: ' + insertComma(totalSumAmount) + ' </span></td></tr>'
                 + '</table>';
             $("#footerSummaryCustomerBookWeight").html(footerHtml).trigger("create");
+            $("#divResultMessageCustomerBookWeight").attr("data-count", rowCount).html(
+                '<div style="text-align:center; padding:6px; color:#555; font-size:13px;">총 ' + rowCount + '건</div>'
+            ).trigger("create");
             $('#hdnNextPageNumberCustomerBookWeight').attr("value", '2'); //다음 페이지는 무조건 2가 되도록 세팅
             if (rowCount == 20) { //20건이 출력되었다면 다음 페이지 표시 버튼 보이기
                 $("#btnMorePageCustomerBookWeight").html('<table style="width: 100% ; "><tr><td><a href="#" data-role="button" data-mini="true" onclick="clickMorePageCustomerBookWeightSale()">검색결과 20건 더보기</a></td></tr></table>').trigger("create");
@@ -1515,7 +1524,7 @@ function clickMorePageCustomerBookWeightSale() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookWeight").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -1562,6 +1571,10 @@ function clickMorePageCustomerBookWeightSale() {
 
             var nextPageNumber = parseInt($('#hdnNextPageNumberCustomerBookWeight').attr("value"), 10) + 1;
             $('#hdnNextPageNumberCustomerBookWeight').attr("value", nextPageNumber); //다음 페이지 세팅 처리
+            var totalCount = parseInt($("#divResultMessageCustomerBookWeight").attr("data-count") || "0") + rowCount;
+            $("#divResultMessageCustomerBookWeight").attr("data-count", totalCount).html(
+                '<div style="text-align:center; padding:6px; color:#555; font-size:13px;">총 ' + totalCount + '건</div>'
+            ).trigger("create");
             if (rowCount == 20) { //20건이 출력되었다면 다음 페이지 표시 버튼 보이기
                 $("#btnMorePageCustomerBookWeight").html('<table style="width: 100% ; "><tr><td><a href="#" data-role="button" data-mini="true" onclick="clickMorePageCustomerBookWeightSale()">검색결과 20건 더보기</a></td></tr></table>').trigger("create");
             } else {
@@ -1641,7 +1654,7 @@ function searchCustomerBookVolumeReadMeter() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -1727,7 +1740,7 @@ function clickMorePageCustomerBookVolumeReadMeter() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookVolume").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -1822,8 +1835,9 @@ function searchCustomerBookVolumeCollect() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
+            hideActivityIndicator();
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
                 $("#divSearchResultCustomerBookVolume").html(html).trigger("create");
@@ -1833,6 +1847,7 @@ function searchCustomerBookVolumeCollect() {
             $("#footerSummaryCustomerBookVolume").html("<table><tr><td>&nbsp;</td></tr></table>").trigger("create");
         },
         success: function (xml) {
+            hideActivityIndicator();
             if ($(xml).find("session").text() == "X") {
                 alert("오랫동안 사용하지 않아서\n접속이 종료되었습니다.\n다시 로그인해 주세요.");
                 showPageIntro(false);
@@ -1893,7 +1908,7 @@ function clickMorePageCustomerBookVolumeCollect() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookVolume").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -1980,7 +1995,7 @@ function deleteCustomerBookVolumeCollect(key) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -2040,7 +2055,7 @@ function searchCustomerBookVolumeSale() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             hideActivityIndicator()
@@ -2113,7 +2128,7 @@ function clickMorePageCustomerBookVolumeSale() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookVolume").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -2203,7 +2218,7 @@ function deleteCustomerBookVolumeSale(key) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -2252,7 +2267,7 @@ function injectionCustomerBookVolumeReadMeterDetail(tagId, key) {
         type: "post",
         data: "key=" + key,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -2359,7 +2374,7 @@ function deleteCustomerBookVolumeReadMeterDetail(key) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -2398,7 +2413,7 @@ function navigateCustomerBookVolumeReadMeterDetail(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -2463,7 +2478,7 @@ function searchCustomerBookTaxInvoice() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -2552,7 +2567,7 @@ function clickMorePageCustomerBookTaxInvoice() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookTaxInvoice").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -2637,7 +2652,7 @@ function injectionCustomerBookTaxInvoiceDetail(tagId, key, period) {
             + "&period=" + period
         ,
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -2662,7 +2677,7 @@ function navigateCustomerBookTaxInvoiceDetail(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -2729,7 +2744,7 @@ function searchCustomerBookItemBalanceHPG() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -2795,7 +2810,7 @@ function clickMorePageCustomerBookItemBalanceHPG() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookItemBalance").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -2885,7 +2900,7 @@ function injectionCustomerBookItemBalanceHPGDetailList(key, preBalance) {
             + "&preBalance=" + preBalance
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -2945,7 +2960,7 @@ function clickMorePageCustomerBookItemBalanceHPGDetailList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberCustomerBookItemBalanceDetailList").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -3232,7 +3247,7 @@ function popupSignatureCustomerSaftyCheckTankInsert(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -3278,7 +3293,7 @@ function popupSignatureCustomerSaftyCheckTankEdit(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -3342,7 +3357,7 @@ function choiceCustomer(areaCode, customerCode) {
             ,
             type: "post",
             dataType: "html",
-            timeout: 120000,
+            timeout: 30000,
             error: function (result) {
                 if (result.status == 200) {
                     var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -3372,7 +3387,7 @@ function choiceCustomer(areaCode, customerCode) {
         type: "post",
         data: "customerCode=" + customerCode + "&areaCode=" + areaCode,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -3396,7 +3411,7 @@ function choiceCustomer(areaCode, customerCode) {
         url: gasmaxWebappPath + "reset_session_customer_ajx.jsp",
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -3461,7 +3476,7 @@ function searchManageCidList(defaultAreaAddress, phoneAreaNumber) {
             + "&deliveryComplete=" + deliveryComplete
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -3610,7 +3625,7 @@ function clickMorePageManageCidList(defaultAreaAddress, phoneAreaNumber) {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageCidList").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -3843,7 +3858,7 @@ function searchManageSaleList() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -3937,7 +3952,7 @@ function clickMorePageManageSaleList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageSaleList").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -4064,7 +4079,7 @@ function searchManageUnpaidList() {
             + "&employeeCode=" + employeeCode
             + "&collectTypeCode=" + collectTypeCode,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -4156,7 +4171,7 @@ function clickMorePageManageUnpaidList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageUnpaidList").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -4286,7 +4301,7 @@ function searchManageCollectList() {
             + "&endDate=" + endDate
             + "&collectTypeCode=" + collectTypeCode,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -4395,7 +4410,7 @@ function clickMorePageManageCollectList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageCollectList").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -4549,7 +4564,7 @@ function searchManageReadMeterList() {
             + "&endDate=" + endDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -4661,7 +4676,7 @@ function clickMorePageManageReadMeterList() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberManageReadMeterList").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -4954,7 +4969,7 @@ function customerSearch() {
         type: "post",
         data: "keyword=" + encodeURIComponent($("#txtCustomerKeyword").val()),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -5065,7 +5080,7 @@ function searchCustomerQR(customerCode) {
         type: "post",
         data: "customerCode=" + customerCode,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -5102,7 +5117,7 @@ function clickMorePageCustomerSearch() {
         type: "post",
         data: "pageNumber=" + $("#hdnNextPageNumberSearchCustomer").attr("value"),
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("더 이상 자료가 없습니다.", false);
@@ -5192,7 +5207,7 @@ function injectionAppUserInsert(tagId) {
         type: "post",
         data: "macNumber=" + window.sessionStorage.uuid + "&phoneNumber=" + hpNo,
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5278,7 +5293,7 @@ function clickSaveAppUserInsert() {
             + "&phoneAreaNumber=" + phoneAreaNumber
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5313,7 +5328,7 @@ function injectionCustomerInsert(tagId) {
         url: gasmaxWebappPath + "customer_insert.jsp",
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5337,7 +5352,7 @@ function injectionCustomerUpdate(tagId) {
         url: gasmaxWebappPath + "customer_update.jsp",
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5403,7 +5418,7 @@ function clickCustomerSearchInsertSave() {
                 + "&remark2=" + remark2
                 + "&consumeTypeCode=" + consumeTypeCode,
             dataType: "xml",
-            timeout: 120000,
+            timeout: 30000,
             error: function (result) {
                 if (result.status == 0) {
                     console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5474,7 +5489,7 @@ function clickCustomerUpdateSave() {
                 + "&remark2=" + remark2
                 + "&consumeTypeCode=" + consumeTypeCode,
             dataType: "xml",
-            timeout: 120000,
+            timeout: 30000,
             error: function (result) {
                 if (result.status == 0) {
                     console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5593,7 +5608,7 @@ function injectionSearchOptionCustomerBookWeight(tagId, pageType) {
             + "&radioIndex=" + pageType
         ,
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -5625,7 +5640,7 @@ function injectionSearchOptionCustomerBookVolume(tagId, pageType) {
         ,
         dataType: "html",
         async: false,
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5650,7 +5665,7 @@ function injectionSearchOptionCustomerBookTaxInvoice(tagId) {
         data: "startDate=" + $("#hdnStartDateCustomerBookTaxInvoice").attr("value")
             + "&endDate=" + $("#hdnEndDateCustomerBookTaxInvoice").attr("value"),
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5675,7 +5690,7 @@ function injectionSearchOptionCustomerBookItemBalance(tagId) {
         data: "startDate=" + $("#hdnStartDateCustomerBookItemBalance").attr("value")
             + "&endDate=" + $("#hdnEndDateCustomerBookItemBalance").attr("value"),
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5705,7 +5720,7 @@ function injectionSearchOptionCustomerBookItemBalanceHPGDetailList(tagId, itemNa
             + "&endDate=" + endDate
         ,
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5734,7 +5749,7 @@ function injectionCustomerSaleWeightInsert(tagId) {
         url: gasmaxWebappPath + "customer_sale_weight_insert_batch.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -5995,7 +6010,7 @@ function saveInsertCustomerSaleWeightInsertBatch() {
             type: "post",
             async: false,
             dataType: "html",
-            timeout: 120000,
+            timeout: 30000,
             error: function (result) {
                 if (result.status == 0) {
                     console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6114,7 +6129,7 @@ function injectionCustomerSaleWeightInsertItemDetail(tagId, insertMode, itemInde
         data: dataStr,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6396,7 +6411,7 @@ function injectionCustomerSaleWeightInsertItemSearch(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6421,7 +6436,7 @@ function injectionCustomerSaleWeightInsertRemarkSearch(tagId) {
         data: "customerCode=" + customerCode,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6476,7 +6491,7 @@ function injectionCustomerSaleWeightInsertItemDetailRemarkSearch(tagId) {
         data: "customerCode=" + customerCode,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6506,7 +6521,7 @@ function injectionCustomerSaleVolumeInsert(tagId) {
         url: gasmaxWebappPath + "customer_sale_volume_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6634,7 +6649,7 @@ function saveCustomerSaleVolume(insertYesNo) {
             + "&uuid=" + device.uuid						// 비고
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 200) {
@@ -6683,7 +6698,7 @@ function injectionCustomerReadMeterInsert(tagId, readMeterDate) {
         data: dataStr,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6722,7 +6737,7 @@ function changeApplyDelayDateCustomerReadMeterEdit() {
         data: "readMeterDate=" + applyDelayDate,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -6939,7 +6954,7 @@ function saveCustomerReadMeter(insertYesNo) {
             + "&defaultAmountYesNo=" + $("#hdnDefaultAmountYesNoCustomerReadMeterEdit").attr("value")
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -6983,7 +6998,7 @@ function injectionCustomerCollect(tagId) {
         url: gasmaxWebappPath + "customer_collect_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -7097,7 +7112,7 @@ function saveCustomerCollectInsert() {
             + "&employeeName=" + employeeName
             + "&remark=" + remark,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7145,7 +7160,7 @@ function injectionSearchOptionCustomerSaftyCheckList(tagId) {
         url: gasmaxWebappPath + "customer_safty_check_list_search_option_rev3.jsp",
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7169,7 +7184,7 @@ function injectionSearchOptionCustomerSaftyCheckList(tagId) {
         type: "post",
         data: "customerCode=" + customerCode,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             hideActivityIndicator()
@@ -7290,7 +7305,7 @@ function injectionCustomerSaftyCheckEdit(tagId, key) {
         data: "key=" + key,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7365,7 +7380,7 @@ function injectionCustomerSaftyCheckInsert(tagId) {
         url: gasmaxWebappPath + "customer_safty_check_insert_rev3.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7511,7 +7526,7 @@ function saveCustomerSaftyCheckInsert() {
         ,
         dataType: "xml",
         async: async,
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -7624,7 +7639,7 @@ function saveCustomerSaftyCheckEdit(insertYesNo) {
         ,
         dataType: "xml",
         async: async,
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -7674,7 +7689,7 @@ function clickDeleteCustomerSaftyCheckEdit() {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -7726,7 +7741,7 @@ function injectionCustomerSaftyCheckSign(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7761,7 +7776,7 @@ function popupSignatureCustomerSaftyCheckInsert(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7807,7 +7822,7 @@ function popupSignatureCustomerSaftyCheckEdit(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7860,7 +7875,7 @@ function injectionCustomerSaftyCheckTankEdit(tagId, key, sequenceNumber) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7887,7 +7902,7 @@ function injectionCustomerSaftyCheckTankInsert(tagId) {
         url: gasmaxWebappPath + "customer_safty_check_tank_insert.jsp?uuid=" + window.sessionStorage.uuid,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -7997,7 +8012,7 @@ function saveCustomerSaftyCheckTankInsert() {
         ,
         dataType: "xml",
         async: async,
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -8081,7 +8096,7 @@ function saveCustomerSaftyCheckTankEdit(insertYesNo) {
         ,
         dataType: "xml",
         async: async,
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -8130,7 +8145,7 @@ function clickDeleteCustomerSaftyCheckTankEdit() {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -8168,7 +8183,7 @@ function injectionSearchOptionManageCidList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -8282,7 +8297,7 @@ function clickSaveManageCidList(key) {
             + "&completeYesNo=" + completeYesNo
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -8325,7 +8340,7 @@ function injectionManageCidEdit(tagId, key) {
             + "&insertMode=" + insertMode
         ,
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("페이지가 존재하지 않습니다.", false);
@@ -8349,7 +8364,7 @@ function navigateManageCidEdit(key, direction) {
         ,
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -8579,7 +8594,7 @@ function clickSaveManageCidEdit(insertMode, closeBool) {
             + "&collectType=" + collectType
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -8722,7 +8737,7 @@ function clickDeleteManageCidEdit() {
             + "&cidDate=" + cidDate
         ,
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         async: false,
         error: function (result) {
             if (result.status == 0) {
@@ -8765,7 +8780,7 @@ function injectionManageCidEditItemSearch(tagId) {
         ,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -8812,7 +8827,7 @@ function injectionManageCidEditRemarkSearch(tagId) {
         data: "customerCode=" + customerCode,
         type: "post",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 0) {
                 console.log("서버 응답 지연 (timeout 또는 연결 실패)");
@@ -8843,7 +8858,7 @@ function injectionSearchOptionManageSaleList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -8868,7 +8883,7 @@ function injectionSearchOptionManageUnpaidList(tagId) {
         url: gasmaxWebappPath + "manage_unpaid_list.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -8893,7 +8908,7 @@ function injectionSearchOptionManageCollectList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {
@@ -8919,7 +8934,7 @@ function injectionSearchOptionManageReadMeterList(tagId) {
         type: "post",
         data: "now=" + getToday("-"),
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {

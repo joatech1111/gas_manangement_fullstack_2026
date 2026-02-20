@@ -37,7 +37,7 @@ function injectionCustomerSummary(tagId) {
         url: gasmaxWebappPath + "customer_summary.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -60,7 +60,7 @@ function injectionCustomerDetail(tagId) {
         url: gasmaxWebappPath + "search_customer_current_ajx.jsp",
         type: "post",
         dataType: "xml",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             if (result.status == 200) {
                 var html = getResultMessage("검색된 자료가 없습니다.", false);
@@ -311,24 +311,21 @@ function showPageMain() {
     // 접속 디비명 및 hpSeq 업데이트 실행 함수 (localStorage 우선)
     var updateDbNameDisplay = function () {
         try {
+            var areaName = window.localStorage.getItem("remember_gasmax_areaName") || window.sessionStorage.getItem("login_areaName") || "";
             var svrDbName = window.localStorage.getItem("remember_gasmax_svrDbName") || window.sessionStorage.getItem("login_svrDbName") || "";
             var hpSeq = window.localStorage.getItem("remember_gasmax_hpSeq") || window.sessionStorage.getItem("login_hpSeq") || "";
-            
-            // DB명 표시
-            if (svrDbName && svrDbName !== "null" && svrDbName !== "undefined") {
-                $("#headerSvrDbName").text(svrDbName).css("display", "inline-block");
-                console.log("🏙️ AppBar DB Name updated:", svrDbName);
+
+            // 업체명 표시 (없으면 DB명 fallback)
+            var displayLabel = areaName || svrDbName;
+            if (displayLabel && displayLabel !== "null" && displayLabel !== "undefined") {
+                $("#headerSvrDbName").text(displayLabel).css("display", "inline-block");
+                console.log("🏙️ AppBar Name updated:", displayLabel);
             } else {
                 $("#headerSvrDbName").hide();
             }
             
-            // hpSeq 표시
-            if (hpSeq && hpSeq !== "null" && hpSeq !== "undefined" && hpSeq !== "0") {
-                $("#headerHpSeq").text("hpSeq:" + hpSeq).css("display", "inline-block");
-                console.log("🔢 AppBar hpSeq updated:", hpSeq);
-            } else {
-                $("#headerHpSeq").hide();
-            }
+            // hpSeq 표시 안함
+            $("#headerHpSeq").hide();
         } catch (e) {
             console.error("Error updating SvrDbName/hpSeq display:", e);
         }
@@ -357,7 +354,7 @@ function showPageMain() {
         url: gasmaxWebappPath + "home.jsp?uuid=" + window.sessionStorage.uuid,
         type: "get",
         dataType: "html",
-        timeout: 120000,
+        timeout: 30000,
         error: function (result) {
             hideActivityIndicator()
             if (result.status == 200) {

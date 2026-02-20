@@ -7,6 +7,7 @@
 <%@ page import="com.joainfo.gasmax.biz.BizCustomerWeightSale" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="com.joainfo.gasmax.biz.BizAppUser" %>
+<%@ page import="com.joainfo.common.util.RedisUtil" %>
 <%
 	response.setHeader("Cache-Control", "no-store");
 	response.setHeader("Pragma", "no-cache");
@@ -19,6 +20,7 @@
 		String customerCode = request.getParameter("customerCode");
 		String startDate = StringUtil.stringReplace(request.getParameter("startDate"));
 		String endDate = StringUtil.stringReplace(request.getParameter("endDate"));
+		String sessionToken = request.getParameter("sessionToken");
 		AppUser appUser = (AppUser)session.getAttribute("USER_INFO");
 		appUser = BizAppUser.getInstance().getAppUserByHpSeq(BizAppUser.DEFAULT_APP_USER_CATATLOG_NAME, request.getParameter("uuid"), request.getParameter("hpSeq"));
 		if (appUser != null){
@@ -26,9 +28,9 @@
 			String catalogName = appUser.getDbCatalogName();
 			String areaCode = appUser.getAreaCode();
 			CustomerWeightSaleMap customerWeightSales = BizCustomerWeightSale.getInstance().getCustomerWeightSales(serverIp, catalogName, areaCode, customerCode, startDate, endDate);
-			session.setAttribute("CUSTOMER_BOOK_WEIGHT", customerWeightSales);
+			RedisUtil.saveToRedis(sessionToken, "CUSTOMER_BOOK_WEIGHT", customerWeightSales);
 			HashMap<String, String> pagingXML = new HashMap<String, String>(customerWeightSales.toPagingXML(5000));
-			session.setAttribute("CUSTOMER_BOOK_WEIGHT_PAGING", pagingXML);
+			RedisUtil.saveToRedis(sessionToken, "CUSTOMER_BOOK_WEIGHT_PAGING", pagingXML);
 			String pageNumber = "1";
 			String xml = pagingXML.get(pageNumber);
 			String modifiedXml = xml==null?"":xml.replace("<CustomerWeightSales>", "<CustomerWeightSales><totalSupplyAmount>" + customerWeightSales.getTotalSupplyAmount() + "</totalSupplyAmount><totalTaxAmount>" + customerWeightSales.getTotalTaxAmount() + "</totalTaxAmount><totalSumAmount>" + customerWeightSales.getTotalSumAmount() + "</totalSumAmount>");

@@ -588,8 +588,7 @@
                                 if (!firstAreaCode) firstAreaCode = areaCode;
 
                                 var displayName = "";
-                                if (catalogName) displayName += catalogName;
-                                if (areaName) displayName += (displayName ? " - " : "") + areaName;
+                                if (areaName) displayName += areaName;
                                 if (employeeName) displayName += " (" + employeeName + ")";
                                 // hpSeq/areaCode는 화면에 노출하지 않음
 
@@ -602,6 +601,7 @@
                                     + ' data-areacode="' + areaCode + '"'
                                     + ' data-areaseq="' + areaSeq + '"'
                                     + ' data-svrdbname="' + catalogName + '"'
+                                    + ' data-areaname="' + areaName + '"'
                                     + '>' + displayName + '</a>';
 
                                 console.log("  User " + (index + 1) + ":", displayName, "svrDbName:", catalogName);
@@ -615,11 +615,13 @@
                             var initialAreaCode = rememberedAreaCode || firstAreaCode;
                             var initialHpSeq = "";
                             var initialSvrDbName = "";
+                            var initialAreaName = "";
 
                             appUsers.each(function () {
                                 if (($(this).find("areaCode").text() || "").trim() === initialAreaCode) {
                                     initialHpSeq = ($(this).find("areaSeq").text() || "").trim();
                                     initialSvrDbName = ($(this).find("dbCatalogName").text() || "").trim();
+                                    initialAreaName = ($(this).find("areaName").text() || "").trim();
                                     return false;
                                 }
                             });
@@ -632,6 +634,10 @@
                                 if (initialSvrDbName) {
                                     sessionStorage.setItem("login_svrDbName", initialSvrDbName);
                                     localStorage.setItem("remember_gasmax_svrDbName", initialSvrDbName);
+                                }
+                                if (initialAreaName) {
+                                    sessionStorage.setItem("login_areaName", initialAreaName);
+                                    localStorage.setItem("remember_gasmax_areaName", initialAreaName);
                                 }
                                 console.log("💾 Initial login_hpSeq:", initialHpSeq, "login_areaCode:", initialAreaCode, "svrDbName:", initialSvrDbName);
                             }
@@ -646,6 +652,7 @@
                             var areaSeq = ($user.find("areaSeq").text() || "").trim();
                             var hpSeq = areaSeq; // HP_SEQ는 areaSeq와 동일
                             var svrDbName = ($user.find("dbCatalogName").text() || "").trim();
+                            var areaName = ($user.find("areaName").text() || "").trim();
                             $("#txtLoginId").val(userId);
                             $("#divMultiUserSelect").html('');
                             if (areaCode) {
@@ -655,6 +662,10 @@
                                 localStorage.setItem("remember_gasmax_hpSeq", hpSeq);
                                 localStorage.setItem("remember_gasmax_areaCode", areaCode);
                                 localStorage.setItem("remember_gasmax_svrDbName", svrDbName);
+                                if (areaName) {
+                                    sessionStorage.setItem("login_areaName", areaName);
+                                    localStorage.setItem("remember_gasmax_areaName", areaName);
+                                }
                                 console.log("💾 Single user login_hpSeq:", hpSeq, "login_areaCode:", areaCode, "svrDbName:", svrDbName);
                             }
                             console.log("✅ Single user, auto-filled:", userId);
@@ -734,6 +745,7 @@
                 var areaCode = ($btn.attr("data-areacode") || "").trim();
                 var areaSeq = ($btn.attr("data-areaseq") || "").trim();
                 var svrDbName = ($btn.attr("data-svrdbname") || "").trim();
+                var areaName = ($btn.attr("data-areaname") || "").trim();
 
                 // active 표시
                 $("#multiUserButtons .btnMultiAppUser").removeClass("ui-btn-active");
@@ -756,6 +768,10 @@
                     sessionStorage.setItem("login_svrDbName", svrDbName);
                     localStorage.setItem("remember_gasmax_areaCode", areaCode);
                     localStorage.setItem("remember_gasmax_svrDbName", svrDbName);
+                    if (areaName) {
+                        sessionStorage.setItem("login_areaName", areaName);
+                        localStorage.setItem("remember_gasmax_areaName", areaName);
+                    }
                 }
 
                 // 기존 areaSeq도 유지 (필요시)
@@ -1908,7 +1924,7 @@ todo: ================ 거래처 신규등록 페이지 시작 =================
         </div>
         <div id="divResultMessageCustomerBookWeight">
         </div>
-        <br /><br /><br /><br />
+        <div style="height: 160px;"></div>
         <footer data-role="footer" data-theme="b" data-position="fixed">
             <div id="footerSummaryCustomerBookWeight" data-role="footer" data-theme="c">
             </div>

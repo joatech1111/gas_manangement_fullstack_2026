@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/xml; charset=utf-8" pageEncoding="utf-8"%>
 <%@ page import="com.joainfo.gasmax.bean.CustomerWeightCollect" %>
 <%@ page import="com.joainfo.gasmax.bean.list.CustomerWeightCollectMap" %>
+<%@ page import="com.joainfo.common.util.RedisUtil" %>
 <%
 	response.setHeader("Cache-Control", "no-store");
 	response.setHeader("Pragma", "no-cache");
@@ -12,7 +13,8 @@
 %><%
 	try{
 		String key = request.getParameter("key");
-		CustomerWeightCollectMap customerWeightCollects = (CustomerWeightCollectMap)session.getAttribute("CUSTOMER_BOOK_WEIGHT");
+		String sessionToken = request.getParameter("sessionToken");
+		CustomerWeightCollectMap customerWeightCollects = RedisUtil.getFromRedis(sessionToken, "CUSTOMER_BOOK_WEIGHT", CustomerWeightCollectMap.class);
 		if (customerWeightCollects != null){
 			CustomerWeightCollect customerWeightCollect = customerWeightCollects.getCustomerWeightCollect(key);
 			if (customerWeightCollect!=null){
@@ -23,5 +25,6 @@
 		}
 	} catch (Exception e){
 		e.printStackTrace();
+		out.print("<session>X</session>");
 	}
 %>
